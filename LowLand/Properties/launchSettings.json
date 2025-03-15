@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "LowLand (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "LowLand (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
