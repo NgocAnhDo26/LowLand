@@ -11,6 +11,6 @@ namespace LowLand.Model.Order
     {
         public int Id { get; set; }
         required public int OrderId { get; set; }
-        required public Tuple<Product, int> Products { get; set; }
+        required public Tuple<Product.Product, int> Products { get; set; }
     }
 }

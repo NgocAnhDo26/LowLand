@@ -10,7 +10,7 @@
     Title="DashboardPage">
 
     <Grid>
-        <NavigationView x:Name="navigation" IsBackButtonVisible="Collapsed" ItemInvoked="navigation_ItemInvoked" SelectionChanged="navigation_SelectionChanged">
+      <!--  <NavigationView x:Name="navigation" IsBackButtonVisible="Collapsed" ItemInvoked="navigation_ItemInvoked" SelectionChanged="navigation_SelectionChanged">
             <NavigationView.MenuItems>
                 <NavigationViewItem Icon="Shop" Content="Dữ liệu cơ sở" IsExpanded="True">
                     <NavigationViewItem.MenuItems>
@@ -40,6 +40,6 @@
                 <NavigationViewItem Content="Help" Tag="SamplePage5" Icon="Help" />
             </NavigationView.FooterMenuItems>
             <Frame x:Name="container"/>
-        </NavigationView>
+        </NavigationView> -->
     </Grid>
 </Window>
