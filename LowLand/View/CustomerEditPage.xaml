@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="LowLand.View.CustomerEditPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LowLand.View"
+    xmlns:model="using:LowLand.Model.Customer"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <DataTemplate x:Key="CustomerEditTemplate" x:DataType="model:Customer">
+            <StackPanel Orientation="Vertical" Padding="10">
+                <TextBlock Text="{x:Bind Name}" FontWeight="Bold" FontSize="18" Foreground="Blue"/>
+                <TextBlock Text="{x:Bind Phone}" Foreground="Black" FontSize="14"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Points: " Foreground="Red" FontSize="14"/>
+                    <TextBlock Text="{x:Bind Point}" Foreground="Red" FontSize="14"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Rank: " Foreground="Green" FontSize="14"/>
+                    <TextBlock Text="{x:Bind RankName}" Foreground="Green" FontSize="14"/>
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+    <StackPanel Padding="10">
+        <TextBlock Text="Manage Customers" FontSize="20" FontWeight="Bold"/>
+
+        <ComboBox x:Name="customersComboBox"
+          ItemsSource="{x:Bind ViewModel.Customers, Mode=TwoWay}"
+          DisplayMemberPath="Name"
+          SelectionChanged="OnCustomerSelected"
+          Header="Select Customer"/>
+
+        <TextBox x:Name="nameTextBox" Header="Name"/>
+        <TextBox x:Name="phoneTextBox" Header="Phone"/>
+        <TextBox x:Name="pointTextBox" Header="Points" InputScope="Number"/>
+        <ComboBox x:Name="rankComboBox" Header="Rank">
+            <ComboBoxItem Content="Bronze"/>
+            <ComboBoxItem Content="Silver"/>
+            <ComboBoxItem Content="Gold"/>
+        </ComboBox>
+
+        <StackPanel Orientation="Horizontal" Margin="10">
+            <Button Content="Add" Click="AddCustomerClick" Margin="5"/>
+            <Button Content="Delete" Click="DeleteCustomer_Click" Margin="5"/>
+            <Button Content="Update" Click="UpdateCustomer_Click" Margin="5"/>
+            <Button Content="Back" Click="GoBack" Margin="5"/>
+        </StackPanel>
+    </StackPanel>
+</Page>
