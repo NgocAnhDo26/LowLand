@@ -21,11 +21,42 @@ namespace LowLand.View
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class DashboardPage : Window
+    public partial class DashboardPage : Page
     {
         public DashboardPage()
         {
             this.InitializeComponent();
+        }
+
+        private void navigation_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+        {
+            if (args.IsSettingsInvoked)
+            {
+                // = "Settings clicked";
+                return;
+            }
+
+            var item = (NavigationViewItem)sender.SelectedItem;
+
+            if (item.Tag != null)
+            {
+                string tag = (string)item.Tag;
+                var pageType = Type.GetType($"{GetType().Namespace}.{tag}");
+                if (pageType != null)
+                {
+                    container.Navigate(pageType);
+                }
+                else
+                {
+                    // Handle the error case if type is not found.
+                    Console.WriteLine($"Page type for {tag} not found.");
+                }
+            }
+        }
+
+        private void navigation_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        {
+
         }
     }
 }

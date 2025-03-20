@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -19,16 +20,16 @@ using Windows.Foundation.Collections;
 namespace LowLand.View
 {
     /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
+    /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LoginWindow : Window
+    public sealed partial class ProductsPage : Page
     {
-        public LoginWindow()
+        public ProductsViewModel ViewModel { get; set; } = new ProductsViewModel();
+        public ProductsPage()
         {
             this.InitializeComponent();
         }
-
-        private void loginButton_Click(object sender, RoutedEventArgs e)
+        private void searchButton_Click(object sender, RoutedEventArgs e)
         {
 
         }
