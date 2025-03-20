@@ -16,21 +16,13 @@ using Windows.Foundation.Collections;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace LowLand.View
+namespace LowLand.UnitTests
 {
-    /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class LoginWindow : Window
+    public sealed partial class UnitTestAppWindow : Window
     {
-        public LoginWindow()
+        public UnitTestAppWindow()
         {
             this.InitializeComponent();
-        }
-
-        private void loginButton_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using LowLand.View;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,6 +27,11 @@ namespace LowLand.View
         public DashboardWindow()
         {
             this.InitializeComponent();
+        }
+
+        private void Window_Activated(object sender, WindowActivatedEventArgs args)
+        {
+            container.Navigate(typeof(DashboardPage));
         }
     }
 }

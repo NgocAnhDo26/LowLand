@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "LowLand.UnitTests (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "LowLand.UnitTests (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

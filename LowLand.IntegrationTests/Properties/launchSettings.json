@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "LowLand.IntegrationTests (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "LowLand.IntegrationTests (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
