@@ -13,7 +13,7 @@ namespace LowLand.Model.Customer
         required public string Name { get; set; }
         public string? Phone { get; set; }
         required public int Point { get; set; } = 0;
-        required public DateTime RegistrationDate { get; set; }
+        required public DateOnly RegistrationDate { get; set; }
 
         // Rank Details
         required public int RankId { get; set; } = 1;

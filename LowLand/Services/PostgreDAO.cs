@@ -85,7 +85,7 @@ namespace LowLand.Services
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Phone = reader.IsDBNull(reader.GetOrdinal("phone")) ? null : reader.GetString(reader.GetOrdinal("phone")),
                 Point = reader.GetInt32(reader.GetOrdinal("point")),
-                RegistrationDate = reader.GetDateTime(reader.GetOrdinal("registration_date")),
+                RegistrationDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("registration_date"))),
                 RankId = reader.GetInt32(reader.GetOrdinal("customer_rank_id")),
                 RankName = reader.GetString(reader.GetOrdinal("customer_rank_name")),
                 PromotionPoint = reader.IsDBNull(reader.GetOrdinal("promotion_point")) ? null : reader.GetInt32(reader.GetOrdinal("promotion_point")),
@@ -95,7 +95,6 @@ namespace LowLand.Services
 
         public Customer GetById(string id)
         {
-
             return ExecuteSingleQuery($"""
             SELECT 
                 c.customer_id, c.name, c.phone, c.point, c.registration_date, c.customer_rank_id, 
@@ -108,13 +107,12 @@ namespace LowLand.Services
                 Name = reader.GetString(reader.GetOrdinal("name")),
                 Phone = reader.IsDBNull(reader.GetOrdinal("phone")) ? null : reader.GetString(reader.GetOrdinal("phone")),
                 Point = reader.GetInt32(reader.GetOrdinal("point")),
-                RegistrationDate = reader.GetDateTime(reader.GetOrdinal("registration_date")),
+                RegistrationDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("registration_date"))),
                 RankId = reader.GetInt32(reader.GetOrdinal("customer_rank_id")),
                 RankName = reader.IsDBNull(reader.GetOrdinal("customer_rank_name")) ? null : reader.GetString(reader.GetOrdinal("customer_rank_name")),
                 PromotionPoint = reader.IsDBNull(reader.GetOrdinal("promotion_point")) ? null : reader.GetInt32(reader.GetOrdinal("promotion_point")),
                 DiscountPercentage = reader.IsDBNull(reader.GetOrdinal("discount_percentage")) ? null : reader.GetInt32(reader.GetOrdinal("discount_percentage"))
             })!;
-
         }
 
         public int Insert(Customer info) => ExecuteNonQuery($"""
@@ -122,7 +120,7 @@ namespace LowLand.Services
              VALUES ('{info.Name}', 
              '{info.Phone}',
              {info.Point},
-             '{info.RegistrationDate}',
+             '{info.RegistrationDate.ToDateTime(new TimeOnly(0, 0))}',
              {info.RankId}
              )
              """);
@@ -131,16 +129,41 @@ namespace LowLand.Services
             DELETE FROM customer WHERE customer_id = '{id}'
             """);
 
-        public int UpdateById(string id, Customer info) => ExecuteNonQuery($"""
+        public int UpdateById(string id, Customer info)
+        {
+            int affectedRows = ExecuteNonQuery($"""
             UPDATE customer SET 
             name = '{info.Name}'
             , phone = '{info.Phone}'
             , point = {info.Point}
-            , registration_date = '{info.RegistrationDate}'
+            , registration_date = '{info.RegistrationDate.ToDateTime(new TimeOnly(0, 0))}'
             , customer_rank_id = {info.RankId}
             WHERE customer_id = '{id}'
             """);
+
+
+            UpdateCustomerRank(id);
+
+            return affectedRows;
+        }
+
+        // extraclass 
+        public void UpdateCustomerRank(string customerId)
+        {
+            ExecuteNonQuery($"""
+            UPDATE customer c
+            SET customer_rank_id = (
+                SELECT customer_rank_id 
+                FROM customer_rank 
+                WHERE promotion_point <= c.point 
+                ORDER BY promotion_point DESC
+                LIMIT 1
+            )
+            WHERE c.customer_id = '{customerId}'
+            """);
+        }
     }
+
 
 
     public class CustomerRankRepository : BaseRepository<CustomerRank>, IRepository<CustomerRank>

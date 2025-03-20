@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Navigation;
 using LowLand.View.ViewModel;
 using LowLand.Model.Product;
 using LowLand.Model.Customer;
+using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,9 +34,55 @@ namespace LowLand.View
             this.InitializeComponent();
         }
 
-        private void OpenCustomerEditPage(object sender, RoutedEventArgs e)
+        
+
+        private void searchButton_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(CustomerEditPage), ViewModel);
+
         }
+
+        private void addButton_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(AddCustomerPage));
+        }
+        private async void deleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is Customer selectedCustomer)
+
+                {
+                    ContentDialog deleteDialog = new ContentDialog
+                    {
+                        Title = "Xác nhận xóa",
+                        Content = $"Bạn có chắc muốn xóa khách hàng {selectedCustomer.Name}?",
+                        PrimaryButtonText = "Xóa",
+                        CloseButtonText = "Hủy",
+                          XamlRoot = this.XamlRoot
+                    };
+
+                    ContentDialogResult result = await deleteDialog.ShowAsync();
+                    if (result == ContentDialogResult.Primary)
+                    {
+                        ViewModel.Remove(selectedCustomer);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+        }
+
+        private void updateButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is Customer selectedCustomer)
+            {
+                Frame.Navigate(typeof(UpdateCustomerPage), selectedCustomer.Id);
+            }
+        }
+
     }
 }
+

@@ -66,7 +66,8 @@ namespace LowLand.View.ViewModel
                     customerToUpdate.Point = item.Point;
                     customerToUpdate.RankName = item.RankName;
                     customerToUpdate.RegistrationDate = item.RegistrationDate;
-                    customerToUpdate.RankId = item.RankId;
+                    // nếu point cao hơn thì cập nhật rank
+                    
                 }
                 else
                 {

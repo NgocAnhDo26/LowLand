@@ -18,7 +18,6 @@
                         <NavigationViewItem Icon="Refresh" Content="Loại sản phẩm" Tag="CustomerPage"/>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
-                
             </NavigationView.MenuItems>
             
             <Frame x:Name="container"/>
