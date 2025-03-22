@@ -10,7 +10,11 @@ namespace LowLand.Model.Product
     {
         public int Id { get; set; }
         required public string Name { get; set; }
+<<<<<<< Updated upstream
         required public int CategoryId { get; set; }
         public string? CategoryName { get; set; }
+=======
+        required public Category Category { get; set; }
+>>>>>>> Stashed changes
     }
 }

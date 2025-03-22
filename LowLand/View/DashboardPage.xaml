@@ -17,6 +17,7 @@
                     <NavigationViewItem.MenuItems>
                         <NavigationViewItem Icon="Refresh" Content="Danh sách khách hàng" Tag="CustomerPage"/>
                     </NavigationViewItem.MenuItems>
+                    
                 </NavigationViewItem>
             </NavigationView.MenuItems>
             

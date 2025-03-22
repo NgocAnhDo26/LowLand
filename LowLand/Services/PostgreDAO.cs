@@ -7,6 +7,7 @@ using LowLand.Model.Customer;
 using Npgsql;
 using LowLand.Model.Order;
 using LowLand.Model.Product;
+using System.Data;
 
 namespace LowLand.Services
 {
@@ -302,25 +303,219 @@ namespace LowLand.Services
     {
         public int DeleteById(string id)
         {
-            throw new NotImplementedException();
+            return ExecuteNonQuery($"""
+                DELETE FROM product WHERE product_id = '{id}'
+            """);
         }
+
         public List<Product> GetAll()
         {
-            throw new NotImplementedException();
+            return ExecuteQuery("""
+                SELECT p.product_id, p.name, p.sale_price, p.cost_price, p.image, p.is_combo, 
+                       c.category_id, c.name AS category_name, 
+                       pt.product_type_id, pt.name AS product_type_name 
+                FROM product p
+                LEFT JOIN product_type pt ON p.product_type_id = pt.product_type_id
+                LEFT JOIN category c ON pt.category_id = c.category_id
+            """, reader =>
+            {
+                bool isCombo = reader.GetBoolean(reader.GetOrdinal("is_combo"));
+                return isCombo
+                    ? new ComboProduct
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("product_id")),
+                        Name = reader.GetString(reader.GetOrdinal("name")),
+                        SalePrice = reader.GetInt32(reader.GetOrdinal("sale_price")),
+                        CostPrice = reader.GetInt32(reader.GetOrdinal("cost_price")),
+                        Image = reader.GetString(reader.GetOrdinal("image")),
+                        ProductIds = GetComboProductItems(reader.GetInt32(reader.GetOrdinal("product_id")))
+                    }
+                    : new SingleProduct
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("product_id")),
+                        Name = reader.GetString(reader.GetOrdinal("name")),
+                        SalePrice = reader.GetInt32(reader.GetOrdinal("sale_price")),
+                        CostPrice = reader.GetInt32(reader.GetOrdinal("cost_price")),
+                        Image = reader.GetString(reader.GetOrdinal("image")),
+                        Category = new Category
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("category_id")),
+                            Name = reader.GetString(reader.GetOrdinal("category_name"))
+                        },
+                        ProductType = new ProductType
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("product_type_id")),
+                            Name = reader.GetString(reader.GetOrdinal("product_type_name")),
+                            Category = new Category
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("category_id")),
+                                Name = reader.GetString(reader.GetOrdinal("category_name"))
+                            }
+                        }
+                    };
+            });
         }
-        public Product GetById(string id)
+
+        public Product? GetById(string id)
         {
-            throw new NotImplementedException();
+            return ExecuteSingleQuery($"""
+                SELECT p.product_id, p.name, p.sale_price, p.cost_price, p.image, p.is_combo, 
+                       c.category_id, c.name AS category_name, 
+                       pt.product_type_id, pt.name AS product_type_name 
+                FROM product p
+                LEFT JOIN product_type pt ON p.product_type_id = pt.product_type_id
+                LEFT JOIN category c ON pt.category_id = c.category_id
+                WHERE p.product_id = '{id}'
+            """, reader =>
+            {
+                bool isCombo = reader.GetBoolean(reader.GetOrdinal("is_combo"));
+                return isCombo
+                    ? new ComboProduct
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("product_id")),
+                        Name = reader.GetString(reader.GetOrdinal("name")),
+                        SalePrice = reader.GetInt32(reader.GetOrdinal("sale_price")),
+                        CostPrice = reader.GetInt32(reader.GetOrdinal("cost_price")),
+                        Image = reader.GetString(reader.GetOrdinal("image")),
+                        ProductIds = GetComboProductItems(reader.GetInt32(reader.GetOrdinal("product_id")))
+                    }
+                    : new SingleProduct
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("product_id")),
+                        Name = reader.GetString(reader.GetOrdinal("name")),
+                        SalePrice = reader.GetInt32(reader.GetOrdinal("sale_price")),
+                        CostPrice = reader.GetInt32(reader.GetOrdinal("cost_price")),
+                        Image = reader.GetString(reader.GetOrdinal("image")),
+                        Category = new Category
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("category_id")),
+                            Name = reader.GetString(reader.GetOrdinal("category_name"))
+                        },
+                        ProductType = new ProductType
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("product_type_id")),
+                            Name = reader.GetString(reader.GetOrdinal("product_type_name")),
+                            Category = new Category
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("category_id")),
+                                Name = reader.GetString(reader.GetOrdinal("category_name"))
+                            }
+                        }
+                    };
+            });
         }
+
         public int Insert(Product info)
         {
-            throw new NotImplementedException();
+            if (info is SingleProduct single)
+            {
+                return ExecuteNonQuery($"""
+            INSERT INTO product (is_combo, name, sale_price, cost_price, image,product_type_id) 
+            VALUES (false, '{single.Name}', {single.SalePrice}, {single.CostPrice}, '{single.Image}', {single.ProductType.Id})
+        """);
+            }
+            else if (info is ComboProduct combo)
+            {
+                int result = ExecuteNonQuery($"""
+            INSERT INTO product (is_combo, name, sale_price, cost_price, image) 
+            VALUES (true, '{combo.Name}', {combo.SalePrice}, {combo.CostPrice}, '{combo.Image}')
+        """);
+
+                int comboId = GetLastInsertedId();
+                foreach (var productId in combo.ProductIds)
+                {
+                    ExecuteNonQuery($"""
+                INSERT INTO combo (product_id_combo, product_id) 
+                VALUES ({comboId}, {productId})
+            """);
+                }
+                return result;
+            }
+            return 0;
         }
+
         public int UpdateById(string id, Product info)
         {
-            throw new NotImplementedException();
+            if (info is SingleProduct single)
+            {
+                return ExecuteNonQuery($"""
+            UPDATE product 
+            SET name = '{single.Name}', 
+                sale_price = {single.SalePrice}, 
+                cost_price = {single.CostPrice}, 
+                image = '{single.Image}',
+              
+                product_type_id = {single.ProductType.Id}
+            WHERE product_id = '{id}'
+        """);
+            }
+            else if (info is ComboProduct combo)
+            {
+                int result = ExecuteNonQuery($"""
+            UPDATE product 
+            SET name = '{combo.Name}', 
+                sale_price = {combo.SalePrice}, 
+                cost_price = {combo.CostPrice}, 
+                image = '{combo.Image}', 
+                is_combo = true
+            WHERE product_id = '{id}'
+        """);
+
+                ExecuteNonQuery($"""
+            DELETE FROM combo WHERE product_id_combo = '{id}'
+        """);
+                foreach (var productId in combo.ProductIds)
+                {
+                    ExecuteNonQuery($"""
+                INSERT INTO combo (product_id_combo, product_id) 
+                VALUES ({id}, {productId})
+            """);
+                }
+                return result;
+            }
+            return 0;
         }
+
+
+        private List<int> GetComboProductItems(int comboId)
+        {
+            var results = new List<int>();
+            using (var conn = new NpgsqlConnection(connectionString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand($"""
+        SELECT product_id FROM combo WHERE product_id_combo = {comboId}
+        """, conn))
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        results.Add(reader.GetInt32(reader.GetOrdinal("product_id")));
+                    }
+                }
+            }
+            return results;
+        }
+
+
+
+
+        private int GetLastInsertedId()
+        {
+            using (var conn = new NpgsqlConnection(connectionString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand("SELECT LAST_INSERT_ID()", conn))
+                using (var reader = cmd.ExecuteReader())
+                {
+                    return reader.Read() ? reader.GetInt32(0) : 0;
+                }
+            }
+        }
+
+
     }
+
 
 
     public class ProductTypeRepository : BaseRepository<ProductType>, IRepository<ProductType>

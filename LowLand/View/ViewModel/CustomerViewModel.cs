@@ -58,21 +58,13 @@ namespace LowLand.View.ViewModel
             {
  
                 int result = _dao.Customers.UpdateById(item.Id.ToString(), item);
-                if (result > 0)
+                if (result <= 0)
                 {
- 
-                    customerToUpdate.Name = item.Name;
-                    customerToUpdate.Phone = item.Phone;
-                    customerToUpdate.Point = item.Point;
-                    customerToUpdate.RankName = item.RankName;
-                    customerToUpdate.RegistrationDate = item.RegistrationDate;
-                    // nếu point cao hơn thì cập nhật rank
-                    
-                }
-                else
-                {
+
                     Console.WriteLine("Update failed: No rows affected.");
+
                 }
+                
             }
         }
     }

@@ -15,6 +15,7 @@ namespace LowLand.Model.Order
         public int DiscountedApplied => TotalPrice - TotalAfterDiscount;
         required public int TotalAfterDiscount { get; set; }
         required public int Status { get; set; }
+        public string Name_Option { get; set; } = "Size: X";
 
     }
 }
