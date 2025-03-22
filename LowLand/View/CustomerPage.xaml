@@ -19,7 +19,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Danh sách sản phẩm" Style="{StaticResource TitleTextBlockStyle}" Margin="36, 40, 0, 36"/>
+        <TextBlock Grid.Row="0" Text="Danh sách khách hàng" Style="{StaticResource TitleTextBlockStyle}" Margin="36, 40, 0, 36"/>
 
         <Grid Grid.Row="1" Margin="36, 0, 0, 16">
             <Grid.ColumnDefinitions>
@@ -29,8 +29,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Column="0" x:Name="searchBar" Width="300" PlaceholderText="Tìm kiếm sản phẩm..."/>
-            <Button Grid.Column="1" x:Name="searchButton" Click="searchButton_Click"  Margin="8, 0, 0, 0" ToolTipService.ToolTip="Tìm kiếm sản phẩm">
+            <TextBox Grid.Column="0" x:Name="searchBar" Width="300" PlaceholderText="Tìm kiếm khách hàng..."/>
+            <Button Grid.Column="1" x:Name="searchButton" Click="searchButton_Click"  Margin="8, 0, 0, 0" ToolTipService.ToolTip="Tìm kiếm khách hàng">
                 <FontIcon Glyph="&#xE721;"/>
             </Button>
             <Rectangle Grid.Column="2"/>
@@ -38,7 +38,7 @@
                 <Button.Content>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon Glyph="&#xE710;"/>
-                        <TextBlock Text="Thêm sản phẩm"/>
+                        <TextBlock Text="Thêm khách hàng"/>
                     </StackPanel>
                 </Button.Content>
             </Button>

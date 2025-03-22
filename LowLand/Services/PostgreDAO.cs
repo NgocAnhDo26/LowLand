@@ -10,7 +10,7 @@ using LowLand.Model.Product;
 
 namespace LowLand.Services
 {
-    public class PostgreDAO : IDao
+    public class PostgreDao : IDao
     {
       //  private readonly string connectionString = "Host=localhost;Port=5432;Username=hoangkha_ngocanhne;Password=ngocanh_hoangkhane;Database=lowland";
 

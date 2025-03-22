@@ -15,7 +15,7 @@
             <NavigationView.MenuItems>
                 <NavigationViewItem Icon="Shop" Content="Dữ liệu cơ sở" IsExpanded="True">
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Icon="Refresh" Content="Loại sản phẩm" Tag="CustomerPage"/>
+                        <NavigationViewItem Icon="Refresh" Content="Danh sách khách hàng" Tag="CustomerPage"/>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

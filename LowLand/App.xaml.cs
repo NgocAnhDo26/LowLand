@@ -35,7 +35,7 @@ namespace LowLand
         public App()
         {
             this.InitializeComponent();
-            Services.Services.AddKeyedSingleton<IDao, PostgreDAO>();
+            Services.Services.AddKeyedSingleton<IDao, PostgreDao>();
         }
 
         /// <summary>

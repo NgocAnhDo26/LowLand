@@ -74,5 +74,10 @@ namespace LowLand.View
             ShowMessage("Thêm khách hàng thành công!");
             Frame.GoBack();
         }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.GoBack();
+        }
     }
 }

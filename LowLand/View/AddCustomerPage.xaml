@@ -10,12 +10,16 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid Padding="20">
+        <TextBlock Text="Thêm khách hàng" FontSize="24" Margin="36, 40, 0, 36"/>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300" Spacing="10">
             <TextBox x:Name="NameTextBox" Header="Tên khách hàng" PlaceholderText="Nhập tên..." />
             <TextBox x:Name="PhoneTextBox" Header="Số điện thoại" PlaceholderText="Nhập số điện thoại..." />
-            <TextBox x:Name="PointTextBox" Header="Điểm" PlaceholderText="Nhập điểm..." InputScope="Number" />
+           
+            <StackPanel Orientation="Horizontal">
 
-            <Button x:Name="addButton" Content="Thêm khách hàng" Click="addButton_Click"/>
+            <Button x:Name="addButton" Content="Thêm khách hàng" Click="addButton_Click" Margin="0,0,30,0"/>
+            <Button x:Name="CancelButton" Content="Hủy" Click="CancelButton_Click"/>
+        </StackPanel>
         </StackPanel>
     </Grid>
 </Page>
