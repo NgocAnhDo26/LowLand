@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -19,9 +20,9 @@ using Windows.Foundation.Collections;
 namespace LowLand.View
 {
     /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
+    /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public partial class DashboardPage : Page
+    public sealed partial class DashboardPage : Page
     {
         public DashboardPage()
         {
@@ -41,16 +42,9 @@ namespace LowLand.View
             if (item.Tag != null)
             {
                 string tag = (string)item.Tag;
-                var pageType = Type.GetType($"{GetType().Namespace}.{tag}");
-                if (pageType != null)
-                {
-                    container.Navigate(pageType);
-                }
-                else
-                {
-                    // Handle the error case if type is not found.
-                    Console.WriteLine($"Page type for {tag} not found.");
-                }
+                Debug.WriteLine(tag);
+                Debug.WriteLine($"{GetType().Namespace}.{tag}");
+                container.Navigate(Type.GetType($"{GetType().Namespace}.{tag}"));
             }
         }
 

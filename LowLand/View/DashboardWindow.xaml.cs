@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -28,7 +29,6 @@ namespace LowLand.View
         {
             this.InitializeComponent();
         }
-
         private void Window_Activated(object sender, WindowActivatedEventArgs args)
         {
             container.Navigate(typeof(DashboardPage));
