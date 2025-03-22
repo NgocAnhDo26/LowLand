@@ -1,4 +1,4 @@
-﻿using LowLand.Model.Customer;
+﻿/*using LowLand.Model.Customer;
 using LowLand.Model.Order;
 using LowLand.Model.Product;
 
@@ -292,3 +292,4 @@ namespace LowLand.Services
         }
     }
 }
+*/
