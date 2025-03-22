@@ -10,9 +10,10 @@
     Title="LoginWindow">
 
     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBox Header="Username" Text="{Binding ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        <PasswordBox Header="Password" Password="{Binding ViewModel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        <CheckBox Content="Remember me" IsChecked="{Binding ViewModel.RememberMe, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        <Button Content="Login" Width="80" Height="35" Click="loginButton_Click"/>
+        
+        <TextBox Header="Username" Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <PasswordBox Header="Password" Password="{x:Bind ViewModel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <CheckBox Content="Remember me" IsChecked="{x:Bind ViewModel.RememberMe, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button Content="Login" Width="80" Height="35" Click="loginButton_Click"/> 
     </StackPanel>
 </Window>

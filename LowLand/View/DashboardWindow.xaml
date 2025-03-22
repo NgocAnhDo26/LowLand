@@ -11,3 +11,4 @@
     Activated="Window_Activated">
     <Frame x:Name="MainFrame"/>
 </Window>
+    

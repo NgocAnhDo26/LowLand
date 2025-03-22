@@ -1,4 +1,4 @@
-﻿    using LowLand.Model.Customer;
+    using LowLand.Model.Customer;
 using LowLand.Model.Order;
 using LowLand.Model.Product;
 
@@ -198,10 +198,10 @@ namespace LowLand.Services
         {
             private List<CustomerRank> _customerRanks = new List<CustomerRank>()
             {
-                new CustomerRank() { Id = 1, Name = "Mới", PromotionPoint = 200, DiscountPercentage = 0},
-                new CustomerRank() { Id = 2, Name = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
-                new CustomerRank() { Id = 3, Name = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
-                new CustomerRank() { Id = 4, Name = "Kim Cương", PromotionPoint = int.MaxValue, DiscountPercentage = 10 },
+                new CustomerRank() { Id = 1, Name = "Mới", PromotionPoint = 0, DiscountPercentage = 0},
+                new CustomerRank() { Id = 2, Name = "Bạc", PromotionPoint = 200, DiscountPercentage = 2 },
+                new CustomerRank() { Id = 3, Name = "Vàng", PromotionPoint = 1000, DiscountPercentage = 5 },
+                new CustomerRank() { Id = 4, Name = "Kim Cương", PromotionPoint = 3000, DiscountPercentage = 10 },
             };
             public List<CustomerRank> GetAll()
             {
@@ -239,26 +239,26 @@ namespace LowLand.Services
         {
             private List<Customer> _customers = new List<Customer>()
             {
-                new Customer() { Id = 1, Name = "Đỗ Minh An", Phone = "0912345678", Point = 1200, RegistrationDate = new DateTime(2021, 5, 10), RankId = 1, RankName = "Mới", PromotionPoint = 200, DiscountPercentage = 0 },
-                new Customer() { Id = 2, Name = "Nguyễn Minh Duy", Phone = "0909876543", Point = 850, RegistrationDate = new DateTime(2020, 7, 25), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
-                new Customer() { Id = 3, Name = "Lê Thị Lan", Phone = "0923456789", Point = 2500, RegistrationDate = new DateTime(2019, 9, 30), RankId = 3, RankName = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
-                new Customer() { Id = 4, Name = "Phan Thị Kim", Phone = "0932123456", Point = 3100, RegistrationDate = new DateTime(2018, 11, 1), RankId = 4, RankName = "Kim Cương", PromotionPoint = int.MaxValue, DiscountPercentage = 10 },
-                new Customer() { Id = 5, Name = "Bùi Thanh Mai", Phone = "0943234567", Point = 780, RegistrationDate = new DateTime(2021, 2, 12), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
-                new Customer() { Id = 6, Name = "Trần Quang Hiếu", Phone = "0954345678", Point = 3300, RegistrationDate = new DateTime(2019, 3, 15), RankId = 3, RankName = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
-                new Customer() { Id = 7, Name = "Nguyễn Thị Hoa", Phone = "0965456789", Point = 1400, RegistrationDate = new DateTime(2020, 8, 22), RankId = 1, RankName = "Mới", PromotionPoint = 200, DiscountPercentage = 0 },
-                new Customer() { Id = 8, Name = "Phạm Minh Khôi", Phone = "0976567890", Point = 1000, RegistrationDate = new DateTime(2020, 12, 30), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
-                new Customer() { Id = 9, Name = "Lê Quang Vũ", Phone = "0987678901", Point = 650, RegistrationDate = new DateTime(2021, 6, 5), RankId = 1, RankName = "Mới", PromotionPoint = 200, DiscountPercentage = 0 },
-                new Customer() { Id = 10, Name = "Vũ Minh Tân", Phone = "0998789012", Point = 900, RegistrationDate = new DateTime(2020, 1, 13), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
-                new Customer() { Id = 11, Name = "Đặng Phương Thảo", Phone = "0910112233", Point = 1800, RegistrationDate = new DateTime(2019, 5, 20), RankId = 3, RankName = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
-                new Customer() { Id = 12, Name = "Trương Mai Linh", Phone = "0901223344", Point = 2500, RegistrationDate = new DateTime(2018, 8, 10), RankId = 3, RankName = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
-                new Customer() { Id = 13, Name = "Nguyễn Thị Như", Phone = "0922334455", Point = 300, RegistrationDate = new DateTime(2021, 7, 30), RankId = 1, RankName = "Mới", PromotionPoint = 200, DiscountPercentage = 0 },
-                new Customer() { Id = 14, Name = "Bùi Ngọc Phương", Phone = "0933445566", Point = 1400, RegistrationDate = new DateTime(2021, 1, 8), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
-                new Customer() { Id = 15, Name = "Trần Minh Long", Phone = "0944556677", Point = 2200, RegistrationDate = new DateTime(2020, 3, 14), RankId = 3, RankName = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
-                new Customer() { Id = 16, Name = "Nguyễn Thái Sơn", Phone = "0955667788", Point = 4000, RegistrationDate = new DateTime(2019, 2, 25), RankId = 4, RankName = "Kim Cương", PromotionPoint = int.MaxValue, DiscountPercentage = 10 },
-                new Customer() { Id = 17, Name = "Lê Hoàng An", Phone = "0966778899", Point = 2100, RegistrationDate = new DateTime(2020, 11, 1), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
-                new Customer() { Id = 18, Name = "Phan Thanh Kiều", Phone = "0977889900", Point = 1500, RegistrationDate = new DateTime(2021, 4, 10), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
-                new Customer() { Id = 19, Name = "Nguyễn Thị Thu", Phone = "0988990011", Point = 600, RegistrationDate = new DateTime(2021, 3, 3), RankId = 1, RankName = "Mới", PromotionPoint = 200, DiscountPercentage = 0 },
-                new Customer() { Id = 20, Name = "Vũ Minh Quang", Phone = "0999001122", Point = 950, RegistrationDate = new DateTime(2020, 9, 10), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 }
+                new Customer() { Id = 1, Name = "Đỗ Minh An", Phone = "0912345678", Point = 1200, RegistrationDate = new DateOnly(2021, 5, 10), RankId = 1, RankName = "Mới", PromotionPoint = 200, DiscountPercentage = 0 },
+                new Customer() { Id = 2, Name = "Nguyễn Minh Duy", Phone = "0909876543", Point = 850, RegistrationDate = new DateOnly(2020, 7, 25), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
+                new Customer() { Id = 3, Name = "Lê Thị Lan", Phone = "0923456789", Point = 2500, RegistrationDate = new DateOnly(2019, 9, 30), RankId = 3, RankName = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
+                new Customer() { Id = 4, Name = "Phan Thị Kim", Phone = "0932123456", Point = 3100, RegistrationDate = new DateOnly(2018, 11, 1), RankId = 4, RankName = "Kim Cương", PromotionPoint = int.MaxValue, DiscountPercentage = 10 },
+                new Customer() { Id = 5, Name = "Bùi Thanh Mai", Phone = "0943234567", Point = 780, RegistrationDate = new DateOnly(2021, 2, 12), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
+                new Customer() { Id = 6, Name = "Trần Quang Hiếu", Phone = "0954345678", Point = 3300, RegistrationDate = new DateOnly(2019, 3, 15), RankId = 3, RankName = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
+                new Customer() { Id = 7, Name = "Nguyễn Thị Hoa", Phone = "0965456789", Point = 1400, RegistrationDate = new DateOnly(2020, 8, 22), RankId = 1, RankName = "Mới", PromotionPoint = 200, DiscountPercentage = 0 },
+                new Customer() { Id = 8, Name = "Phạm Minh Khôi", Phone = "0976567890", Point = 1000, RegistrationDate = new DateOnly(2020, 12, 30), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
+                new Customer() { Id = 9, Name = "Lê Quang Vũ", Phone = "0987678901", Point = 650, RegistrationDate = new DateOnly(2021, 6, 5), RankId = 1, RankName = "Mới", PromotionPoint = 200, DiscountPercentage = 0 },
+                new Customer() { Id = 10, Name = "Vũ Minh Tân", Phone = "0998789012", Point = 900, RegistrationDate = new DateOnly(2020, 1, 13), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
+                new Customer() { Id = 11, Name = "Đặng Phương Thảo", Phone = "0910112233", Point = 1800, RegistrationDate = new DateOnly(2019, 5, 20), RankId = 3, RankName = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
+                new Customer() { Id = 12, Name = "Trương Mai Linh", Phone = "0901223344", Point = 2500, RegistrationDate = new DateOnly(2018, 8, 10), RankId = 3, RankName = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
+                new Customer() { Id = 13, Name = "Nguyễn Thị Như", Phone = "0922334455", Point = 300, RegistrationDate = new DateOnly(2021, 7, 30), RankId = 1, RankName = "Mới", PromotionPoint = 200, DiscountPercentage = 0 },
+                new Customer() { Id = 14, Name = "Bùi Ngọc Phương", Phone = "0933445566", Point = 1400, RegistrationDate = new DateOnly(2021, 1, 8), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
+                new Customer() { Id = 15, Name = "Trần Minh Long", Phone = "0944556677", Point = 2200, RegistrationDate = new DateOnly(2020, 3, 14), RankId = 3, RankName = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
+                new Customer() { Id = 16, Name = "Nguyễn Thái Sơn", Phone = "0955667788", Point = 4000, RegistrationDate = new DateOnly(2019, 2, 25), RankId = 4, RankName = "Kim Cương", PromotionPoint = int.MaxValue, DiscountPercentage = 10 },
+                new Customer() { Id = 17, Name = "Lê Hoàng An", Phone = "0966778899", Point = 2100, RegistrationDate = new DateOnly(2020, 11, 1), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
+                new Customer() { Id = 18, Name = "Phan Thanh Kiều", Phone = "0977889900", Point = 1500, RegistrationDate = new DateOnly(2021, 4, 10), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
+                new Customer() { Id = 19, Name = "Nguyễn Thị Thu", Phone = "0988990011", Point = 600, RegistrationDate = new DateOnly(2021, 3, 3), RankId = 1, RankName = "Mới", PromotionPoint = 200, DiscountPercentage = 0 },
+                new Customer() { Id = 20, Name = "Vũ Minh Quang", Phone = "0999001122", Point = 950, RegistrationDate = new DateOnly(2020, 9, 10), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 }
             };
 
             public List<Customer> GetAll()
@@ -306,3 +306,4 @@ namespace LowLand.Services
         }
     }
 }
+*/

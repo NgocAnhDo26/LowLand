@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -72,7 +73,6 @@ namespace LowLand.View
 
             return false; // Acrylic is not supported on this system
         }
-
         private void Window_Activated(object sender, WindowActivatedEventArgs args)
         {
             if (_configurationSource is not null)
