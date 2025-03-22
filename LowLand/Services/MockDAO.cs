@@ -1,9 +1,10 @@
-﻿using LowLand.Model.Customer;
+﻿    using LowLand.Model.Customer;
 using LowLand.Model.Order;
 using LowLand.Model.Product;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,26 +26,26 @@ namespace LowLand.Services
         {
             private List<Product> _products = new List<Product>()
             {
-                new Product() { Id = 1, ProductTypeId = 1, ProductTypeName="Cà phê", CategoryName="Thức uống", Name = "Phin Sữa Đá", SalePrice = 29000, CostPrice = 15000, Image = "phin_sua_da.jpg", Size = "M" },
-                new Product() { Id = 2, ProductTypeId = 1, ProductTypeName="Cà phê", CategoryName="Thức uống", Name = "Phin Đen Đá", SalePrice = 29000, CostPrice = 15000, Image = "phin_den_da.jpg", Size = "M" },
-                new Product() { Id = 3, ProductTypeId = 1, ProductTypeName="Cà phê", CategoryName="Thức uống", Name = "PhinDi Kem Sữa", SalePrice = 35000, CostPrice = 18000, Image = "phindi_kem_sua.jpg", Size = "M" },
-                new Product() { Id = 4, ProductTypeId = 1, ProductTypeName="Cà phê", CategoryName="Thức uống", Name = "PhinDi Choco", SalePrice = 35000, CostPrice = 18000, Image = "phindi_choco.jpg", Size = "M" },
-                new Product() { Id = 5, ProductTypeId = 1, ProductTypeName="Cà phê", CategoryName="Thức uống", Name = "Espresso", SalePrice = 35000, CostPrice = 18000, Image = "espresso.jpg", Size = "S" },
-                new Product() { Id = 6, ProductTypeId = 1, ProductTypeName="Cà phê", CategoryName="Thức uống", Name = "Americano", SalePrice = 35000, CostPrice = 18000, Image = "americano.jpg", Size = "M" },
-                new Product() { Id = 7, ProductTypeId = 1, ProductTypeName="Cà phê", CategoryName="Thức uống", Name = "Latte", SalePrice = 40000, CostPrice = 20000, Image = "latte.jpg", Size = "M" },
-                new Product() { Id = 8, ProductTypeId = 1, ProductTypeName="Cà phê", CategoryName="Thức uống", Name = "Cappuccino", SalePrice = 40000, CostPrice = 20000, Image = "cappuccino.jpg", Size = "M" },
-                new Product() { Id = 9, ProductTypeId = 1, ProductTypeName="Cà phê", CategoryName = "Thức uống", Name = "Caramel Macchiato", SalePrice = 45000, CostPrice = 22000, Image = "caramel_macchiato.jpg", Size = "M" },
-                new Product() { Id = 10, ProductTypeId = 2, ProductTypeName="Trà", CategoryName="Thức uống",Name = "Trà Sen Vàng", SalePrice = 39000, CostPrice = 20000, Image = "tra_sen_vang.jpg", Size = "M" },
-                new Product() { Id = 11, ProductTypeId = 2, ProductTypeName="Trà", CategoryName = "Thức uống", Name = "Trà Thạch Đào", SalePrice = 39000, CostPrice = 20000, Image = "tra_thach_dao.jpg", Size = "M" },
-                new Product() { Id = 12, ProductTypeId = 2, ProductTypeName="Trà", CategoryName = "Thức uống", Name = "Trà Thạch Vải", SalePrice = 39000, CostPrice = 20000, Image = "tra_thach_vai.jpg", Size = "M" },
-                new Product() { Id = 13, ProductTypeId = 2, ProductTypeName="Trà", CategoryName = "Thức uống", Name = "Trà Thanh Đào", SalePrice = 39000, CostPrice = 20000, Image = "tra_thanh_dao.jpg", Size = "M" },
-                new Product() { Id = 14, ProductTypeId = 3, ProductTypeName="Freeze", CategoryName = "Thức uống", Name = "Freeze Trà Xanh", SalePrice = 49000, CostPrice = 25000, Image = "freeze_tra_xanh.jpg", Size = "M" },
-                new Product() { Id = 15, ProductTypeId = 3, ProductTypeName="Freeze", CategoryName = "Thức uống", Name = "Freeze Cookies & Cream", SalePrice = 49000, CostPrice = 25000, Image = "freeze_cookies_cream.jpg", Size = "M" },
-                new Product() { Id = 16, ProductTypeId = 3, ProductTypeName="Freeze", CategoryName = "Thức uống", Name = "Freeze Chocolate", SalePrice = 49000, CostPrice = 25000, Image = "freeze_chocolate.jpg", Size = "M" },
-                new Product() { Id = 17, ProductTypeId = 4, ProductTypeName="Bánh", CategoryName = "Đồ ăn", Name = "Bánh Croissant", SalePrice = 29000, CostPrice = 15000, Image = "banh_croissant.jpg", Size = "X" },
-                new Product() { Id = 18, ProductTypeId = 4, ProductTypeName="Bánh", CategoryName="Đồ ăn", Name = "Bánh Mousse Cacao", SalePrice = 35000, CostPrice = 18000, Image = "banh_mousse_cacao.jpg", Size = "X" },
-                new Product() { Id = 19, ProductTypeId = 4, ProductTypeName="Bánh", CategoryName = "Đồ ăn", Name = "Bánh Mousse Đào", SalePrice = 35000, CostPrice = 18000, Image = "banh_mousse_dao.jpg", Size = "X" },
-                new Product() { Id = 20, ProductTypeId = 4, ProductTypeName="Bánh", CategoryName = "Đồ ăn", Name = "Bánh Phô Mai Chanh Dây", SalePrice = 29000, CostPrice = 15000, Image = "banh_pho_mai_chanh_day.jpg", Size = "X" },
+                new SingleProduct() { Id = 1, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() {Id = 1, Name = "Thức uống" }, Name = "Phin Sữa Đá", SalePrice = 29000, CostPrice = 15000, Image = "phin_sua_da.jpg"},
+                new SingleProduct() { Id = 2, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() {Id = 1, Name = "Thức uống" }, Name = "Phin Đen Đá", SalePrice = 29000, CostPrice = 15000, Image = "phin_den_da.jpg"},
+                new SingleProduct() { Id = 3, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() {Id = 1, Name = "Thức uống" }, Name = "PhinDi Kem Sữa", SalePrice = 35000, CostPrice = 18000, Image = "phindi_kem_sua.jpg"},
+                new SingleProduct() { Id = 4, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "PhinDi Choco", SalePrice = 35000, CostPrice = 18000, Image = "phindi_choco.jpg"},
+                new SingleProduct() { Id = 5, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Espresso", SalePrice = 35000, CostPrice = 18000, Image = "espresso.jpg"},
+                new SingleProduct() { Id = 6, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Americano", SalePrice = 35000, CostPrice = 18000, Image = "americano.jpg"},
+                new SingleProduct() { Id = 7, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Latte", SalePrice = 40000, CostPrice = 20000, Image = "latte.jpg"},
+                new SingleProduct() { Id = 8, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Cappuccino", SalePrice = 40000, CostPrice = 20000, Image = "cappuccino.jpg" },
+                new SingleProduct() { Id = 9, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Caramel Macchiato", SalePrice = 45000, CostPrice = 22000, Image = "caramel_macchiato.jpg"},
+                new SingleProduct() { Id = 10, ProductType = new ProductType() { Id = 2, Name = "Trà", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" },Name = "Trà Sen Vàng", SalePrice = 39000, CostPrice = 20000, Image = "tra_sen_vang.jpg"},
+                new SingleProduct() { Id = 11, ProductType = new ProductType() { Id = 2, Name = "Trà", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Trà Thạch Đào", SalePrice = 39000, CostPrice = 20000, Image = "tra_thach_dao.jpg" },
+                new SingleProduct() { Id = 12, ProductType = new ProductType() { Id = 2, Name = "Trà", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Trà Thạch Vải", SalePrice = 39000, CostPrice = 20000, Image = "tra_thach_vai.jpg" },
+                new SingleProduct() { Id = 13, ProductType = new ProductType() { Id = 2, Name = "Trà", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Trà Thanh Đào", SalePrice = 39000, CostPrice = 20000, Image = "tra_thanh_dao.jpg" },
+                new SingleProduct() { Id = 14, ProductType = new ProductType() { Id = 3, Name = "Freeze", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Freeze Trà Xanh", SalePrice = 49000, CostPrice = 25000, Image = "freeze_tra_xanh.jpg" },
+                new SingleProduct() { Id = 15, ProductType = new ProductType() { Id = 3, Name = "Freeze", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Freeze Cookies & Cream", SalePrice = 49000, CostPrice = 25000, Image = "freeze_cookies_cream.jpg" },
+                new SingleProduct() { Id = 16, ProductType = new ProductType() { Id = 3, Name = "Freeze", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Freeze Chocolate", SalePrice = 49000, CostPrice = 25000, Image = "freeze_chocolate.jpg" },
+                new SingleProduct() { Id = 17, ProductType = new ProductType() { Id = 4, Name = "Bánh", CategoryId = 2 }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Croissant", SalePrice = 29000, CostPrice = 15000, Image = "banh_croissant.jpg" },
+                new SingleProduct() { Id = 18, ProductType = new ProductType() { Id = 4, Name = "Bánh", CategoryId = 2 }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Mousse Cacao", SalePrice = 35000, CostPrice = 18000, Image = "banh_mousse_cacao.jpg" },
+                new SingleProduct() { Id = 19, ProductType = new ProductType() { Id = 4, Name = "Bánh", CategoryId = 2 }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Mousse Đào", SalePrice = 35000, CostPrice = 18000, Image = "banh_mousse_dao.jpg" },
+                new SingleProduct() { Id = 20, ProductType = new ProductType() { Id = 4, Name = "Bánh", CategoryId = 2 }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Phô Mai Chanh Dây", SalePrice = 29000, CostPrice = 15000, Image = "banh_pho_mai_chanh_day.jpg" },
             };
             public List<Product> GetAll()
             {
@@ -73,19 +74,32 @@ namespace LowLand.Services
             public int UpdateById(string id, Product info)
             {
                 var product = _products.FirstOrDefault(p => p.Id == int.Parse(id));
+                
                 if (product != null)
                 {
-                    product.ProductTypeId = info.ProductTypeId;
                     product.Name = info.Name;
+                    Debug.WriteLine(info.Name, product.Name);
                     product.SalePrice = info.SalePrice;
+                    Debug.WriteLine(info.SalePrice, product.SalePrice.ToString());
                     product.CostPrice = info.CostPrice;
+                    Debug.WriteLine(info.CostPrice, product.CostPrice.ToString());
                     product.Image = info.Image;
-                    product.Size = info.Size;
-                    return 1;
+
+                    if (product is SingleProduct prod)
+                    {
+                        prod.Category = ((SingleProduct)info).Category;
+                        prod.ProductType = ((SingleProduct)info).ProductType;
+                    } 
+                    else if (product is ComboProduct combo)
+                    {
+                        combo.ProductIds = ((ComboProduct)info).ProductIds;
+                    }
+
+                    return int.Parse(id);
                 }
                 else
                 {
-                    return 0;
+                    return -1;
                 }
             }
         }

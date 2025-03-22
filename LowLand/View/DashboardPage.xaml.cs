@@ -53,10 +53,5 @@ namespace LowLand.View
                 }
             }
         }
-
-        private void navigation_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
-        {
-
-        }
     }
 }

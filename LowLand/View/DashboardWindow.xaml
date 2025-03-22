@@ -9,5 +9,5 @@
     mc:Ignorable="d"
     Title="DashboardWindow"
     Activated="Window_Activated">
-    <Frame x:Name="container"/>
+    <Frame x:Name="MainFrame"/>
 </Window>
