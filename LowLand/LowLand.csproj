@@ -16,10 +16,12 @@
     <Content Remove="Assets\product_default.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="View\CategoriesPage.xaml" />
     <None Remove="View\DashboardPage.xaml" />
     <None Remove="View\DashboardWindow.xaml" />
     <None Remove="View\LoginWindow.xaml" />
     <None Remove="View\ProductInfoPage.xaml" />
+    <None Remove="View\ProductOptionDialog.xaml" />
     <None Remove="View\ProductsPage.xaml" />
   </ItemGroup>
 
@@ -56,6 +58,15 @@
     <None Update="Assets\product_default.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="View\ProductOptionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\CategoriesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\ProductsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="View\ProductInfoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

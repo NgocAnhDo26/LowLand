@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-
 
 namespace LowLand.Model.Product
 {
-
-   
-    public abstract abstract class Product : INotifyPropertyChanged
+    public abstract class Product : INotifyPropertyChanged
     {
         public int Id { get; set; }
 
@@ -21,22 +13,17 @@ namespace LowLand.Model.Product
         public string Image { get; set; } = "product_default.jpg";
 
         public event PropertyChangedEventHandler? PropertyChanged;
-
-
-     
     }
 
     public class SingleProduct : Product
     {
         required public Category Category { get; set; }
         required public ProductType ProductType { get; set; }
-
     }
 
     public class ComboProduct : Product
     {
-        public List<int> ProductIds { get; set; } = new List<int>(); 
-
+        public List<int> ProductIds { get; set; } = new List<int>();
     }
 }
 

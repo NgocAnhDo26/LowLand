@@ -38,8 +38,9 @@ namespace LowLand.View
         {
             ViewModel = new LoginViewModel();
             this.InitializeComponent();
+            SystemBackdrop = new DesktopAcrylicBackdrop();
             //  _dao = new PostgreDAO();
-            test();
+            //test();
 
             var localStorage = Windows.Storage.ApplicationData.Current.LocalSettings;
             var username = (string)localStorage.Values["Username"];

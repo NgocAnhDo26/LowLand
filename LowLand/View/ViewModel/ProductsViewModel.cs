@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using LowLand.Model.Product;
 using LowLand.Services;
 using LowLand.Utils;
@@ -19,6 +14,23 @@ namespace LowLand.View.ViewModel
         {
             _dao = Services.Services.GetKeyedSingleton<IDao>();
             Products = new FullObservableCollection<Product>(_dao.Products.GetAll());
+        }
+
+        public bool RemoveProduct(int productId)
+        {
+            var product = Products.FirstOrDefault(p => p.Id == productId);
+            if (product != null)
+            {
+                int result = _dao.Products.DeleteById(productId.ToString());
+
+                if (result != -1)
+                {
+                    Products.Remove(product);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
     }

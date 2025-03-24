@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LowLand.Model.Product;
 using LowLand.Services;
 using LowLand.Utils;
 
 namespace LowLand.View.ViewModel
 {
-    class ProductInfoViewModel : INotifyPropertyChanged
+    public class ProductInfoViewModel : INotifyPropertyChanged
     {
         private IDao _dao;
         private bool _isSingleProduct = true;
@@ -32,6 +27,7 @@ namespace LowLand.View.ViewModel
                 _filteredProductTypes = value;
             }
         }
+        public FullObservableCollection<ProductOption> ProductOptions { get; set; }
 
         public ProductInfoViewModel()
         {
@@ -48,6 +44,13 @@ namespace LowLand.View.ViewModel
             {
                 _isSingleProduct = false;
             }
+            else
+            {
+                // Filter options by product id
+                List<ProductOption> options = _dao.ProductOptions.GetAll();
+                options = options.Where(o => o.ProductId == Product.Id).ToList();
+                ProductOptions = new FullObservableCollection<ProductOption>(options);
+            }
         }
 
         public bool UpdateProduct()
@@ -56,6 +59,51 @@ namespace LowLand.View.ViewModel
             if (result != 1)
             {
                 return false;
+            }
+
+            return true;
+        }
+
+        public bool UpdateProductOption(ProductOption option)
+        {
+            int result = _dao.ProductOptions.UpdateById(option.OptionId.ToString(), option);
+
+            if (result == -1)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool AddNewProductOption(ProductOption option)
+        {
+            int newId = _dao.ProductOptions.Insert(option);
+
+            if (newId == -1)
+            {
+                return false;
+            }
+
+            // Add to the list
+            option.OptionId = newId;
+            ProductOptions.Add(option);
+
+            return true;
+        }
+
+        public bool DeleteProductOption(int optionId)
+        {
+            int result = _dao.ProductOptions.DeleteById(optionId.ToString());
+            if (result == -1)
+            {
+                return false;
+            }
+
+            var option = ProductOptions.FirstOrDefault(o => o.OptionId == optionId);
+            if (option != null)
+            {
+                ProductOptions.Remove(option);
             }
 
             return true;
@@ -72,7 +120,7 @@ namespace LowLand.View.ViewModel
 
         private void FilterProductTypesByCategory()
         {
-            var filtered = AllProductTypes.Where(pt => pt.CategoryId == (Product as SingleProduct)!.Category.Id);
+            var filtered = AllProductTypes.Where(pt => pt.Category.Id == (Product as SingleProduct)!.Category.Id);
             FilteredProductTypes = new FullObservableCollection<ProductType>(filtered);
         }
 

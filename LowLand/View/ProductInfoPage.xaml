@@ -13,6 +13,7 @@
 
     <Page.Resources>
         <converter:AbsolutePathConverter x:Key="AbsolutePathConverter"/>
+        <converter:CurrencyFormatter x:Key="CurrencyFormatter"/>
         <DataTemplate x:Key="ComboBoxTemplate1" x:DataType="model:Category">
             <TextBlock>
                 <Run Text="{x:Bind Id}"/> - <Run Text="{x:Bind Name}"/>
@@ -22,6 +23,43 @@
             <TextBlock>
     <Run Text="{x:Bind Id}"/> - <Run Text="{x:Bind Name}"/>
             </TextBlock>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ProductOptionTemplate" x:DataType="model:ProductOption">
+            <Grid Padding="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="{x:Bind OptionId}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="{x:Bind Name}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="{x:Bind CostPrice, Converter={StaticResource CurrencyFormatter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="{x:Bind SalePrice, Converter={StaticResource CurrencyFormatter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <DropDownButton Grid.Column="4">
+                    <DropDownButton.Content>
+                        <FontIcon Glyph="&#xE712;"/>
+                    </DropDownButton.Content>
+                    <DropDownButton.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Text="Thay đổi" Click="EditProductOption_Click">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE70F;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+
+                            <MenuFlyoutItem Text="Xóa" x:Name="DeleteProductOption" Foreground="Red" Click="DeleteProductOption_Click">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE74D;" Foreground="Red"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
+            </Grid>
         </DataTemplate>
     </Page.Resources>
 
@@ -33,23 +71,45 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Thay đổi thông tin sản phẩm" Style="{StaticResource TitleTextBlockStyle}" Margin="36, 40, 0, 36"/>
-
-        <Grid Grid.Row="1">
+        <Grid>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Grid.Column="0" Text="Thay đổi thông tin sản phẩm" Style="{StaticResource TitleTextBlockStyle}" Margin="36, 40, 0, 36"/>
+            <Rectangle Grid.Column="1"/>
+            <Button Grid.Column="2" x:Name="CancelButton" Content="Quay lại" Click="CancelButton_Click" Margin="0, 0, 36, 0"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" Margin="36, 0, 36, 16" CornerRadius="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="6*"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" Padding="24" Margin="36, 0, 16, 16" CornerRadius="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Grid.Column="0" Padding="24" CornerRadius="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
                 <TextBlock Text="Ảnh sản phẩm" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Center" Margin="0, 0, 0, 24"/>
-                <Border CornerRadius="4" Width="230" Height="230" BorderBrush="Aqua" BorderThickness="2">
-                    <Image Source="{x:Bind ViewModel.Product.Image}"/>
-                </Border>
-            </StackPanel>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Source="{x:Bind ViewModel.Product.Image, Mode=TwoWay, Converter={StaticResource AbsolutePathConverter}}"/>
+                </Grid>
+            </Grid>
 
-
-            <Grid Grid.Column="1" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8" Padding="24" Margin="0, 0, 36, 16">
+            <Grid Grid.Row="0" Grid.Column="1" CornerRadius="8" Padding="24">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -57,40 +117,93 @@
 
                 <TextBlock Grid.Row="0" Text="Thông tin cơ bản" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Center" Margin="0, 0, 0, 24"/>
 
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                    <StackPanel x:Name="ProductBasicInfo"  Spacing="16">
+                <ScrollViewer Grid.Row="1">
+                    <Grid x:Name="ProductBasicInfo" RowSpacing="16" ColumnSpacing="16">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
                         <TextBox 
-                            Header="ID" 
-                            IsEnabled="False"
-                            Text="{x:Bind ViewModel.Product.Id, Mode=TwoWay}" 
-                            Style="{StaticResource BodyTextBlockStyle}" 
-                            VerticalAlignment="Center"/>
+                    Header="ID" 
+                    Grid.Row="0" Grid.Column="0"
+                    IsEnabled="False"
+                    Text="{x:Bind ViewModel.Product.Id}" 
+                    Style="{StaticResource BodyTextBlockStyle}" 
+                    VerticalAlignment="Center"/>
                         <TextBox 
-                            Header="Tên sản phẩm" 
-                            Text="{x:Bind ViewModel.Product.Name, Mode=TwoWay}" 
-                            Style="{StaticResource BodyTextBlockStyle}" 
-                            VerticalAlignment="Center"/>
+                    Header="Tên sản phẩm" 
+                    Grid.Row="0" Grid.Column="1"
+                    Text="{x:Bind ViewModel.Product.Name, Mode=TwoWay}" 
+                    Style="{StaticResource BodyTextBlockStyle}" 
+                    VerticalAlignment="Center"/>
                         <NumberBox 
-                            Header="Giá bán mặc định" 
-                            Text="{x:Bind ViewModel.Product.SalePrice, Mode=TwoWay}" 
-                            Style="{StaticResource BodyTextBlockStyle}" 
-                            VerticalAlignment="Center"/>
+                    Header="Giá bán mặc định" 
+                    Grid.Row="1" Grid.Column="0"
+                    Text="{x:Bind ViewModel.Product.SalePrice, Mode=TwoWay, Converter={StaticResource CurrencyFormatter}}" 
+                    Style="{StaticResource BodyTextBlockStyle}" 
+                    VerticalAlignment="Center"/>
                         <NumberBox 
-                            Header="Giá vốn mặc định" 
-                            Text="{x:Bind ViewModel.Product.CostPrice, Mode=TwoWay}" 
-                            Style="{StaticResource BodyTextBlockStyle}" 
-                            VerticalAlignment="Center"/>
-                    </StackPanel>
+                    Header="Giá vốn mặc định" 
+                    Grid.Row="1" Grid.Column="1"
+                    Text="{x:Bind ViewModel.Product.CostPrice, Mode=TwoWay, Converter={StaticResource CurrencyFormatter}}" 
+                    Style="{StaticResource BodyTextBlockStyle}" 
+                    VerticalAlignment="Center"/>
+                    </Grid>
                 </ScrollViewer>
             </Grid>
+
+            <Button Grid.Row="1" Grid.ColumnSpan="2" x:Name="ApplyButton" Margin="0, 0, 24, 24" Content="Lưu thay đổi" Click="ApplyButton_Click" Style="{StaticResource AccentButtonStyle}" HorizontalAlignment="Right"/>
         </Grid>
 
         <Grid x:Name="OptionContainer" Grid.Row="2" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" Padding="24" Margin="36, 0, 36, 16" CornerRadius="8">
-        </Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="36, 0, 36, 36">
-            <Button x:Name="ApplyButton" Content="Áp dụng" Click="ApplyButton_Click"/>
-            <Button x:Name="CancelButton" Content="Hủy" Click="CancelButton_Click"/>
-        </StackPanel>
+            <Grid Grid.Row="0" Margin="0, 0, 0, 24" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" x:Name="OptionContainerTitle" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                <Rectangle Grid.Column="1"/>
+                <Button Grid.Column="2" x:Name="addNewOptionButton" Click="AddNewOptionButton_Click" Style="{StaticResource AccentButtonStyle}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon Glyph="&#xE710;"/>
+                            <TextBlock x:Name="NewItemButtonText"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="0, 0, 0, 8" Padding="18, 16, 18, 16" CornerRadius="4" Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="ID" Grid.Column="0" TextAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="14, 0, 0, 0"/>
+                <TextBlock Text="Tên" Grid.Column="1" TextAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}" Margin="8, 0, 0, 0"/>
+                <TextBlock Text="Giá vốn" Grid.Column="2" TextAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                <TextBlock Text="Giá bán" Grid.Column="3" TextAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                <TextBlock Grid.Column="4" TextAlignment="Center"/>
+            </Grid>
+
+            <ListView Grid.Row="2" x:Name="OptionListView" CornerRadius="4" Background="{StaticResource CardBackgroundFillColorDefaultBrush}"/>
+        </Grid>
     </Grid>
 </Page>

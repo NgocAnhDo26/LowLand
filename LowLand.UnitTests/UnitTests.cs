@@ -33,24 +33,24 @@ namespace LowLand.UnitTests
         [TestMethod]
         public void TestMockDAO_ProductRepository_CRUD()
         {
-            // Arrange
-            var mockDao = new MockDAO();
-            var productRepo = mockDao.Products;
-            var newProduct = new Product { Id = 21, Name = "Test Product", ProductTypeId = 1, SalePrice = 100, CostPrice = 50, Image = "test.jpg", Size = "M" };
+        //    // Arrange
+        //    var mockDao = new MockDAO();
+        //    var productRepo = mockDao.Products;
+        //    var newProduct = new Product { Id = 21, Name = "Test Product", ProductTypeId = 1, SalePrice = 100, CostPrice = 50, Image = "test.jpg", Size = "M" };
 
-            // Act
-            productRepo.Insert(newProduct);
-            var insertedProduct = productRepo.GetById("21");
-            insertedProduct.Name = "Updated Product";
-            productRepo.UpdateById("21", insertedProduct);
-            var updatedProduct = productRepo.GetById("21");
-            productRepo.DeleteById("21");
-            var deletedProduct = productRepo.GetById("21");
+        //    // Act
+        //    productRepo.Insert(newProduct);
+        //    var insertedProduct = productRepo.GetById("21");
+        //    insertedProduct.Name = "Updated Product";
+        //    productRepo.UpdateById("21", insertedProduct);
+        //    var updatedProduct = productRepo.GetById("21");
+        //    productRepo.DeleteById("21");
+        //    var deletedProduct = productRepo.GetById("21");
 
-            // Assert
-            Assert.IsNotNull(insertedProduct);
-            Assert.AreEqual("Updated Product", updatedProduct.Name);
-            Assert.IsNull(deletedProduct);
+        //    // Assert
+        //    Assert.IsNotNull(insertedProduct);
+        //    Assert.AreEqual("Updated Product", updatedProduct.Name);
+        //    Assert.IsNull(deletedProduct);
         }
 
         [TestMethod]

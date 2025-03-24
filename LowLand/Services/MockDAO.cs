@@ -1,4 +1,4 @@
-    using LowLand.Model.Customer;
+using LowLand.Model.Customer;
 using LowLand.Model.Order;
 using LowLand.Model.Product;
 
@@ -21,35 +21,36 @@ namespace LowLand.Services
         public IRepository<OrderDetail> OrderDetails { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public IRepository<Customer> Customers { get; set; } = new CustomerRepository();
         public IRepository<CustomerRank> CustomerRanks { get; set; } = new CustomerRankRepository();
+        public IRepository<ProductOption> ProductOptions { get; set; } = new ProductOptionRepository();
 
         private class ProductRepository : IRepository<Product>
         {
             private List<Product> _products = new List<Product>()
             {
-                new SingleProduct() { Id = 1, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() {Id = 1, Name = "Thức uống" }, Name = "Phin Sữa Đá", SalePrice = 29000, CostPrice = 15000, Image = "phin_sua_da.jpg"},
-                new SingleProduct() { Id = 2, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() {Id = 1, Name = "Thức uống" }, Name = "Phin Đen Đá", SalePrice = 29000, CostPrice = 15000, Image = "phin_den_da.jpg"},
-                new SingleProduct() { Id = 3, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() {Id = 1, Name = "Thức uống" }, Name = "PhinDi Kem Sữa", SalePrice = 35000, CostPrice = 18000, Image = "phindi_kem_sua.jpg"},
-                new SingleProduct() { Id = 4, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "PhinDi Choco", SalePrice = 35000, CostPrice = 18000, Image = "phindi_choco.jpg"},
-                new SingleProduct() { Id = 5, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Espresso", SalePrice = 35000, CostPrice = 18000, Image = "espresso.jpg"},
-                new SingleProduct() { Id = 6, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Americano", SalePrice = 35000, CostPrice = 18000, Image = "americano.jpg"},
-                new SingleProduct() { Id = 7, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Latte", SalePrice = 40000, CostPrice = 20000, Image = "latte.jpg"},
-                new SingleProduct() { Id = 8, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Cappuccino", SalePrice = 40000, CostPrice = 20000, Image = "cappuccino.jpg" },
-                new SingleProduct() { Id = 9, ProductType = new ProductType() { Id = 1, Name = "Cà phê", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Caramel Macchiato", SalePrice = 45000, CostPrice = 22000, Image = "caramel_macchiato.jpg"},
-                new SingleProduct() { Id = 10, ProductType = new ProductType() { Id = 2, Name = "Trà", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" },Name = "Trà Sen Vàng", SalePrice = 39000, CostPrice = 20000, Image = "tra_sen_vang.jpg"},
-                new SingleProduct() { Id = 11, ProductType = new ProductType() { Id = 2, Name = "Trà", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Trà Thạch Đào", SalePrice = 39000, CostPrice = 20000, Image = "tra_thach_dao.jpg" },
-                new SingleProduct() { Id = 12, ProductType = new ProductType() { Id = 2, Name = "Trà", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Trà Thạch Vải", SalePrice = 39000, CostPrice = 20000, Image = "tra_thach_vai.jpg" },
-                new SingleProduct() { Id = 13, ProductType = new ProductType() { Id = 2, Name = "Trà", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Trà Thanh Đào", SalePrice = 39000, CostPrice = 20000, Image = "tra_thanh_dao.jpg" },
-                new SingleProduct() { Id = 14, ProductType = new ProductType() { Id = 3, Name = "Freeze", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Freeze Trà Xanh", SalePrice = 49000, CostPrice = 25000, Image = "freeze_tra_xanh.jpg" },
-                new SingleProduct() { Id = 15, ProductType = new ProductType() { Id = 3, Name = "Freeze", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Freeze Cookies & Cream", SalePrice = 49000, CostPrice = 25000, Image = "freeze_cookies_cream.jpg" },
-                new SingleProduct() { Id = 16, ProductType = new ProductType() { Id = 3, Name = "Freeze", CategoryId = 1 }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Freeze Chocolate", SalePrice = 49000, CostPrice = 25000, Image = "freeze_chocolate.jpg" },
-                new SingleProduct() { Id = 17, ProductType = new ProductType() { Id = 4, Name = "Bánh", CategoryId = 2 }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Croissant", SalePrice = 29000, CostPrice = 15000, Image = "banh_croissant.jpg" },
-                new SingleProduct() { Id = 18, ProductType = new ProductType() { Id = 4, Name = "Bánh", CategoryId = 2 }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Mousse Cacao", SalePrice = 35000, CostPrice = 18000, Image = "banh_mousse_cacao.jpg" },
-                new SingleProduct() { Id = 19, ProductType = new ProductType() { Id = 4, Name = "Bánh", CategoryId = 2 }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Mousse Đào", SalePrice = 35000, CostPrice = 18000, Image = "banh_mousse_dao.jpg" },
-                new SingleProduct() { Id = 20, ProductType = new ProductType() { Id = 4, Name = "Bánh", CategoryId = 2 }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Phô Mai Chanh Dây", SalePrice = 29000, CostPrice = 15000, Image = "banh_pho_mai_chanh_day.jpg" },
+                new SingleProduct() { Id = 1, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() {Id = 1, Name = "Thức uống" }, Name = "Phin Sữa Đá", SalePrice = 29000, CostPrice = 15000, Image = "phin_sua_da.jpg"},
+                new SingleProduct() { Id = 2, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() {Id = 1, Name = "Thức uống" }, Name = "Phin Đen Đá", SalePrice = 29000, CostPrice = 15000, Image = "phin_den_da.jpg"},
+                new SingleProduct() { Id = 3, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() {Id = 1, Name = "Thức uống" }, Name = "PhinDi Kem Sữa", SalePrice = 35000, CostPrice = 18000, Image = "phindi_kem_sua.jpg"},
+                new SingleProduct() { Id = 4, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "PhinDi Choco", SalePrice = 35000, CostPrice = 18000, Image = "phindi_choco.jpg"},
+                new SingleProduct() { Id = 5, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Espresso", SalePrice = 35000, CostPrice = 18000, Image = "espresso.jpg"},
+                new SingleProduct() { Id = 6, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Americano", SalePrice = 35000, CostPrice = 18000, Image = "americano.jpg"},
+                new SingleProduct() { Id = 7, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Latte", SalePrice = 40000, CostPrice = 20000, Image = "latte.jpg"},
+                new SingleProduct() { Id = 8, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Cappuccino", SalePrice = 40000, CostPrice = 20000, Image = "cappuccino.jpg" },
+                new SingleProduct() { Id = 9, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Caramel Macchiato", SalePrice = 45000, CostPrice = 22000, Image = "caramel_macchiato.jpg"},
+                new SingleProduct() { Id = 10, ProductType = new ProductType() { Id = 2, Name = "Trà", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" },Name = "Trà Sen Vàng", SalePrice = 39000, CostPrice = 20000, Image = "tra_sen_vang.jpg"},
+                new SingleProduct() { Id = 11, ProductType = new ProductType() { Id = 2, Name = "Trà", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Trà Thạch Đào", SalePrice = 39000, CostPrice = 20000, Image = "tra_thach_dao.jpg" },
+                new SingleProduct() { Id = 12, ProductType = new ProductType() { Id = 2, Name = "Trà", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Trà Thạch Vải", SalePrice = 39000, CostPrice = 20000, Image = "tra_thach_vai.jpg" },
+                new SingleProduct() { Id = 13, ProductType = new ProductType() { Id = 2, Name = "Trà", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Trà Thanh Đào", SalePrice = 39000, CostPrice = 20000, Image = "tra_thanh_dao.jpg" },
+                new SingleProduct() { Id = 14, ProductType = new ProductType() { Id = 3, Name = "Freeze", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Freeze Trà Xanh", SalePrice = 49000, CostPrice = 25000, Image = "freeze_tra_xanh.jpg" },
+                new SingleProduct() { Id = 15, ProductType = new ProductType() { Id = 3, Name = "Freeze", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Freeze Cookies & Cream", SalePrice = 49000, CostPrice = 25000, Image = "freeze_cookies_cream.jpg" },
+                new SingleProduct() { Id = 16, ProductType = new ProductType() { Id = 3, Name = "Freeze", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Freeze Chocolate", SalePrice = 49000, CostPrice = 25000, Image = "freeze_chocolate.jpg" },
+                new SingleProduct() { Id = 17, ProductType = new ProductType() { Id = 4, Name = "Bánh", Category = new Category() { Id = 2, Name = "Đồ ăn" } }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Croissant", SalePrice = 29000, CostPrice = 15000, Image = "banh_croissant.jpg" },
+                new SingleProduct() { Id = 18, ProductType = new ProductType() { Id = 4, Name = "Bánh", Category = new Category() { Id = 2, Name = "Đồ ăn" } }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Mousse Cacao", SalePrice = 35000, CostPrice = 18000, Image = "banh_mousse_cacao.jpg" },
+                new SingleProduct() { Id = 19, ProductType = new ProductType() { Id = 4, Name = "Bánh", Category = new Category() { Id = 2, Name = "Đồ ăn" } }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Mousse Đào", SalePrice = 35000, CostPrice = 18000, Image = "banh_mousse_dao.jpg" },
+                new SingleProduct() { Id = 20, ProductType = new ProductType() { Id = 4, Name = "Bánh", Category = new Category() { Id = 2, Name = "Đồ ăn" } }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Phô Mai Chanh Dây", SalePrice = 29000, CostPrice = 15000, Image = "banh_pho_mai_chanh_day.jpg" },
             };
             public List<Product> GetAll()
             {
-                return _products;
+                return new List<Product>(_products);
             }
 
             public int DeleteById(string id)
@@ -62,34 +63,63 @@ namespace LowLand.Services
             public Product GetById(string id)
             {
                 var product = _products.FirstOrDefault(p => p.Id == int.Parse(id));
-                return product;
+                if (product is SingleProduct singleProduct)
+                {
+                    return new SingleProduct()
+                    {
+                        Id = singleProduct.Id,
+                        Name = singleProduct.Name,
+                        SalePrice = singleProduct.SalePrice,
+                        CostPrice = singleProduct.CostPrice,
+                        Image = singleProduct.Image,
+                        Category = singleProduct.Category,
+                        ProductType = singleProduct.ProductType
+                    };
+                }
+                else if (product is ComboProduct comboProduct)
+                {
+                    return new ComboProduct()
+                    {
+                        Id = comboProduct.Id,
+                        Name = comboProduct.Name,
+                        SalePrice = comboProduct.SalePrice,
+                        CostPrice = comboProduct.CostPrice,
+                        Image = comboProduct.Image,
+                        ProductIds = comboProduct.ProductIds
+                    };
+                }
+                else
+                {
+                    return null;
+                }
             }
 
             public int Insert(Product info)
             {
+                int newId = _products.Max(p => p.Id) + 1;
+                info.Id = newId;
                 _products.Add(info);
-                return 1;
+
+                return newId;
             }
 
             public int UpdateById(string id, Product info)
             {
                 var product = _products.FirstOrDefault(p => p.Id == int.Parse(id));
-                
+
                 if (product != null)
                 {
                     product.Name = info.Name;
-                    Debug.WriteLine(info.Name, product.Name);
+                    Debug.WriteLine(product.Name);
                     product.SalePrice = info.SalePrice;
-                    Debug.WriteLine(info.SalePrice, product.SalePrice.ToString());
                     product.CostPrice = info.CostPrice;
-                    Debug.WriteLine(info.CostPrice, product.CostPrice.ToString());
                     product.Image = info.Image;
 
                     if (product is SingleProduct prod)
                     {
                         prod.Category = ((SingleProduct)info).Category;
                         prod.ProductType = ((SingleProduct)info).ProductType;
-                    } 
+                    }
                     else if (product is ComboProduct combo)
                     {
                         combo.ProductIds = ((ComboProduct)info).ProductIds;
@@ -104,43 +134,134 @@ namespace LowLand.Services
             }
         }
 
+        private class ProductOptionRepository : IRepository<ProductOption>
+        {
+            private List<ProductOption> _options = new List<ProductOption>()
+            {
+                new ProductOption() { OptionId = 1, ProductId = 1, Name = "Size S", SalePrice = 29000, CostPrice = 15000 },
+                new ProductOption() { OptionId = 2, ProductId = 1, Name = "Size M", SalePrice = 39000, CostPrice = 22000 },
+                new ProductOption() { OptionId = 3, ProductId = 1, Name = "Size L", SalePrice = 49000, CostPrice = 27000 },
+                new ProductOption() { OptionId = 4, ProductId = 2, Name = "Size S", SalePrice = 29000, CostPrice = 15000 },
+                new ProductOption() { OptionId = 5, ProductId = 2, Name = "Size M", SalePrice = 39000, CostPrice = 22000 },
+                new ProductOption() { OptionId = 6, ProductId = 2, Name = "Size L", SalePrice = 49000, CostPrice = 27000 },
+                new ProductOption() { OptionId = 7, ProductId = 3, Name = "Size S", SalePrice = 35000, CostPrice = 18000 },
+                new ProductOption() { OptionId = 8, ProductId = 3, Name = "Size M", SalePrice = 49000, CostPrice = 25000 },
+                new ProductOption() { OptionId = 9, ProductId = 3, Name = "Size L", SalePrice = 55000, CostPrice = 32000 },
+                new ProductOption() { OptionId = 10, ProductId = 12, Name = "Size S", SalePrice = 39000, CostPrice = 20000 },
+                new ProductOption() { OptionId = 11, ProductId = 12, Name = "Size M", SalePrice = 49000, CostPrice = 27000 },
+                new ProductOption() { OptionId = 12, ProductId = 12, Name = "Size L", SalePrice = 55000, CostPrice = 35000 },
+            };
+
+            public List<ProductOption> GetAll()
+            {
+                return new List<ProductOption>(_options);
+            }
+
+            public List<ProductOption> GetByProductId(int productId)
+            {
+                var options = _options.Where(p => p.ProductId == productId).ToList();
+                return new List<ProductOption>(options);
+            }
+
+            public ProductOption GetById(string id)
+            {
+                var option = _options.FirstOrDefault(p => p.OptionId == int.Parse(id));
+
+                return new ProductOption()
+                {
+                    OptionId = option.OptionId,
+                    ProductId = option.ProductId,
+                    Name = option.Name,
+                    SalePrice = option.SalePrice,
+                    CostPrice = option.CostPrice
+                };
+            }
+
+            public int Insert(ProductOption info)
+            {
+                int newId = _options.Max(p => p.OptionId) + 1;
+                info.OptionId = newId;
+                _options.Add(info);
+
+                return newId;
+            }
+
+            public int DeleteById(string id)
+            {
+                var result = _options.RemoveAll(p => p.OptionId == int.Parse(id));
+                return (result > 0) ? int.Parse(id) : -1;
+            }
+
+            public int UpdateById(string id, ProductOption info)
+            {
+                var option = _options.FirstOrDefault(p => p.OptionId == int.Parse(id));
+                if (option != null)
+                {
+                    option.Name = info.Name;
+                    option.SalePrice = info.SalePrice;
+                    option.CostPrice = info.CostPrice;
+                    return int.Parse(id);
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+        }
+
         private class ProductTypeRepository : IRepository<ProductType>
         {
             private List<ProductType> _productTypes = new List<ProductType>()
             {
-                new ProductType() { Id = 1, Name = "Cà Phê", CategoryId = 1, CategoryName="Thức uống" },
-                new ProductType() { Id = 2, Name = "Trà", CategoryId = 1, CategoryName="Thức uống" },
-                new ProductType() { Id = 3, Name = "Freeze", CategoryId = 1, CategoryName="Thức uống" },
-                new ProductType() { Id = 4, Name = "Bánh", CategoryId = 2, CategoryName="Đồ ăn" },
+                new ProductType() { Id = 1, Name = "Cà Phê", Category =  new Category() { Id = 1, Name = "Thức uống" } },
+                new ProductType() { Id = 2, Name = "Trà", Category =  new Category() { Id = 1, Name = "Thức uống" } },
+                new ProductType() { Id = 3, Name = "Freeze", Category =  new Category() { Id = 1, Name = "Thức uống" } },
+                new ProductType() { Id = 4, Name = "Bánh", Category =  new Category() { Id = 2, Name = "Đồ ăn" } },
             };
 
             public List<ProductType> GetAll()
             {
-                return _productTypes;
+                return new List<ProductType>(_productTypes);
             }
+
             public ProductType GetById(string id)
             {
                 var productType = _productTypes.FirstOrDefault(p => p.Id == int.Parse(id));
-                return productType;
+                if (productType != null)
+                {
+                    return new ProductType()
+                    {
+                        Id = productType.Id,
+                        Name = productType.Name,
+                        Category = productType.Category
+                    };
+                }
+
+                return null;        
             }
+
             public int Insert(ProductType info)
             {
+                int newId = _productTypes.Max(p => p.Id) + 1;
+                info.Id = newId;
                 _productTypes.Add(info);
-                return 1;
+
+                return newId;
             }
+
             public int DeleteById(string id)
             {
                 var result = _productTypes.RemoveAll(p => p.Id == int.Parse(id));
-                return result;
+                return result > 0 ? int.Parse(id) : -1;
             }
+
             public int UpdateById(string id, ProductType info)
             {
                 var productType = _productTypes.FirstOrDefault(p => p.Id == int.Parse(id));
                 if (productType != null)
                 {
                     productType.Name = info.Name;
-                    productType.CategoryId = info.CategoryId;
-                    productType.CategoryName = info.CategoryName;
+                    productType.Category = info.Category;
                     return 1;
                 }
                 else
@@ -160,25 +281,37 @@ namespace LowLand.Services
 
             public List<Category> GetAll()
             {
-                return _categories;
+                return new List<Category>(_categories);
             }
 
             public int DeleteById(string id)
             {
-                _categories.RemoveAll(p => p.Id == int.Parse(id));
-                return 1;
+                var result = _categories.RemoveAll(p => p.Id == int.Parse(id));
+                return result > 0 ? int.Parse(id) : -1;
             }
 
             public Category GetById(string id)
             {
                 var category = _categories.FirstOrDefault(p => p.Id == int.Parse(id));
-                return category;
+                if (category != null)
+                {
+                    return new Category()
+                    {
+                        Id = category.Id,
+                        Name = category.Name
+                    };
+                }
+
+                return null;
             }
 
             public int Insert(Category info)
             {
+                int newId = _categories.Max(p => p.Id) + 1;
+                info.Id = newId;
                 _categories.Add(info);
-                return 1;
+
+                return newId;
             }
 
             public int UpdateById(string id, Category info)
@@ -187,10 +320,10 @@ namespace LowLand.Services
                 if (category != null)
                 {
                     category.Name = info.Name;
-                    return 1;
+                    return category.Id;
                 }
 
-                return 0;
+                return -1;
             }
         }
 
@@ -203,35 +336,53 @@ namespace LowLand.Services
                 new CustomerRank() { Id = 3, Name = "Vàng", PromotionPoint = 1000, DiscountPercentage = 5 },
                 new CustomerRank() { Id = 4, Name = "Kim Cương", PromotionPoint = 3000, DiscountPercentage = 10 },
             };
+
             public List<CustomerRank> GetAll()
             {
-                return _customerRanks;
+                return new List<CustomerRank>(_customerRanks);
             }
+
             public int DeleteById(string id)
             {
-                _customerRanks.RemoveAll(p => p.Id == int.Parse(id));
-                return 1;
+                var result = _customerRanks.RemoveAll(p => p.Id == int.Parse(id));
+                return result > 0 ? int.Parse(id) : -1;
             }
+
             public CustomerRank GetById(string id)
             {
                 var customerRank = _customerRanks.FirstOrDefault(p => p.Id == int.Parse(id));
-                return customerRank;
+                if (customerRank != null)
+                {
+                    return new CustomerRank()
+                    {
+                        Id = customerRank.Id,
+                        Name = customerRank.Name,
+                        PromotionPoint = customerRank.PromotionPoint,
+                        DiscountPercentage = customerRank.DiscountPercentage
+                    };
+                }
+
+                return null;
             }
+
             public int Insert(CustomerRank info)
             {
+                int newId = _customerRanks.Max(p => p.Id) + 1;
+                info.Id = newId;
                 _customerRanks.Add(info);
-                return 1;
+                return newId;
             }
+
             public int UpdateById(string id, CustomerRank info)
             {
                 var customerRank = _customerRanks.FirstOrDefault(p => p.Id == int.Parse(id));
                 if (customerRank != null)
                 {
                     customerRank.Name = info.Name;
-                    return 1;
+                    return customerRank.Id;
                 }
 
-                return 0;
+                return -1;
             }
         }
 
@@ -263,25 +414,44 @@ namespace LowLand.Services
 
             public List<Customer> GetAll()
             {
-                return _customers;
+                return new List<Customer>(_customers);
             }
 
             public int DeleteById(string id)
             {
-                _customers.RemoveAll(p => p.Id == int.Parse(id));
-                return 1;
+                var result = _customers.RemoveAll(p => p.Id == int.Parse(id));
+                return result > 0 ? int.Parse(id) : -1;
             }
 
             public Customer GetById(string id)
             {
                 var customer = _customers.FirstOrDefault(p => p.Id == int.Parse(id));
-                return customer;
+                if (customer != null)
+                {
+                    return new Customer()
+                    {
+                        Id = customer.Id,
+                        Name = customer.Name,
+                        Phone = customer.Phone,
+                        Point = customer.Point,
+                        RegistrationDate = customer.RegistrationDate,
+                        RankId = customer.RankId,
+                        RankName = customer.RankName,
+                        PromotionPoint = customer.PromotionPoint,
+                        DiscountPercentage = customer.DiscountPercentage
+                    };
+                }
+
+                return null;
             }
 
             public int Insert(Customer info)
             {
+                int newId = _customers.Max(p => p.Id) + 1;
+                info.Id = newId;
                 _customers.Add(info);
-                return 1;
+
+                return newId;
             }
 
             public int UpdateById(string id, Customer info)
@@ -298,12 +468,11 @@ namespace LowLand.Services
                     customer.RankName = info.RankName;
                     customer.PromotionPoint = info.PromotionPoint;
                     customer.DiscountPercentage = info.DiscountPercentage;
-                    return 1;
+                    return customer.Id;
                 }
 
-                return 0;
+                return -1;
             }
         }
     }
 }
-*/

@@ -11,10 +11,12 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using static System.Net.Mime.MediaTypeNames;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -70,17 +72,20 @@ namespace LowLand.View
 
                 productType.SelectionChanged += ProductType_SelectionChanged;
 
-                category.SelectedValue = product.Category.Id;
-                productType.SelectedValue = product.ProductType.Id;
+                category.SelectedValue = product?.Category?.Id;
+                Grid.SetRow(category, 2);
+                Grid.SetColumn(category, 0);
+                productType.SelectedValue = product?.ProductType?.Id;
+                Grid.SetRow(productType, 2);
+                Grid.SetColumn(category, 1);
 
                 ProductBasicInfo.Children.Add(category);
                 ProductBasicInfo.Children.Add(productType);
 
-                OptionContainer.Children.Add(new TextBlock()
-                {
-                    Text = "Tùy chọn của sản phẩm",
-                    Margin = new Thickness(0, 10, 0, 10)
-                });
+                OptionContainerTitle.Text = "Tùy chọn của sản phẩm";
+                NewItemButtonText.Text = "Thêm tùy chọn";
+                OptionListView.ItemsSource = ViewModel.ProductOptions;
+                OptionListView.ItemTemplate = (DataTemplate)Resources["ProductOptionTemplate"];
             }
 
             base.OnNavigatedTo(e);
@@ -98,12 +103,11 @@ namespace LowLand.View
             ViewModel.OnCategoryChange(category!);
         }
 
-        private void ApplyButton_Click(object sender, RoutedEventArgs e)
+        private async void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel.UpdateProduct())
             {
                 // Success dialog
-                Debug.WriteLine("Update product successfully");
                 var dialog = new ContentDialog
                 {
                     Title = "Cập nhật sản phẩm",
@@ -112,13 +116,49 @@ namespace LowLand.View
                     XamlRoot = Content.XamlRoot
                 };
 
-                dialog.ShowAsync();
+                await dialog.ShowAsync();
             }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(ProductsPage));
+        }
+
+        private async void EditProductOption_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedOption = (ProductOption)((MenuFlyoutItem)sender).DataContext;
+            var editDialog = new ProductOptionDialog(ViewModel, selectedOption.OptionId);
+            editDialog.XamlRoot = Content.XamlRoot;
+            await editDialog.ShowAsync();
+        }
+        private async void AddNewOptionButton_Click(object sender, RoutedEventArgs e)
+        {
+            var addDialog = new ProductOptionDialog(ViewModel, -1);
+            addDialog.XamlRoot = Content.XamlRoot;
+            await addDialog.ShowAsync();
+        }
+
+        private async void DeleteProductOption_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedOption = (ProductOption)((MenuFlyoutItem)sender).DataContext;
+
+            // Show confirmation dialog
+            ContentDialog contentDialog = new ContentDialog
+            {
+                Title = "Xác nhận xóa",
+                Content = "Bạn có chắc chắn muốn xóa tùy chọn này?",
+                PrimaryButtonText = "Xóa",
+                CloseButtonText = "Hủy",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = Content.XamlRoot
+            };
+
+            var result = await contentDialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                ViewModel.DeleteProductOption(selectedOption.OptionId);
+            }       
         }
     }
 }

@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace LowLand.View.Converter
 {
-    public partial class AbsolutePathConverter : Microsoft.UI.Xaml.Data.IValueConverter
+    public partial class AbsolutePathConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -16,16 +14,16 @@ namespace LowLand.View.Converter
                 if (value == null) return "";
 
                 string filename = value.ToString()!;
-                string folder = AppDomain.CurrentDomain.BaseDirectory;
-                string path = $"Assets/{filename}";
+                string folder = "C:/LowLand/Images";
+                //string folder = AppDomain.CurrentDomain.BaseDirectory;
+                var path = $"{folder}/{filename}";
 
-                // Find if the file exists
                 if (!System.IO.File.Exists(path))
                 {
-                    path = $"Assets/product_default.jpg";
+                    return new BitmapImage(new Uri("ms-appx:///Assets/product_default.jpg"));
                 }
 
-                return path;
+                return new BitmapImage(new Uri("file:///" + path));
             }
             catch (Exception ex)
             {

@@ -13,6 +13,7 @@ namespace LowLand.Services
     {
         // Product repositories
         IRepository<Product> Products { get; set; }
+        IRepository<ProductOption> ProductOptions { get; set; }
         IRepository<ProductType> ProductTypes { get; set; }
         IRepository<Category> Categories { get; set; }
 
