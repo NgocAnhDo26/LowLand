@@ -16,8 +16,8 @@
     </ContentDialog.Resources>
 
     <StackPanel Spacing="12">
-        <TextBox Header="Tên" Text="{x:Bind ViewModel.Option.Name, Mode=TwoWay}" />
+        <!--<TextBox Header="Tên" Text="{x:Bind ViewModel.Option.Name, Mode=TwoWay}" />
         <NumberBox Header="Giá vốn" Value="{x:Bind ViewModel.Option.CostPrice, Mode=TwoWay}" />
-        <NumberBox Header="Giá bán" Value="{x:Bind ViewModel.Option.SalePrice, Mode=TwoWay}" />
+        <NumberBox Header="Giá bán" Value="{x:Bind ViewModel.Option.SalePrice, Mode=TwoWay}" />-->
     </StackPanel>
 </ContentDialog>

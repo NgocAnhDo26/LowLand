@@ -1,132 +1,125 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using LowLand.Model.Product;
-using LowLand.Services;
-using LowLand.Utils;
-
-namespace LowLand.View.ViewModel
+﻿namespace LowLand.View.ViewModel
 {
-    public class ProductInfoViewModel : INotifyPropertyChanged
+    public class ProductInfoViewModel //: INotifyPropertyChanged
     {
-        private IDao _dao;
-        private bool _isSingleProduct = true;
+        //private IDao _dao;
+        //private bool _isSingleProduct = true;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        //public event PropertyChangedEventHandler? PropertyChanged;
 
-        public Product Product { get; set; }
-        public List<Category> Categories { get; }
-        public List<ProductType> AllProductTypes { get; set; }
+        //public Product Product { get; set; }
 
-        private FullObservableCollection<ProductType> _filteredProductTypes;
-        public FullObservableCollection<ProductType> FilteredProductTypes
-        {
-            get => _filteredProductTypes;
-            set
-            {
-                _filteredProductTypes = value;
-            }
-        }
-        public FullObservableCollection<ProductOption> ProductOptions { get; set; }
+        //public List<ProductType> AllProductTypes { get; set; }
 
-        public ProductInfoViewModel()
-        {
-            _dao = Services.Services.GetKeyedSingleton<IDao>();
-            Categories = _dao.Categories.GetAll();
-            AllProductTypes = _dao.ProductTypes.GetAll();
-        }
+        //private FullObservableCollection<ProductType> _filteredProductTypes;
+        //public FullObservableCollection<ProductType> FilteredProductTypes
+        //{
+        //    get => _filteredProductTypes;
+        //    set
+        //    {
+        //        _filteredProductTypes = value;
+        //    }
+        //}
+        //public FullObservableCollection<ProductOption> ProductOptions { get; set; }
 
-        public void LoadProduct(string productId)
-        {
-            Product = _dao.Products.GetById(productId);
+        //public ProductInfoViewModel()
+        //{
+        //    _dao = Services.Services.GetKeyedSingleton<IDao>();
+        //    Categories = _dao.Categories.GetAll();
+        //    //   AllProductTypes = _dao.ProductTypes.GetAll();
+        //}
 
-            if (Product is ComboProduct)
-            {
-                _isSingleProduct = false;
-            }
-            else
-            {
-                // Filter options by product id
-                List<ProductOption> options = _dao.ProductOptions.GetAll();
-                options = options.Where(o => o.ProductId == Product.Id).ToList();
-                ProductOptions = new FullObservableCollection<ProductOption>(options);
-            }
-        }
+        //public void LoadProduct(string productId)
+        //{
+        //    Product = _dao.Products.GetById(productId);
 
-        public bool UpdateProduct()
-        {
-            int result = _dao.Products.UpdateById(Product.Id.ToString(), Product);
-            if (result != 1)
-            {
-                return false;
-            }
+        //    if (Product is ComboProduct)
+        //    {
+        //        _isSingleProduct = false;
+        //    }
+        //    else
+        //    {
+        //        // Filter options by product id
+        //        List<ProductOption> options = _dao.ProductOptions.GetAll();
+        //        options = options.Where(o => o.ProductId == Product.Id).ToList();
+        //        ProductOptions = new FullObservableCollection<ProductOption>(options);
+        //    }
+        //}
 
-            return true;
-        }
+        //public bool UpdateProduct()
+        //{
+        //    int result = _dao.Products.UpdateById(Product.Id.ToString(), Product);
+        //    if (result != 1)
+        //    {
+        //        return false;
+        //    }
 
-        public bool UpdateProductOption(ProductOption option)
-        {
-            int result = _dao.ProductOptions.UpdateById(option.OptionId.ToString(), option);
+        //    return true;
+        //}
 
-            if (result == -1)
-            {
-                return false;
-            }
+        //public bool UpdateProductOption(ProductOption option)
+        //{
+        //    int result = _dao.ProductOptions.UpdateById(option.OptionId.ToString(), option);
 
-            return true;
-        }
+        //    if (result == -1)
+        //    {
+        //        return false;
+        //    }
 
-        public bool AddNewProductOption(ProductOption option)
-        {
-            int newId = _dao.ProductOptions.Insert(option);
+        //    return true;
+        //}
 
-            if (newId == -1)
-            {
-                return false;
-            }
+        //public bool AddNewProductOption(ProductOption option)
+        //{
+        //    int newId = _dao.ProductOptions.Insert(option);
 
-            // Add to the list
-            option.OptionId = newId;
-            ProductOptions.Add(option);
+        //    if (newId == -1)
+        //    {
+        //        return false;
+        //    }
 
-            return true;
-        }
+        //    // Add to the list
+        //    option.OptionId = newId;
+        //    ProductOptions.Add(option);
 
-        public bool DeleteProductOption(int optionId)
-        {
-            int result = _dao.ProductOptions.DeleteById(optionId.ToString());
-            if (result == -1)
-            {
-                return false;
-            }
+        //    return true;
+        //}
 
-            var option = ProductOptions.FirstOrDefault(o => o.OptionId == optionId);
-            if (option != null)
-            {
-                ProductOptions.Remove(option);
-            }
+        //public bool DeleteProductOption(int optionId)
+        //{
+        //    int result = _dao.ProductOptions.DeleteById(optionId.ToString());
+        //    if (result == -1)
+        //    {
+        //        return false;
+        //    }
 
-            return true;
-        }
+        //    var option = ProductOptions.FirstOrDefault(o => o.OptionId == optionId);
+        //    if (option != null)
+        //    {
+        //        ProductOptions.Remove(option);
+        //    }
 
-        public void OnCategoryChange(Category category)
-        {
-            if (_isSingleProduct)
-            {
-                (Product as SingleProduct)!.Category = category;
-                FilterProductTypesByCategory();
-            }
-        }
+        //    return true;
+        //}
 
-        private void FilterProductTypesByCategory()
-        {
-            var filtered = AllProductTypes.Where(pt => pt.Category.Id == (Product as SingleProduct)!.Category.Id);
-            FilteredProductTypes = new FullObservableCollection<ProductType>(filtered);
-        }
+        //public void OnCategoryChange(Category category)
+        //{
+        //    if (_isSingleProduct)
+        //    {
+        //        (Product as SingleProduct)!.Category = category;
+        //        //  FilterProductTypesByCategory();
+        //    }
+        //}
 
-        internal void OnProductTypeChange(ProductType type)
-        {
-            (Product as SingleProduct)!.ProductType = type;
-        }
+        //private void FilterProductTypesByCategory()
+        //{
+        //    var filtered = AllProductTypes.Where(pt => pt.Category.Id == (Product as SingleProduct)!.Category.Id);
+        //    FilteredProductTypes = new FullObservableCollection<ProductType>(filtered);
+        //}
+
+        //internal void OnProductTypeChange(ProductType type)
+        //{
+        //    (Product as SingleProduct)!.ProductType = type;
+        //}
     }
 }

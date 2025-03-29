@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace LowLand.Services
 {
     public interface IRepository<T>
     {
-        List<T> GetAll(); // Phân trang, Sắp xếp, Lọc, Tìm kiếm
+        List<T> GetAll();
         T GetById(string id);
         int Insert(T info);
         int DeleteById(string id);

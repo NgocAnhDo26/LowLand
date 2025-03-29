@@ -1,25 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Npgsql;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using LowLand.Services;
-using LowLand.Model.Customer;
 using System.Diagnostics;
-using DemoListBinding.View.ViewModel;
 using System.Security.Cryptography;
 using System.Text;
+using DemoListBinding.View.ViewModel;
 using LowLand.Model.Product;
+using LowLand.Services;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -90,13 +78,13 @@ namespace LowLand.View
             Debug.WriteLine("\n===== Insert New Product =====");
             SingleProduct newProduct = new SingleProduct
             {
-             
+
                 Name = "New Product",
                 SalePrice = 1999,
                 CostPrice = 1050,
                 Image = "new_product.jpg",
                 Category = new Category { Id = 1, Name = "Electronics" },
-                ProductType = new ProductType { Id = 1, Name = "Gadget", Category = new Category { Id = 1, Name = "Electronics" } }
+
             };
             int insertResult = repository.Insert(newProduct);
             Debug.WriteLine($"Insert Result: {insertResult}");
@@ -158,6 +146,6 @@ namespace LowLand.View
                 }
             }
         }
-      
+
     }
 }

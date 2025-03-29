@@ -1,21 +1,17 @@
-using LowLand.Model.Customer;
-using LowLand.Model.Order;
-using LowLand.Model.Product;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+using LowLand.Model.Customer;
+using LowLand.Model.Order;
+using LowLand.Model.Product;
 
 namespace LowLand.Services
 {
     public class MockDAO : IDao
     {
         public IRepository<Product> Products { get; set; } = new ProductRepository();
-        public IRepository<ProductType> ProductTypes { get; set; } = new ProductTypeRepository();
+
         public IRepository<Category> Categories { get; set; } = new CategoryRepository();
         public IRepository<Order> Orders { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
         public IRepository<OrderDetail> OrderDetails { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
@@ -27,26 +23,26 @@ namespace LowLand.Services
         {
             private List<Product> _products = new List<Product>()
             {
-                new SingleProduct() { Id = 1, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() {Id = 1, Name = "Thức uống" }, Name = "Phin Sữa Đá", SalePrice = 29000, CostPrice = 15000, Image = "phin_sua_da.jpg"},
-                new SingleProduct() { Id = 2, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() {Id = 1, Name = "Thức uống" }, Name = "Phin Đen Đá", SalePrice = 29000, CostPrice = 15000, Image = "phin_den_da.jpg"},
-                new SingleProduct() { Id = 3, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() {Id = 1, Name = "Thức uống" }, Name = "PhinDi Kem Sữa", SalePrice = 35000, CostPrice = 18000, Image = "phindi_kem_sua.jpg"},
-                new SingleProduct() { Id = 4, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "PhinDi Choco", SalePrice = 35000, CostPrice = 18000, Image = "phindi_choco.jpg"},
-                new SingleProduct() { Id = 5, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Espresso", SalePrice = 35000, CostPrice = 18000, Image = "espresso.jpg"},
-                new SingleProduct() { Id = 6, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Americano", SalePrice = 35000, CostPrice = 18000, Image = "americano.jpg"},
-                new SingleProduct() { Id = 7, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Latte", SalePrice = 40000, CostPrice = 20000, Image = "latte.jpg"},
-                new SingleProduct() { Id = 8, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Cappuccino", SalePrice = 40000, CostPrice = 20000, Image = "cappuccino.jpg" },
-                new SingleProduct() { Id = 9, ProductType = new ProductType() { Id = 1, Name = "Cà Phê", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Caramel Macchiato", SalePrice = 45000, CostPrice = 22000, Image = "caramel_macchiato.jpg"},
-                new SingleProduct() { Id = 10, ProductType = new ProductType() { Id = 2, Name = "Trà", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" },Name = "Trà Sen Vàng", SalePrice = 39000, CostPrice = 20000, Image = "tra_sen_vang.jpg"},
-                new SingleProduct() { Id = 11, ProductType = new ProductType() { Id = 2, Name = "Trà", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Trà Thạch Đào", SalePrice = 39000, CostPrice = 20000, Image = "tra_thach_dao.jpg" },
-                new SingleProduct() { Id = 12, ProductType = new ProductType() { Id = 2, Name = "Trà", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Trà Thạch Vải", SalePrice = 39000, CostPrice = 20000, Image = "tra_thach_vai.jpg" },
-                new SingleProduct() { Id = 13, ProductType = new ProductType() { Id = 2, Name = "Trà", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Trà Thanh Đào", SalePrice = 39000, CostPrice = 20000, Image = "tra_thanh_dao.jpg" },
-                new SingleProduct() { Id = 14, ProductType = new ProductType() { Id = 3, Name = "Freeze", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Freeze Trà Xanh", SalePrice = 49000, CostPrice = 25000, Image = "freeze_tra_xanh.jpg" },
-                new SingleProduct() { Id = 15, ProductType = new ProductType() { Id = 3, Name = "Freeze", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Freeze Cookies & Cream", SalePrice = 49000, CostPrice = 25000, Image = "freeze_cookies_cream.jpg" },
-                new SingleProduct() { Id = 16, ProductType = new ProductType() { Id = 3, Name = "Freeze", Category = new Category() { Id = 1, Name = "Thức uống" } }, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Freeze Chocolate", SalePrice = 49000, CostPrice = 25000, Image = "freeze_chocolate.jpg" },
-                new SingleProduct() { Id = 17, ProductType = new ProductType() { Id = 4, Name = "Bánh", Category = new Category() { Id = 2, Name = "Đồ ăn" } }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Croissant", SalePrice = 29000, CostPrice = 15000, Image = "banh_croissant.jpg" },
-                new SingleProduct() { Id = 18, ProductType = new ProductType() { Id = 4, Name = "Bánh", Category = new Category() { Id = 2, Name = "Đồ ăn" } }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Mousse Cacao", SalePrice = 35000, CostPrice = 18000, Image = "banh_mousse_cacao.jpg" },
-                new SingleProduct() { Id = 19, ProductType = new ProductType() { Id = 4, Name = "Bánh", Category = new Category() { Id = 2, Name = "Đồ ăn" } }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Mousse Đào", SalePrice = 35000, CostPrice = 18000, Image = "banh_mousse_dao.jpg" },
-                new SingleProduct() { Id = 20, ProductType = new ProductType() { Id = 4, Name = "Bánh", Category = new Category() { Id = 2, Name = "Đồ ăn" } }, Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Phô Mai Chanh Dây", SalePrice = 29000, CostPrice = 15000, Image = "banh_pho_mai_chanh_day.jpg" },
+                new SingleProduct() { Id = 1,  Category = new Category() {Id = 1, Name = "Thức uống" }, Name = "Phin Sữa Đá", SalePrice = 29000, CostPrice = 15000, Image = "phin_sua_da.jpg"},
+                new SingleProduct() { Id = 2,  Category = new Category() {Id = 1, Name = "Thức uống" }, Name = "Phin Đen Đá", SalePrice = 29000, CostPrice = 15000, Image = "phin_den_da.jpg"},
+                new SingleProduct() { Id = 3,  Category = new Category() {Id = 1, Name = "Thức uống" }, Name = "PhinDi Kem Sữa", SalePrice = 35000, CostPrice = 18000, Image = "phindi_kem_sua.jpg"},
+                new SingleProduct() { Id = 4,  Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "PhinDi Choco", SalePrice = 35000, CostPrice = 18000, Image = "phindi_choco.jpg"},
+                new SingleProduct() { Id = 5,  Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Espresso", SalePrice = 35000, CostPrice = 18000, Image = "espresso.jpg"},
+                new SingleProduct() { Id = 6,  Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Americano", SalePrice = 35000, CostPrice = 18000, Image = "americano.jpg"},
+                new SingleProduct() { Id = 7,  Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Latte", SalePrice = 40000, CostPrice = 20000, Image = "latte.jpg"},
+                new SingleProduct() { Id = 8,  Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Cappuccino", SalePrice = 40000, CostPrice = 20000, Image = "cappuccino.jpg" },
+                new SingleProduct() { Id = 9,  Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Caramel Macchiato", SalePrice = 45000, CostPrice = 22000, Image = "caramel_macchiato.jpg"},
+                new SingleProduct() { Id = 10, Category = new Category() { Id = 1, Name = "Thức uống" },Name = "Trà Sen Vàng", SalePrice = 39000, CostPrice = 20000, Image = "tra_sen_vang.jpg"},
+                new SingleProduct() { Id = 11, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Trà Thạch Đào", SalePrice = 39000, CostPrice = 20000, Image = "tra_thach_dao.jpg" },
+                new SingleProduct() { Id = 12, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Trà Thạch Vải", SalePrice = 39000, CostPrice = 20000, Image = "tra_thach_vai.jpg" },
+                new SingleProduct() { Id = 13, Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Trà Thanh Đào", SalePrice = 39000, CostPrice = 20000, Image = "tra_thanh_dao.jpg" },
+                new SingleProduct() { Id = 14,  Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Freeze Trà Xanh", SalePrice = 49000, CostPrice = 25000, Image = "freeze_tra_xanh.jpg" },
+                new SingleProduct() { Id = 15,  Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Freeze Cookies & Cream", SalePrice = 49000, CostPrice = 25000, Image = "freeze_cookies_cream.jpg" },
+                new SingleProduct() { Id = 16,  Category = new Category() { Id = 1, Name = "Thức uống" }, Name = "Freeze Chocolate", SalePrice = 49000, CostPrice = 25000, Image = "freeze_chocolate.jpg" },
+                new SingleProduct() { Id = 17,  Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Croissant", SalePrice = 29000, CostPrice = 15000, Image = "banh_croissant.jpg" },
+                new SingleProduct() { Id = 18,  Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Mousse Cacao", SalePrice = 35000, CostPrice = 18000, Image = "banh_mousse_cacao.jpg" },
+                new SingleProduct() { Id = 19,  Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Mousse Đào", SalePrice = 35000, CostPrice = 18000, Image = "banh_mousse_dao.jpg" },
+                new SingleProduct() { Id = 20,  Category = new Category() { Id = 2, Name = "Đồ ăn" }, Name = "Bánh Phô Mai Chanh Dây", SalePrice = 29000, CostPrice = 15000, Image = "banh_pho_mai_chanh_day.jpg" },
             };
             public List<Product> GetAll()
             {
@@ -73,7 +69,7 @@ namespace LowLand.Services
                         CostPrice = singleProduct.CostPrice,
                         Image = singleProduct.Image,
                         Category = singleProduct.Category,
-                        ProductType = singleProduct.ProductType
+
                     };
                 }
                 else if (product is ComboProduct comboProduct)
@@ -118,7 +114,7 @@ namespace LowLand.Services
                     if (product is SingleProduct prod)
                     {
                         prod.Category = ((SingleProduct)info).Category;
-                        prod.ProductType = ((SingleProduct)info).ProductType;
+
                     }
                     else if (product is ComboProduct combo)
                     {
@@ -209,67 +205,7 @@ namespace LowLand.Services
             }
         }
 
-        private class ProductTypeRepository : IRepository<ProductType>
-        {
-            private List<ProductType> _productTypes = new List<ProductType>()
-            {
-                new ProductType() { Id = 1, Name = "Cà Phê", Category =  new Category() { Id = 1, Name = "Thức uống" } },
-                new ProductType() { Id = 2, Name = "Trà", Category =  new Category() { Id = 1, Name = "Thức uống" } },
-                new ProductType() { Id = 3, Name = "Freeze", Category =  new Category() { Id = 1, Name = "Thức uống" } },
-                new ProductType() { Id = 4, Name = "Bánh", Category =  new Category() { Id = 2, Name = "Đồ ăn" } },
-            };
 
-            public List<ProductType> GetAll()
-            {
-                return new List<ProductType>(_productTypes);
-            }
-
-            public ProductType GetById(string id)
-            {
-                var productType = _productTypes.FirstOrDefault(p => p.Id == int.Parse(id));
-                if (productType != null)
-                {
-                    return new ProductType()
-                    {
-                        Id = productType.Id,
-                        Name = productType.Name,
-                        Category = productType.Category
-                    };
-                }
-
-                return null;        
-            }
-
-            public int Insert(ProductType info)
-            {
-                int newId = _productTypes.Max(p => p.Id) + 1;
-                info.Id = newId;
-                _productTypes.Add(info);
-
-                return newId;
-            }
-
-            public int DeleteById(string id)
-            {
-                var result = _productTypes.RemoveAll(p => p.Id == int.Parse(id));
-                return result > 0 ? int.Parse(id) : -1;
-            }
-
-            public int UpdateById(string id, ProductType info)
-            {
-                var productType = _productTypes.FirstOrDefault(p => p.Id == int.Parse(id));
-                if (productType != null)
-                {
-                    productType.Name = info.Name;
-                    productType.Category = info.Category;
-                    return 1;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-        }
 
         private class CategoryRepository : IRepository<Category>
         {
@@ -390,26 +326,27 @@ namespace LowLand.Services
         {
             private List<Customer> _customers = new List<Customer>()
             {
-                new Customer() { Id = 1, Name = "Đỗ Minh An", Phone = "0912345678", Point = 1200, RegistrationDate = new DateOnly(2021, 5, 10), RankId = 1, RankName = "Mới", PromotionPoint = 200, DiscountPercentage = 0 },
-                new Customer() { Id = 2, Name = "Nguyễn Minh Duy", Phone = "0909876543", Point = 850, RegistrationDate = new DateOnly(2020, 7, 25), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
-                new Customer() { Id = 3, Name = "Lê Thị Lan", Phone = "0923456789", Point = 2500, RegistrationDate = new DateOnly(2019, 9, 30), RankId = 3, RankName = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
-                new Customer() { Id = 4, Name = "Phan Thị Kim", Phone = "0932123456", Point = 3100, RegistrationDate = new DateOnly(2018, 11, 1), RankId = 4, RankName = "Kim Cương", PromotionPoint = int.MaxValue, DiscountPercentage = 10 },
-                new Customer() { Id = 5, Name = "Bùi Thanh Mai", Phone = "0943234567", Point = 780, RegistrationDate = new DateOnly(2021, 2, 12), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
-                new Customer() { Id = 6, Name = "Trần Quang Hiếu", Phone = "0954345678", Point = 3300, RegistrationDate = new DateOnly(2019, 3, 15), RankId = 3, RankName = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
-                new Customer() { Id = 7, Name = "Nguyễn Thị Hoa", Phone = "0965456789", Point = 1400, RegistrationDate = new DateOnly(2020, 8, 22), RankId = 1, RankName = "Mới", PromotionPoint = 200, DiscountPercentage = 0 },
-                new Customer() { Id = 8, Name = "Phạm Minh Khôi", Phone = "0976567890", Point = 1000, RegistrationDate = new DateOnly(2020, 12, 30), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
-                new Customer() { Id = 9, Name = "Lê Quang Vũ", Phone = "0987678901", Point = 650, RegistrationDate = new DateOnly(2021, 6, 5), RankId = 1, RankName = "Mới", PromotionPoint = 200, DiscountPercentage = 0 },
-                new Customer() { Id = 10, Name = "Vũ Minh Tân", Phone = "0998789012", Point = 900, RegistrationDate = new DateOnly(2020, 1, 13), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
-                new Customer() { Id = 11, Name = "Đặng Phương Thảo", Phone = "0910112233", Point = 1800, RegistrationDate = new DateOnly(2019, 5, 20), RankId = 3, RankName = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
-                new Customer() { Id = 12, Name = "Trương Mai Linh", Phone = "0901223344", Point = 2500, RegistrationDate = new DateOnly(2018, 8, 10), RankId = 3, RankName = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
-                new Customer() { Id = 13, Name = "Nguyễn Thị Như", Phone = "0922334455", Point = 300, RegistrationDate = new DateOnly(2021, 7, 30), RankId = 1, RankName = "Mới", PromotionPoint = 200, DiscountPercentage = 0 },
-                new Customer() { Id = 14, Name = "Bùi Ngọc Phương", Phone = "0933445566", Point = 1400, RegistrationDate = new DateOnly(2021, 1, 8), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
-                new Customer() { Id = 15, Name = "Trần Minh Long", Phone = "0944556677", Point = 2200, RegistrationDate = new DateOnly(2020, 3, 14), RankId = 3, RankName = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 },
-                new Customer() { Id = 16, Name = "Nguyễn Thái Sơn", Phone = "0955667788", Point = 4000, RegistrationDate = new DateOnly(2019, 2, 25), RankId = 4, RankName = "Kim Cương", PromotionPoint = int.MaxValue, DiscountPercentage = 10 },
-                new Customer() { Id = 17, Name = "Lê Hoàng An", Phone = "0966778899", Point = 2100, RegistrationDate = new DateOnly(2020, 11, 1), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
-                new Customer() { Id = 18, Name = "Phan Thanh Kiều", Phone = "0977889900", Point = 1500, RegistrationDate = new DateOnly(2021, 4, 10), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 },
-                new Customer() { Id = 19, Name = "Nguyễn Thị Thu", Phone = "0988990011", Point = 600, RegistrationDate = new DateOnly(2021, 3, 3), RankId = 1, RankName = "Mới", PromotionPoint = 200, DiscountPercentage = 0 },
-                new Customer() { Id = 20, Name = "Vũ Minh Quang", Phone = "0999001122", Point = 950, RegistrationDate = new DateOnly(2020, 9, 10), RankId = 2, RankName = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 }
+                new Customer() { Id = 1, Name = "Đỗ Minh An", Phone = "0912345678", Point = 1200, RegistrationDate = new DateOnly(2021, 5, 10), Rank = new CustomerRank() { Id = 1, Name = "Mới", PromotionPoint = 0, DiscountPercentage = 0 } },
+                new Customer() { Id = 2, Name = "Nguyễn Minh Duy", Phone = "0909876543", Point = 850, RegistrationDate = new DateOnly(2020, 7, 25), Rank = new CustomerRank() { Id = 2, Name = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 } },
+                new Customer() { Id = 3, Name = "Lê Thị Lan", Phone = "0923456789", Point = 2500, RegistrationDate = new DateOnly(2019, 9, 30), Rank = new CustomerRank() { Id = 3, Name = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 } },
+                new Customer() { Id = 4, Name = "Phan Thị Kim", Phone = "0932123456", Point = 3100, RegistrationDate = new DateOnly(2018, 11, 1), Rank = new CustomerRank() { Id = 4, Name = "Kim Cương", PromotionPoint = int.MaxValue, DiscountPercentage = 10 } },
+                new Customer() { Id = 5, Name = "Bùi Thanh Mai", Phone = "0943234567", Point = 780, RegistrationDate = new DateOnly(2021, 2, 12), Rank = new CustomerRank() { Id = 2, Name = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 } },
+                new Customer() { Id = 6, Name = "Trần Quang Hiếu", Phone = "0954345678", Point = 3300, RegistrationDate = new DateOnly(2019, 3, 15), Rank = new CustomerRank() { Id = 3, Name = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 } },
+                new Customer() { Id = 7, Name = "Nguyễn Thị Hoa", Phone = "0965456789", Point = 1400, RegistrationDate = new DateOnly(2020, 8, 22), Rank = new CustomerRank() { Id = 1, Name = "Mới", PromotionPoint = 200, DiscountPercentage = 0 } },
+                new Customer() { Id = 8, Name = "Phạm Minh Khôi", Phone = "0976567890", Point = 1000, RegistrationDate = new DateOnly(2020, 12, 30), Rank = new CustomerRank() { Id = 2, Name = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 } },
+                new Customer() { Id = 9, Name = "Lê Quang Vũ", Phone = "0987678901", Point = 650, RegistrationDate = new DateOnly(2021, 6, 5), Rank = new CustomerRank() { Id = 1, Name = "Mới", PromotionPoint = 200, DiscountPercentage = 0 } },
+                new Customer() { Id = 10, Name = "Vũ Minh Tân", Phone = "0998789012", Point = 900, RegistrationDate = new DateOnly(2020, 1, 13), Rank = new CustomerRank() { Id = 2, Name = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 } },
+                new Customer() { Id = 11, Name = "Đặng Phương Thảo", Phone = "0910112233", Point = 1800, RegistrationDate = new DateOnly(2019, 5, 20), Rank = new CustomerRank() { Id = 3, Name = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 } },
+                new Customer() { Id = 12, Name = "Trương Mai Linh", Phone = "0901223344", Point = 2500, RegistrationDate = new DateOnly(2018, 8, 10), Rank = new CustomerRank() { Id = 3, Name = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 } },
+                new Customer() { Id = 13, Name = "Nguyễn Thị Như", Phone = "0922334455", Point = 300, RegistrationDate = new DateOnly(2021, 7, 30), Rank = new CustomerRank() { Id = 1, Name = "Mới", PromotionPoint = 200, DiscountPercentage = 0 } },
+                new Customer() { Id = 14, Name = "Bùi Ngọc Phương", Phone = "0933445566", Point = 1400, RegistrationDate = new DateOnly(2021, 1, 8), Rank = new CustomerRank() { Id = 2, Name = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 } },
+                new Customer() { Id = 15, Name = "Trần Minh Long", Phone = "0944556677", Point = 2200, RegistrationDate = new DateOnly(2020, 3, 14), Rank = new CustomerRank() { Id = 3, Name = "Vàng", PromotionPoint = 3000, DiscountPercentage = 5 } },
+                new Customer() { Id = 16, Name = "Nguyễn Thái Sơn", Phone = "0955667788", Point = 4000, RegistrationDate = new DateOnly(2019, 2, 25), Rank = new CustomerRank() { Id = 4, Name = "Kim Cương", PromotionPoint = int.MaxValue, DiscountPercentage = 10 } },
+                new Customer() { Id = 17, Name = "Lê Hoàng An", Phone = "0966778899", Point = 2100, RegistrationDate = new DateOnly(2020, 11, 1), Rank = new CustomerRank() { Id = 2, Name = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 } },
+                new Customer() { Id = 18, Name = "Phan Thanh Kiều", Phone = "0977889900", Point = 1500, RegistrationDate = new DateOnly(2021, 4, 10), Rank = new CustomerRank() { Id = 2, Name = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 } },
+                new Customer() { Id = 19, Name = "Nguyễn Thị Thu", Phone = "0988990011", Point = 600, RegistrationDate = new DateOnly(2021, 3, 3), Rank = new CustomerRank() { Id = 1, Name = "Mới", PromotionPoint = 200, DiscountPercentage = 0 } },
+                new Customer() { Id = 20, Name = "Vũ Minh Quang", Phone = "0999001122", Point = 950, RegistrationDate = new DateOnly(2020, 9, 10), Rank = new CustomerRank() { Id = 2, Name = "Bạc", PromotionPoint = 1000, DiscountPercentage = 2 } }
+
             };
 
             public List<Customer> GetAll()
@@ -435,10 +372,7 @@ namespace LowLand.Services
                         Phone = customer.Phone,
                         Point = customer.Point,
                         RegistrationDate = customer.RegistrationDate,
-                        RankId = customer.RankId,
-                        RankName = customer.RankName,
-                        PromotionPoint = customer.PromotionPoint,
-                        DiscountPercentage = customer.DiscountPercentage
+                        Rank = customer.Rank,
                     };
                 }
 
@@ -464,10 +398,7 @@ namespace LowLand.Services
                     customer.Phone = info.Phone;
                     customer.Point = info.Point;
                     customer.RegistrationDate = info.RegistrationDate;
-                    customer.RankId = info.RankId;
-                    customer.RankName = info.RankName;
-                    customer.PromotionPoint = info.PromotionPoint;
-                    customer.DiscountPercentage = info.DiscountPercentage;
+                    customer.Rank = info.Rank;
                     return customer.Id;
                 }
 

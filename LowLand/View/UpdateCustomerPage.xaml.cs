@@ -1,20 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using System.Threading.Tasks;
+using LowLand.Model.Customer;
+using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using LowLand.View.ViewModel;
-using LowLand.Model.Customer;
-using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -44,7 +35,7 @@ namespace LowLand.View
                     NameBox.Text = EditingCustomer.Name;
                     PhoneBox.Text = EditingCustomer.Phone;
                     PointBox.Text = EditingCustomer.Point.ToString();
-                    RankNameBox.Text = EditingCustomer.RankName;
+                    RankNameBox.Text = EditingCustomer.Rank.Name;
                 }
             }
         }
@@ -60,7 +51,7 @@ namespace LowLand.View
                 PrimaryButtonText = "OK",
                 XamlRoot = this.XamlRoot
             };
-            return await dialog.ShowAsync(); 
+            return await dialog.ShowAsync();
         }
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
@@ -75,15 +66,15 @@ namespace LowLand.View
                 var result = await ShowMessage("Cập nhật thông tin khách hàng thành công!");
                 if (result == ContentDialogResult.Primary)
                 {
-                  //  Frame.GoBack();
+                    //  Frame.GoBack();
                 }
             }
             else
             {
                 var result = await ShowMessage("Cập nhật thông tin khách hàng thất bại!");
-                if (result == ContentDialogResult.Primary) 
+                if (result == ContentDialogResult.Primary)
                 {
-                   // Frame.GoBack();
+                    // Frame.GoBack();
                 }
             }
         }

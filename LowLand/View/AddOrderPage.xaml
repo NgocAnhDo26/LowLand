@@ -1,0 +1,185 @@
+<Page
+    x:Class="LowLand.View.AddOrderPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LowLand.View"
+    xmlns:Pmodel="using:LowLand.Model.Product"
+    xmlns:DOmodel="using:LowLand.Model.Order"
+    xmlns:converter="using:LowLand.View.Converter"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="#f8f8f8">
+    
+    
+    
+
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Padding="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="Tạo đơn hàng" Style="{StaticResource TitleTextBlockStyle}" Margin="36, 40, 0, 36"/>
+
+
+
+            <Grid Grid.Row="1">
+               
+
+            <!-- Danh sách sản phẩm đã thêm -->
+            <Grid  CornerRadius="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Margin="20" Background="White" Padding="20" CornerRadius="10">
+                        <TextBlock Text="Chọn sản phẩm" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
+
+                        <GridView x:Name="ProductGridView" ItemsSource="{x:Bind ViewModel.Products, Mode=OneWay}" SelectionMode="Single" IsItemClickEnabled="True"  DoubleTapped="ProductGridView_DoubleTapped" MaxHeight="450">
+                            <GridView.ItemTemplate>
+                                <DataTemplate x:DataType="Pmodel:Product">
+                                    <Grid Background="LightGray" Padding="10" CornerRadius="8">
+                                        <StackPanel>
+                                            <Image Source="{x:Bind Image}" Width="auto" Height="auto" Stretch="UniformToFill"/>
+                                            <TextBlock Text="{x:Bind Name}" FontSize="14" Foreground="DarkGray"/>
+                                            <TextBlock Text="{x:Bind SalePrice}" FontSize="14" Foreground="DarkGray"/>
+
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+
+                    </StackPanel>
+
+
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel x:Name="SelectedProductsPanel" Grid.Row="0" Margin="20" Background="White" Padding="20" CornerRadius="10">
+                            <TextBlock x:Name="SelectedProductsTitle" Text="Sản phẩm đã chọn" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
+
+                            <!-- Tiêu đề -->
+                            <Grid x:Name="ProductListHeader" Margin="5,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="3*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="ProductNameHeader" Text="Tên SP" FontWeight="Bold" Grid.Column="0" TextAlignment="Left"/>
+                                <TextBlock x:Name="ProductOptionHeader" Text="Thêm" FontWeight="Bold" Grid.Column="1" TextAlignment="Left"/>
+                                <TextBlock x:Name="ProductPriceHeader" Text="Giá" FontWeight="Bold" Grid.Column="2" TextAlignment="Left"/>
+                                <TextBlock x:Name="ProductQuantityHeader" Text="SL" FontWeight="Bold" Grid.Column="3" TextAlignment="Left"/>
+                                <TextBlock x:Name="ProductTotalHeader" Text="Tổng" FontWeight="Bold" Grid.Column="4" TextAlignment="Left"/>
+                            </Grid>
+
+                            <!-- Danh sách sản phẩm -->
+                            <ListView x:Name="SelectedProductListView" 
+                  ItemsSource="{x:Bind ViewModel.EditorAddOrder.Details, Mode=TwoWay}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="DOmodel:OrderDetail">
+                                        <Grid x:Name="ProductRow" Margin="0,5">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="3*"/>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="1*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock x:Name="HiddenProductId" Text="{Binding Id}" Visibility="Collapsed"/>
+
+                                            <!-- Tên sản phẩm -->
+                                            <TextBlock x:Name="ProductName" Text="{x:Bind ProductName, Mode=TwoWay}" Grid.Column="0" VerticalAlignment="Center" TextAlignment="Left"/>
+
+                                            <!-- ComboBox chọn kích thước -->
+                                            <ComboBox x:Name="ProductOptionsComboBox" 
+                                  ItemsSource="{x:Bind ProductOptions, Mode=TwoWay}"
+                                  SelectedIndex="-1" Grid.Column="1" VerticalAlignment="Stretch"  
+                                  Margin="5" Height="Auto" SelectionChanged="ComboBox_SelectionChanged">
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock x:Name="OptionName" Text="{Binding Name}"/>
+                                                            <TextBlock Text=":  "/>
+                                                            <TextBlock x:Name="OptionPrice" Text="{Binding SalePrice}" />
+                                                            <TextBlock Text=" vnd"/>
+                                                         
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+
+                                            <!-- Giá -->
+                                            <TextBlock x:Name="ProductPriceText" Text="{x:Bind ProductPrice, Mode=TwoWay}" Grid.Column="2" TextAlignment="Left" VerticalAlignment="Center" />
+
+                                            <!-- Số lượng -->
+                                            <TextBox x:Name="ProductQuantityTextBox" 
+                                 Text="{x:Bind quantity, Mode=TwoWay}" Grid.Column="3"
+                                 Width="50px" Height="32" MinHeight="32" TextAlignment="Center" 
+                                 VerticalAlignment="Stretch" Margin="5" Padding="5,0"
+                                 TextChanged="TextBox_TextChanged"/>
+
+                                            <!-- Giá tổng -->
+                                            <TextBlock x:Name="ProductTotalText" Text="{x:Bind Price, Mode=TwoWay}" Grid.Column="4" TextAlignment="Left" VerticalAlignment="Center" />
+
+                                            <!-- Nút xóa -->
+                                            <DropDownButton x:Name="DeleteButton" Grid.Column="5">
+                                                <DropDownButton.Content>
+                                                    <FontIcon Glyph="&#xE712;"/>
+                                                </DropDownButton.Content>
+                                                <DropDownButton.Flyout>
+                                                    <MenuFlyout Placement="Bottom">
+                                                        <MenuFlyoutItem x:Name="DeleteMenuItem" Text="Xóa" Foreground="Red" Click="deleteButton_Click">
+                                                            <MenuFlyoutItem.Icon>
+                                                                <FontIcon Glyph="&#xE74D;"/>
+                                                            </MenuFlyoutItem.Icon>
+                                                        </MenuFlyoutItem>
+                                                    </MenuFlyout>
+                                                </DropDownButton.Flyout>
+                                            </DropDownButton>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            <StackPanel Orientation="Horizontal" Margin="0,10">
+                                <TextBlock Text="Tổng tiền: " FontSize="16" FontWeight="Bold"/>
+                                <TextBlock x:Name="TotalAmountValue" 
+                   Text="{x:Bind ViewModel.EditorAddOrder.TotalPrice, Mode=OneWay}" 
+                   FontSize="16" FontWeight="Bold"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel x:Name="CustomerInfoPanel" Grid.Row="1" Margin="20" Background="White" Padding="20" CornerRadius="10">
+                            <AutoSuggestBox x:Name="PhoneNumberBox" 
+                        TextChanged="AutoSuggestBox_TextChanged"
+                        SuggestionChosen="AutoSuggestBox_SuggestionChosen" 
+                        Header="Số điện thoại"
+                        AutomationProperties.Name="Basic AutoSuggestBox"  
+                        PlaceholderText="Nhập số điện thoại..." Margin="0,5" />
+                        </StackPanel>
+                    </Grid>
+
+                </Grid>
+            </Grid>
+
+            <!-- Nút hành động -->
+            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="30" Margin="20">
+                <Button x:Name="CreateOrderButton" Content="Tạo hóa đơn" Background="Green" Foreground="White" Padding="10,5" CornerRadius="5"/>
+                <Button x:Name="CancelButton" Content="Hủy" Background="Red" Foreground="White" Padding="10,5" CornerRadius="5"/>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+
+</Page>
