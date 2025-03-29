@@ -15,30 +15,20 @@ namespace LowLand.View.ViewModel
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public Product Product { get; set; }
+        public string OldImage { get; set; }
         public List<Category> Categories { get; }
-        public List<ProductType> AllProductTypes { get; set; }
-
-        private FullObservableCollection<ProductType> _filteredProductTypes;
-        public FullObservableCollection<ProductType> FilteredProductTypes
-        {
-            get => _filteredProductTypes;
-            set
-            {
-                _filteredProductTypes = value;
-            }
-        }
         public FullObservableCollection<ProductOption> ProductOptions { get; set; }
 
         public ProductInfoViewModel()
         {
             _dao = Services.Services.GetKeyedSingleton<IDao>();
             Categories = _dao.Categories.GetAll();
-            AllProductTypes = _dao.ProductTypes.GetAll();
         }
 
         public void LoadProduct(string productId)
         {
             Product = _dao.Products.GetById(productId);
+            OldImage = Product.Image;
 
             if (Product is ComboProduct)
             {
@@ -53,15 +43,66 @@ namespace LowLand.View.ViewModel
             }
         }
 
-        public bool UpdateProduct()
+        public ResponseCode UpdateProduct()
         {
+            // Validate if name is not empty
+            if (string.IsNullOrWhiteSpace(Product.Name))
+            {
+                return ResponseCode.EmptyName;
+            }
+
+            // Validate if price is not negative
+            if (Product.CostPrice < 0 || Product.SalePrice < 0)
+            {
+                return ResponseCode.NegativeValueNotAllowed;
+            }
+
+            // Validate if cost price is not greater than sale price
+            if (Product.CostPrice > Product.SalePrice)
+            {
+                return ResponseCode.InvalidValue;
+            }
+
+            // Delete the old image (if it's not the default image, and the image has changed)
+            if (OldImage != "product_default.jpg" && Product.Image != OldImage)
+            {
+                var status = FileUtils.DeleteImage(OldImage);
+                if (!status)
+                {
+                    return ResponseCode.Error;
+                }
+            }
+
+            // Save the image to the folder
+            if (Product.Image != OldImage)
+            {
+                string newImageName = FileUtils.SaveImage(Product.Image);
+                if (newImageName == "")
+                {
+                    return ResponseCode.Error;
+                }
+
+                Product.Image = newImageName;
+            }
+
+            // Update the product in the database
             int result = _dao.Products.UpdateById(Product.Id.ToString(), Product);
             if (result != 1)
             {
-                return false;
+                return ResponseCode.Error;
             }
 
-            return true;
+            return ResponseCode.Success;
+        }
+
+        internal void UpdateProductImage(string path, string fileName)
+        {
+            Product.Image = path;
+        }
+
+        public void OnCategoryChange(Category category)
+        {
+            (Product as SingleProduct)!.Category = category;
         }
 
         public bool UpdateProductOption(ProductOption option)
@@ -107,26 +148,6 @@ namespace LowLand.View.ViewModel
             }
 
             return true;
-        }
-
-        public void OnCategoryChange(Category category)
-        {
-            if (_isSingleProduct)
-            {
-                (Product as SingleProduct)!.Category = category;
-                FilterProductTypesByCategory();
-            }
-        }
-
-        private void FilterProductTypesByCategory()
-        {
-            var filtered = AllProductTypes.Where(pt => pt.Category.Id == (Product as SingleProduct)!.Category.Id);
-            FilteredProductTypes = new FullObservableCollection<ProductType>(filtered);
-        }
-
-        internal void OnProductTypeChange(ProductType type)
-        {
-            (Product as SingleProduct)!.ProductType = type;
         }
     }
 }

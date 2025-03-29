@@ -19,7 +19,7 @@ namespace LowLand.View.ViewModel
                 {
                     OptionId = -1,
                     ProductId = productId,
-                    Name = "",
+                    Name = "Tùy chọn mới",
                 };
 
                 return;

@@ -1,5 +1,6 @@
 ﻿using System;
 using LowLand.Model.Product;
+using LowLand.Utils;
 using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -28,9 +29,9 @@ namespace LowLand.View
             // Handle search button click
         }
 
-        private void addNewProductButton_Click(object sender, RoutedEventArgs e)
+        private void AddNewSingleProduct(object sender, RoutedEventArgs e)
         {
-
+            Frame.Navigate(typeof(AddSingleProductPage));
         }
 
         private void ViewDetails_Click(object sender, RoutedEventArgs e)
@@ -63,31 +64,25 @@ namespace LowLand.View
                 ContentDialogResult result = await deleteConfirmationDialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
                 {
-                    // Handle delete product
-                    if (ViewModel.RemoveProduct(product.Id))
+                    var responseCode = ViewModel.RemoveProduct(product.Id);
+
+                    // Show appropriate messages based on response code
+                    string message = responseCode switch
                     {
-                        // Show success message
-                        ContentDialog successDialog = new ContentDialog
-                        {
-                            Title = "Xóa sản phẩm thành công",
-                            Content = "Sản phẩm đã được xóa khỏi hệ thống.",
-                            CloseButtonText = "Đóng",
-                            XamlRoot = this.Content.XamlRoot
-                        };
-                        await successDialog.ShowAsync();
-                    }
-                    else
+                        ResponseCode.Success => "Xóa sản phẩm thành công!",
+                        ResponseCode.Error => "Đã xảy ra lỗi khi xóa sản phẩm!",
+                        _ => "Lỗi không xác định!"
+                    };
+
+                    ContentDialog infoDialog = new ContentDialog
                     {
-                        // Show error message
-                        ContentDialog errorDialog = new ContentDialog
-                        {
-                            Title = "Xóa sản phẩm thất bại",
-                            Content = "Đã xảy ra lỗi trong quá trình xóa sản phẩm.",
-                            CloseButtonText = "Đóng",
-                            XamlRoot = this.Content.XamlRoot
-                        };
-                        await errorDialog.ShowAsync();
-                    }
+                        Title = "Thông báo",
+                        Content = message,
+                        CloseButtonText = "OK",
+                        XamlRoot = this.Content.XamlRoot
+                    };
+
+                    await infoDialog.ShowAsync();
                 }
             }
         }

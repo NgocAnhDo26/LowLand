@@ -16,7 +16,7 @@ namespace LowLand.View.ViewModel
             Products = new FullObservableCollection<Product>(_dao.Products.GetAll());
         }
 
-        public bool RemoveProduct(int productId)
+        public ResponseCode RemoveProduct(int productId)
         {
             var product = Products.FirstOrDefault(p => p.Id == productId);
             if (product != null)
@@ -25,12 +25,18 @@ namespace LowLand.View.ViewModel
 
                 if (result != -1)
                 {
+                    // Remove the product + image from the folder
                     Products.Remove(product);
-                    return true;
+                    if (!FileUtils.DeleteImage(product.Image))
+                    {
+                        return ResponseCode.Error;
+                    }
+
+                    return ResponseCode.Success;
                 }
             }
 
-            return false;
+            return ResponseCode.NotFound;
         }
 
     }

@@ -16,6 +16,7 @@
     <Content Remove="Assets\product_default.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="View\AddSingleProductPage.xaml" />
     <None Remove="View\CategoriesPage.xaml" />
     <None Remove="View\DashboardPage.xaml" />
     <None Remove="View\DashboardWindow.xaml" />
@@ -58,6 +59,9 @@
     <None Update="Assets\product_default.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="View\AddSingleProductPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="View\ProductOptionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

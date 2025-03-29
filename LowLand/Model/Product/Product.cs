@@ -17,8 +17,7 @@ namespace LowLand.Model.Product
 
     public class SingleProduct : Product
     {
-        required public Category Category { get; set; }
-        required public ProductType ProductType { get; set; }
+        public Category? Category { get; set; }
     }
 
     public class ComboProduct : Product

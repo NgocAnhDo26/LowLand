@@ -1,22 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using LowLand.Model.Product;
+using LowLand.Utils;
 using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Markup;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using static System.Net.Mime.MediaTypeNames;
+using Windows.Storage.Pickers;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -39,7 +28,6 @@ namespace LowLand.View
         {
             ViewModel.LoadProduct(e.Parameter.ToString()!);
             // Add categories to ProductBasicInfo StackPanel
-
             if (ViewModel.Product is SingleProduct product)
             {
                 var category = new ComboBox
@@ -53,34 +41,11 @@ namespace LowLand.View
                 };
                 category.SelectionChanged += Category_SelectionChanged;
 
-                var productType = new ComboBox
-                {
-                    Name = "ProdProductType",
-                    Header = "Loại sản phẩm",
-                    SelectedValuePath = "Id",
-                    ItemTemplate = (DataTemplate)Resources["ComboBoxTemplate2"],
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-
-                // Apply 2-way binding
-                productType.SetBinding(ComboBox.ItemsSourceProperty, new Binding
-                {
-                    Path = new PropertyPath("FilteredProductTypes"),
-                    Source = ViewModel,
-                    Mode = BindingMode.OneWay
-                });
-
-                productType.SelectionChanged += ProductType_SelectionChanged;
-
                 category.SelectedValue = product?.Category?.Id;
                 Grid.SetRow(category, 2);
                 Grid.SetColumn(category, 0);
-                productType.SelectedValue = product?.ProductType?.Id;
-                Grid.SetRow(productType, 2);
-                Grid.SetColumn(category, 1);
 
                 ProductBasicInfo.Children.Add(category);
-                ProductBasicInfo.Children.Add(productType);
 
                 OptionContainerTitle.Text = "Tùy chọn của sản phẩm";
                 NewItemButtonText.Text = "Thêm tùy chọn";
@@ -91,12 +56,6 @@ namespace LowLand.View
             base.OnNavigatedTo(e);
         }
 
-        private void ProductType_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var type = (sender as ComboBox)!.SelectedItem as ProductType;
-            ViewModel.OnProductTypeChange(type!);
-        }
-
         private void Category_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var category = (sender as ComboBox)!.SelectedItem as Category;
@@ -105,18 +64,33 @@ namespace LowLand.View
 
         private async void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.UpdateProduct())
-            {
-                // Success dialog
-                var dialog = new ContentDialog
-                {
-                    Title = "Cập nhật sản phẩm",
-                    Content = "Cập nhật sản phẩm thành công",
-                    CloseButtonText = "OK",
-                    XamlRoot = Content.XamlRoot
-                };
+            var responseCode = ViewModel.UpdateProduct();
 
-                await dialog.ShowAsync();
+            // Show appropriate messages based on response code
+            string message = responseCode switch
+            {
+                ResponseCode.Success => "Cập nhật sản phẩm thành công!",
+                ResponseCode.EmptyName => "Tên sản phẩm không được để trống!",
+                ResponseCode.NegativeValueNotAllowed => "Giá bán và giá vốn phải lớn hơn 0!",
+                ResponseCode.InvalidValue => "Giá bán không được thấp hơn giá vốn!",
+                ResponseCode.Error => "Đã xảy ra lỗi khi cập nhật sản phẩm!",
+                _ => "Lỗi không xác định!"
+            };
+
+            var infoDialog = new ContentDialog
+            {
+                Title = "Thông báo",
+                Content = message,
+                CloseButtonText = "OK",
+                XamlRoot = Content.XamlRoot
+            };
+
+            await infoDialog.ShowAsync();
+
+            // Navigate back to ProductsPage
+            if (responseCode == ResponseCode.Success)
+            {
+                Frame.Navigate(typeof(ProductsPage));
             }
         }
 
@@ -158,7 +132,44 @@ namespace LowLand.View
             if (result == ContentDialogResult.Primary)
             {
                 ViewModel.DeleteProductOption(selectedOption.OptionId);
-            }       
+            }
+        }
+
+        private async void ChooseNewImageFile(object sender, RoutedEventArgs e)
+        {
+            //disable the button to avoid double-clicking
+            var senderButton = sender as Button;
+            senderButton.IsEnabled = false;
+
+            // Create a file picker
+            var openPicker = new Windows.Storage.Pickers.FileOpenPicker();
+
+            // Get the current window
+            var window = App.m_window;
+
+            // Retrieve the window handle (HWND) of the current WinUI 3 window.
+            var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+
+            // Initialize the file picker with the window handle (HWND).
+            WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
+
+            // Set options for your file picker
+            openPicker.ViewMode = PickerViewMode.Thumbnail;
+            openPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            openPicker.FileTypeFilter.Add(".jpg");
+            openPicker.FileTypeFilter.Add(".jpeg");
+            openPicker.FileTypeFilter.Add(".png");
+
+            // Open the picker for the user to pick a file
+            var file = await openPicker.PickSingleFileAsync();
+            if (file != null)
+            {
+                // Update the image in the view model
+                ViewModel.UpdateProductImage(file.Path, file.Name);
+            }
+
+            //re-enable the button
+            senderButton.IsEnabled = true;
         }
     }
 }
