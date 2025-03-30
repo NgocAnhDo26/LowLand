@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using LowLand.Model.Customer;
@@ -18,7 +18,6 @@ namespace LowLand.Services
         public IRepository<OrderDetail> OrderDetails { get; set; } = new OrderDetailRepository();
         public IRepository<Category> Categories { get; set; } = new CategoryRepository();
         public IRepository<Product> Products { get; set; } = new ProductRepository();
-
         public IRepository<ProductOption> ProductOptions { get; set; } = new ProductOptionRepository();
     }
 
@@ -26,7 +25,7 @@ namespace LowLand.Services
 
     public abstract class BaseRepository<T>
     {
-        protected readonly string connectionString = "Host=localhost;Port=5432;Username=hoangkha_ngocanhne;Password=ngocanh_hoangkhane;Database=lowland";
+        protected readonly string connectionString = "Host=localhost;Port=5432;Username=admin;Password=1234;Database=myshop";
 
         protected List<T> ExecuteQuery(string query, Func<NpgsqlDataReader, T> mapFunction)
         {
@@ -48,14 +47,22 @@ namespace LowLand.Services
 
         protected T? ExecuteSingleQuery(string query, Func<NpgsqlDataReader, T> mapFunction)
         {
-            using (var conn = new NpgsqlConnection(connectionString))
+            try
             {
-                conn.Open();
-                using (var cmd = new NpgsqlCommand(query, conn))
-                using (var reader = cmd.ExecuteReader())
+                using (var conn = new NpgsqlConnection(connectionString))
                 {
-                    return reader.Read() ? mapFunction(reader) : default;
+                    conn.Open();
+                    using (var cmd = new NpgsqlCommand(query, conn))
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return reader.Read() ? mapFunction(reader) : default;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return default;
             }
         }
 
@@ -190,7 +197,6 @@ namespace LowLand.Services
                 PromotionPoint = reader.GetInt32(reader.GetOrdinal("promotion_point")),
                 DiscountPercentage = reader.GetInt32(reader.GetOrdinal("discount_percentage"))
             })!;
-
         }
 
         public int Insert(CustomerRank info) => ExecuteNonQuery($"""
@@ -484,7 +490,6 @@ namespace LowLand.Services
                             Id = reader.GetInt32(reader.GetOrdinal("category_id")),
                             Name = reader.GetString(reader.GetOrdinal("category_name"))
                         },
-
                     };
             });
         }
@@ -568,7 +573,6 @@ namespace LowLand.Services
                 sale_price = {single.SalePrice}, 
                 cost_price = {single.CostPrice}, 
                 image = '{single.Image}',
-              
                 category_id = {single.Category.Id}
             WHERE product_id = '{id}'
         """);
@@ -633,6 +637,7 @@ namespace LowLand.Services
 
 
     }
+    
     internal class ProductOptionRepository : BaseRepository<ProductOption>, IRepository<ProductOption>
     {
         public int DeleteById(string id)

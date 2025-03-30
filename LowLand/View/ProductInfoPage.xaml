@@ -8,8 +8,7 @@
     xmlns:converter="using:LowLand.View.Converter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    mc:Ignorable="d">
 
     <!--<Page.Resources>
         <converter:AbsolutePathConverter x:Key="AbsolutePathConverter"/>
@@ -17,11 +16,6 @@
         <DataTemplate x:Key="ComboBoxTemplate1" x:DataType="model:Category">
             <TextBlock>
                 <Run Text="{x:Bind Id}"/> - <Run Text="{x:Bind Name}"/>
-            </TextBlock>
-        </DataTemplate>
-        <DataTemplate x:Key="ComboBoxTemplate2" x:DataType="model:ProductType">
-            <TextBlock>
-    <Run Text="{x:Bind Id}"/> - <Run Text="{x:Bind Name}"/>
             </TextBlock>
         </DataTemplate>
 
@@ -83,7 +77,7 @@
             <Button Grid.Column="2" x:Name="CancelButton" Content="Quay lại" Click="CancelButton_Click" Margin="0, 0, 36, 0"/>
         </Grid>
 
-        <Grid Grid.Row="1" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" Margin="36, 0, 36, 16" CornerRadius="8">
+        <Grid Grid.Row="1" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Margin="36, 0, 36, 16" CornerRadius="8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="4*"/>
                 <ColumnDefinition Width="6*"/>
@@ -101,11 +95,25 @@
                 </Grid.RowDefinitions>
                 <TextBlock Text="Ảnh sản phẩm" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Center" Margin="0, 0, 0, 24"/>
                 <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="2*"/>
-                    </Grid.ColumnDefinitions>
-                    <Image Source="{x:Bind ViewModel.Product.Image, Mode=TwoWay, Converter={StaticResource AbsolutePathConverter}}"/>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <Grid Grid.Row="0" CornerRadius="4" MaxWidth="170" MaxHeight="170" VerticalAlignment="Center">
+                        <Image Stretch="UniformToFill" VerticalAlignment="Center" Source="{x:Bind ViewModel.Product.Image, Converter={StaticResource AbsolutePathConverter}, Mode=OneWay}"/>
+                    </Grid>
+   
+                    <TextBlock Grid.Row="1" Text="Ảnh đại diện" Margin="0, 24, 0, 12"/>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox PlaceholderText="Ảnh mặc định" IsEnabled="False" Text="{x:Bind ViewModel.Product.Image, Mode=OneWay}"/>
+                        <Button Grid.Column="1" Margin="8, 0, 0, 0" Content="Chọn ảnh mới" Click="ChooseNewImageFile"/>
+                    </Grid>
                 </Grid>
             </Grid>
 
@@ -113,12 +121,13 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Text="Thông tin cơ bản" Style="{StaticResource SubtitleTextBlockStyle}" VerticalAlignment="Center" Margin="0, 0, 0, 24"/>
 
-                <ScrollViewer Grid.Row="1">
-                    <Grid x:Name="ProductBasicInfo" RowSpacing="16" ColumnSpacing="16">
+                <ScrollViewer Grid.Row="1" VerticalScrollMode="Auto" HorizontalScrollMode="Disabled">
+                    <Grid x:Name="ProductBasicInfo" RowSpacing="16" ColumnSpacing="16" VerticalAlignment="Top">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -145,13 +154,13 @@
                         <NumberBox 
                     Header="Giá bán mặc định" 
                     Grid.Row="1" Grid.Column="0"
-                    Text="{x:Bind ViewModel.Product.SalePrice, Mode=TwoWay, Converter={StaticResource CurrencyFormatter}}" 
+                    Text="{x:Bind ViewModel.Product.SalePrice, Mode=TwoWay}" 
                     Style="{StaticResource BodyTextBlockStyle}" 
                     VerticalAlignment="Center"/>
                         <NumberBox 
                     Header="Giá vốn mặc định" 
                     Grid.Row="1" Grid.Column="1"
-                    Text="{x:Bind ViewModel.Product.CostPrice, Mode=TwoWay, Converter={StaticResource CurrencyFormatter}}" 
+                    Text="{x:Bind ViewModel.Product.CostPrice, Mode=TwoWay}" 
                     Style="{StaticResource BodyTextBlockStyle}" 
                     VerticalAlignment="Center"/>
                     </Grid>
@@ -161,7 +170,7 @@
             <Button Grid.Row="1" Grid.ColumnSpan="2" x:Name="ApplyButton" Margin="0, 0, 24, 24" Content="Lưu thay đổi" Click="ApplyButton_Click" Style="{StaticResource AccentButtonStyle}" HorizontalAlignment="Right"/>
         </Grid>
 
-        <Grid x:Name="OptionContainer" Grid.Row="2" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" Padding="24" Margin="36, 0, 36, 16" CornerRadius="8">
+        <Grid x:Name="OptionContainer" Grid.Row="2" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="24" Margin="36, 0, 36, 36" CornerRadius="8">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>

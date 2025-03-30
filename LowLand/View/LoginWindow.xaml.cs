@@ -84,7 +84,6 @@ namespace LowLand.View
                 CostPrice = 1050,
                 Image = "new_product.jpg",
                 Category = new Category { Id = 1, Name = "Electronics" },
-
             };
             int insertResult = repository.Insert(newProduct);
             Debug.WriteLine($"Insert Result: {insertResult}");
@@ -139,8 +138,8 @@ namespace LowLand.View
 
                 if (success)
                 {
-                    var screen = new DashboardWindow();
-                    screen.Activate();
+                    App.m_window = new DashboardWindow();
+                    App.m_window.Activate();
 
                     this.Close();
                 }

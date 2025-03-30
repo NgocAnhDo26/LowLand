@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Windows.Storage;
 
 namespace LowLand.View.Converter
 {
@@ -11,24 +13,37 @@ namespace LowLand.View.Converter
         {
             try
             {
-                if (value == null) return "";
+                if (value == null) return new BitmapImage(new Uri("ms-appx:///Assets/product_default.jpg"));
 
                 string filename = value.ToString()!;
-                string folder = "C:/LowLand/Images";
-                //string folder = AppDomain.CurrentDomain.BaseDirectory;
-                var path = $"{folder}/{filename}";
-
-                if (!System.IO.File.Exists(path))
+                // If the path is already absolute, use it directly
+                if (Path.IsPathRooted(filename))
                 {
-                    return new BitmapImage(new Uri("ms-appx:///Assets/product_default.jpg"));
+                    Debug.WriteLine("Rooted: " + filename);
+                    if (File.Exists(filename))
+                    {
+                        return new BitmapImage(new Uri(filename));
+                    }
+                }
+                else
+                {
+                    // Try to get the image file from the local folder
+                    string localFolder = ApplicationData.Current.LocalFolder.Path;
+                    var path = Path.Combine(localFolder, filename);
+
+                    if (File.Exists(path))
+                    {
+                        return new BitmapImage(new Uri(path));
+                    }
                 }
 
-                return new BitmapImage(new Uri("file:///" + path));
+                // Fall back to the default image
+                return new BitmapImage(new Uri("ms-appx:///Assets/product_default.jpg"));
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                throw;
+                return new BitmapImage(new Uri("ms-appx:///Assets/product_default.jpg"));
             }
         }
 

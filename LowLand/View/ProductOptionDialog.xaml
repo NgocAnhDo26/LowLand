@@ -15,9 +15,10 @@
                BasedOn="{StaticResource DefaultContentDialogStyle}"/>
     </ContentDialog.Resources>
 
-    <StackPanel Spacing="12">
-        <!--<TextBox Header="Tên" Text="{x:Bind ViewModel.Option.Name, Mode=TwoWay}" />
-        <NumberBox Header="Giá vốn" Value="{x:Bind ViewModel.Option.CostPrice, Mode=TwoWay}" />
-        <NumberBox Header="Giá bán" Value="{x:Bind ViewModel.Option.SalePrice, Mode=TwoWay}" />-->
+    <StackPanel Spacing="16" Margin="0, 16, 0, 0" Width="400">
+        <InfoBar x:Name="WarningBar" IsOpen="True" Severity="Warning" IsClosable="False" Visibility="Collapsed"/>
+        <TextBox Header="Tên" Text="{x:Bind ViewModel.Option.Name, Mode=TwoWay}"/>
+        <NumberBox x:Name="CostPriceBox" Header="Giá vốn" Value="{x:Bind ViewModel.Option.CostPrice, Mode=TwoWay}" ValueChanged="CostPriceBox_ValueChanged"/>
+        <NumberBox x:Name="SalePriceBox" Header="Giá bán" Value="{x:Bind ViewModel.Option.SalePrice, Mode=TwoWay}" ValueChanged="SalePriceBox_ValueChanged"/>
     </StackPanel>
 </ContentDialog>
