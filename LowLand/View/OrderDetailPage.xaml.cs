@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using LowLand.Model.Order;
 using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -14,7 +13,7 @@ namespace LowLand.View
     /// </summary>
     public sealed partial class OrderDetailPage : Page
     {
-        OrderViewModel ViewModel { get; set; } = new OrderViewModel();
+        OrderDetailViewModel ViewModel { get; set; } = new OrderDetailViewModel();
         public OrderDetailPage()
         {
             this.InitializeComponent();
@@ -23,46 +22,13 @@ namespace LowLand.View
         {
             base.OnNavigatedTo(e);
 
-            if (!ValidateAndLoadOrder(e.Parameter))
+            if (e.Parameter is Order order)
             {
-                Debug.WriteLine("⚠️ Không thể tải đơn hàng!");
+                ViewModel.EditorAddOrder = order;
             }
         }
 
-        private bool ValidateAndLoadOrder(object parameter)
-        {
-            if (parameter == null)
-            {
-                Debug.WriteLine("⚠️ e.Parameter is NULL!");
-                return false;
-            }
 
-            if (parameter is not int orderId)
-            {
-                Debug.WriteLine($"⚠️ Unexpected parameter type: {parameter.GetType()}");
-                return false;
-            }
-
-            Debug.WriteLine($"🔍 Loading Order ID: {orderId}");
-
-            if (ViewModel.Orders == null || !ViewModel.Orders.Any())
-            {
-                Debug.WriteLine("⚠️ ViewModel.Orders is NULL or Empty!");
-                return false;
-            }
-
-            var order = ViewModel.Orders.FirstOrDefault(c => c.Id == orderId);
-            if (order == null)
-            {
-                Debug.WriteLine("⚠️ No order found with given Id!");
-                return false;
-            }
-
-            ViewModel.EditorAddOrder = order;
-            Debug.WriteLine($"✅ Order Loaded: {order.Id}");
-
-            return true;
-        }
 
 
         private void searchButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

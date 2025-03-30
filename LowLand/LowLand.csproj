@@ -65,7 +65,7 @@
     <None Update="Assets\product_default.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Page Update="View\AddSingleProductPage.xaml">
+    <Page Update="View\AddSingleProductPage.xaml"/>
     <Page Update="View\CustomerRankDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

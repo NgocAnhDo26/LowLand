@@ -17,7 +17,7 @@ namespace LowLand.View
     /// </summary>
     public sealed partial class ProductInfoPage : Page
     {
-        //ProductInfoViewModel ViewModel = new();
+        ProductInfoViewModel ViewModel = new();
         public ProductInfoPage()
         {
             this.InitializeComponent();

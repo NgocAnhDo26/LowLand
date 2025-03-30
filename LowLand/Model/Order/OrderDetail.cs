@@ -15,7 +15,7 @@ namespace LowLand.Model.Order
         public string? ProductName { get; set; }
         public int? OptionId { get; set; }
         public string? OptionName { get; set; }
-        public ObservableCollection<ProductOption> ProductOptions { get; set; } = new ObservableCollection<ProductOption>();
+        public ObservableCollection<ProductOption>? ProductOptions { get; set; } = new ObservableCollection<ProductOption>();
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

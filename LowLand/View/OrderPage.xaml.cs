@@ -64,7 +64,7 @@ namespace LowLand.View
         {
             if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is Order selectedOrder)
             {
-                Frame.Navigate(typeof(UpdateOrderPage), selectedOrder.Id);
+                Frame.Navigate(typeof(UpdateOrderPage), selectedOrder);
             }
         }
 
@@ -75,7 +75,7 @@ namespace LowLand.View
                 if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is Order selectedOrder)
                 {
                     Debug.WriteLine(selectedOrder.Id);
-                    Frame.Navigate(typeof(OrderDetailPage), selectedOrder.Id);
+                    Frame.Navigate(typeof(OrderDetailPage), selectedOrder);
                 }
             }
             catch (Exception ex)

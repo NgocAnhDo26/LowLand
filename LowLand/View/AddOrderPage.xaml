@@ -176,8 +176,8 @@
 
             <!-- Nút hành động -->
             <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="30" Margin="20">
-                <Button x:Name="CreateOrderButton" Content="Tạo hóa đơn" Background="Green" Foreground="White" Padding="10,5" CornerRadius="5"/>
-                <Button x:Name="CancelButton" Content="Hủy" Background="Red" Foreground="White" Padding="10,5" CornerRadius="5"/>
+                <Button x:Name="CreateOrderButton" Content="Tạo hóa đơn" Background="Green" Foreground="White" Padding="10,5" CornerRadius="5" Click="CreateOrderButton_Click" />
+                <Button x:Name="CancelButton" Content="Hủy" Background="Red" Foreground="White" Padding="10,5" CornerRadius="5" Click="CancelButton_Click"/>
             </StackPanel>
         </Grid>
     </ScrollViewer>

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using LowLand.Model.Order;
 using LowLand.Model.Product;
@@ -18,25 +17,37 @@ namespace LowLand.View
     /// </summary>
     public sealed partial class AddOrderPage : Page
     {
-        public OrderViewModel ViewModel { get; set; } = new OrderViewModel();
+        public AddOrderViewModel ViewModel { get; set; } = new AddOrderViewModel();
         public AddOrderPage()
         {
             this.InitializeComponent();
         }
 
-        private void AddProductButton_Click(object sender, RoutedEventArgs e)
-        {
 
-        }
 
         private void CreateOrderButton_Click(object sender, RoutedEventArgs e)
         {
+            if (ViewModel.EditorAddOrder.Details == null || ViewModel.EditorAddOrder.Details.Count == 0)
+            {
+                ShowMessage("Vui lòng chọn sản phẩm cho đơn hàng!");
+                return;
+            }
 
+            if (ViewModel.EditorAddOrder.CustomerId == 0 || string.IsNullOrEmpty(ViewModel.EditorAddOrder.CustomerPhone))
+            {
+                ShowMessage("Vui lòng chọn khách hàng!");
+                return;
+            }
+
+            ViewModel.Add(ViewModel.EditorAddOrder);
+            ShowMessage("Cập nhật thông tin khách hàng thành công!");
+            Frame.GoBack();
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
 
+            Frame.GoBack();
         }
 
 
@@ -54,7 +65,7 @@ namespace LowLand.View
         }
 
 
-        // lay danh sach sdt-ten khach hang
+
 
 
         private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -95,7 +106,7 @@ namespace LowLand.View
 
             if (selectedCustomer != null)
             {
-                ViewModel.EditorAddOrder.CustomerId = selectedCustomer.Id; // Gán CustomerId
+                ViewModel.EditorAddOrder.CustomerId = selectedCustomer.Id;
                 ViewModel.EditorAddOrder.CustomerPhone = selectedCustomer.Phone;
                 ViewModel.EditorAddOrder.CustomerName = selectedCustomer.Name;
 
@@ -104,39 +115,28 @@ namespace LowLand.View
 
         }
 
-
-
-
-
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (sender is TextBox textBox && textBox.DataContext is OrderDetail orderDetail)
             {
                 if (int.TryParse(textBox.Text, out int quantity))
                 {
-                    // Cập nhật số lượng và giá
                     orderDetail.quantity = quantity;
                     orderDetail.Price = orderDetail.ProductPrice * quantity;
 
-                    // Ensure ProductTotalText is defined in the context
                     var productTotalText = textBox.FindName("ProductTotalText") as TextBlock;
                     if (productTotalText != null)
                     {
                         productTotalText.Text = $"{orderDetail.Price}";
                     }
 
-                    // Cập nhật tổng tiền
-                    TotalAmountValue.Text = $"{ViewModel.EditorAddOrder.Details.Sum(d => d.Price)}";
-
-                    // Debug log
-                    foreach (var detail in ViewModel.EditorAddOrder.Details)
+                    if (ViewModel.EditorAddOrder.Details != null)
                     {
-                        Debug.WriteLine($"🛒 {detail.ProductName} - {detail.quantity} - {detail.Price}");
+                        TotalAmountValue.Text = $"{ViewModel.EditorAddOrder.Details.Sum(d => d.Price)}";
                     }
                 }
             }
         }
-
 
         private void ProductGridView_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
         {
@@ -145,30 +145,49 @@ namespace LowLand.View
             if (selectedProduct != null)
             {
                 var newOrderDetail = ViewModel.CreateOrderDetail(selectedProduct);
-                ViewModel.EditorAddOrder.Details.Add(newOrderDetail);
-                Debug.WriteLine($"🛒 Added Product (DoubleTap): {selectedProduct.Name}");
+                if (ViewModel.EditorAddOrder.Details != null)
+                {
+                    ViewModel.EditorAddOrder.Details.Add(newOrderDetail);
+
+                }
             }
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is ComboBox comboBox && comboBox.DataContext is ProductOption productOption)
+            if (sender is ComboBox comboBox && comboBox.DataContext is OrderDetail orderDetail)
             {
-                // Cập nhật giá của sản phẩm dựa vào lựa chọn mới
-                productOption.Selected = comboBox.SelectedItem as string;
 
-                // Cập nhật tổng tiền vào ViewModel
-                ViewModel.EditorAddOrder.TotalPrice = ViewModel.EditorAddOrder.Details.Sum(d => d.Price);
+                var selectedOption = comboBox.SelectedItem as ProductOption;
+                if (selectedOption != null)
+                {
+                    orderDetail.OptionId = selectedOption.OptionId;
+                    orderDetail.OptionName = selectedOption.Name;
+                    orderDetail.ProductPrice = selectedOption.SalePrice;
+                    orderDetail.Price = orderDetail.ProductPrice * orderDetail.quantity;
+                }
 
-                // Cập nhật UI (nếu cần)
-                TotalAmountValue.Text = $"{ViewModel.EditorAddOrder.TotalPrice:N0}";
+
+                if (ViewModel.EditorAddOrder.Details != null)
+                {
+                    ViewModel.EditorAddOrder.TotalPrice = ViewModel.EditorAddOrder.Details.Sum(d => d.Price);
+                }
+                TotalAmountValue.Text = $"{ViewModel.EditorAddOrder.TotalPrice} VND";
             }
         }
 
 
         private void deleteButton_Click(object sender, RoutedEventArgs e)
         {
-
+            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is OrderDetail orderDetail)
+            {
+                if (orderDetail != null)
+                {
+                    ViewModel.EditorAddOrder.Details.Remove(orderDetail);
+                    ViewModel.EditorAddOrder.TotalPrice = ViewModel.EditorAddOrder.Details.Sum(d => d.Price);
+                    TotalAmountValue.Text = $"{ViewModel.EditorAddOrder.TotalPrice} VND";
+                }
+            }
         }
 
 

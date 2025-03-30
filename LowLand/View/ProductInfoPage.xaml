@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     mc:Ignorable="d">
 
-    <!--<Page.Resources>
+    <Page.Resources>
         <converter:AbsolutePathConverter x:Key="AbsolutePathConverter"/>
         <converter:CurrencyFormatter x:Key="CurrencyFormatter"/>
         <DataTemplate x:Key="ComboBoxTemplate1" x:DataType="model:Category">
@@ -55,10 +55,10 @@
                 </DropDownButton>
             </Grid>
         </DataTemplate>
-    </Page.Resources>-->
+    </Page.Resources>
 
     <Grid>
-        <!--<Grid.RowDefinitions>
+        <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
@@ -213,6 +213,6 @@
             </Grid>
 
             <ListView Grid.Row="2" x:Name="OptionListView" CornerRadius="4" Background="{StaticResource CardBackgroundFillColorDefaultBrush}"/>
-        </Grid>-->
+        </Grid>
     </Grid>
 </Page>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using LowLand.Model.Customer;
 using LowLand.Model.Order;
 using LowLand.Model.Product;
@@ -25,7 +26,7 @@ namespace LowLand.Services
 
     public abstract class BaseRepository<T>
     {
-        protected readonly string connectionString = "Host=localhost;Port=5432;Username=admin;Password=1234;Database=myshop";
+        protected readonly string connectionString = "Host=localhost;Port=5432;Username=hoangkha_ngocanhne;Password=ngocanh_hoangkhane;Database=lowland";
 
         protected List<T> ExecuteQuery(string query, Func<NpgsqlDataReader, T> mapFunction)
         {
@@ -77,6 +78,7 @@ namespace LowLand.Services
                 }
             }
         }
+
     }
 
     public class CustomerRepository : BaseRepository<Customer>, IRepository<Customer>
@@ -242,16 +244,16 @@ namespace LowLand.Services
                 CustomerStatus = reader.IsDBNull(reader.GetOrdinal("customer_id")) ? "Chưa đăng ký" : "Thành viên",
                 CustomerPhone = reader.IsDBNull(reader.GetOrdinal("customer_phone")) ? null : reader.GetString(reader.GetOrdinal("customer_phone")),
                 CustomerName = reader.IsDBNull(reader.GetOrdinal("customer_name")) ? null : reader.GetString(reader.GetOrdinal("customer_name")),
-                PromotionId = reader.GetInt32(reader.GetOrdinal("promotion_id")),
+                PromotionId = reader.IsDBNull(reader.GetOrdinal("promotion_id")) ? null : reader.GetInt32(reader.GetOrdinal("promotion_id")),
                 TotalPrice = reader.GetInt32(reader.GetOrdinal("total_price")),
                 TotalAfterDiscount = reader.GetInt32(reader.GetOrdinal("total_after_discount")),
                 Status = reader.GetString(reader.GetOrdinal("status")),
-                Date = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("date")))
+                Date = reader.GetDateTime(reader.GetOrdinal("date"))
             });
 
             foreach (var order in orders)
             {
-                order.Details = new ObservableCollection<OrderDetail> { _orderDetailRepository.GetById(order.Id.ToString()) };
+                order.Details = new ObservableCollection<OrderDetail>(_orderDetailRepository.GetByOrderId(order.Id.ToString()));
             }
 
             return orders;
@@ -273,12 +275,12 @@ namespace LowLand.Services
                 TotalPrice = reader.GetInt32(reader.GetOrdinal("total_price")),
                 TotalAfterDiscount = reader.GetInt32(reader.GetOrdinal("total_after_discount")),
                 Status = reader.GetString(reader.GetOrdinal("status")),
-                Date = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("date")))
+                Date = reader.GetDateTime(reader.GetOrdinal("date"))
             });
 
             if (order != null)
             {
-                order.Details = new ObservableCollection<OrderDetail> { _orderDetailRepository.GetById(order.Id.ToString()) };
+                order.Details = new ObservableCollection<OrderDetail>(_orderDetailRepository.GetByOrderId(order.Id.ToString()));
             }
 
             return order!;
@@ -286,44 +288,82 @@ namespace LowLand.Services
 
         public int Insert(Order info)
         {
-            var orderId = ExecuteNonQuery($"""
-        INSERT INTO "order" (customer_id, customer_phone,customer_name, promotion_id, total_price, total_after_discount, status, date)
-        VALUES ({info.CustomerId}, '{info.CustomerPhone}', '{info.CustomerName}',{info.PromotionId}, {info.TotalPrice}, {info.TotalAfterDiscount}, '{info.Status}', '{info.Date}')
-        RETURNING order_id
-    """);
+            using var conn = new NpgsqlConnection(connectionString);
+            conn.Open();
+
+            using var cmd = new NpgsqlCommand(@"
+                INSERT INTO ""order"" (customer_id, customer_phone, customer_name, promotion_id, total_price, total_after_discount, status, date)
+                VALUES (@CustomerId, @CustomerPhone, @CustomerName, @PromotionId, @TotalPrice, @TotalAfterDiscount, @Status, @Date)
+                RETURNING order_id", conn);
+
+            cmd.Parameters.AddWithValue("@CustomerId", (object?)info.CustomerId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@CustomerPhone", (object?)info.CustomerPhone ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@CustomerName", (object?)info.CustomerName ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@PromotionId", (object?)info.PromotionId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@TotalPrice", info.TotalPrice);
+            cmd.Parameters.AddWithValue("@TotalAfterDiscount", info.TotalAfterDiscount);
+            cmd.Parameters.AddWithValue("@Status", (object?)info.Status ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Date", info.Date);
+
+            var orderId = (int)cmd.ExecuteScalar();
 
             foreach (var detail in info.Details)
             {
-                _orderDetailRepository.Insert(detail);
+                _orderDetailRepository.Insert(detail, orderId);
             }
 
             return orderId;
         }
 
+
         public int UpdateById(string id, Order info)
         {
-            var rowsAffected = ExecuteNonQuery($"""
-        UPDATE "order" SET 
-            customer_id = {info.CustomerId},
-            customer_phone = '{info.CustomerPhone}',
-            customer_name = '{info.CustomerName}',
-            promotion_id = {info.PromotionId},
-            total_price = {info.TotalPrice},
-            total_after_discount = {info.TotalAfterDiscount},
-            status = '{info.Status}',
-            date = '{info.Date}'
-        WHERE order_id = '{id}'
-    """);
+            using var conn = new NpgsqlConnection(connectionString);
+            conn.Open();
 
-            ExecuteNonQuery($"""DELETE FROM order_detail WHERE order_id = '{id}'""");
+            using var cmd = new NpgsqlCommand(@"
+        UPDATE ""order"" SET 
+            customer_id = @CustomerId,
+            customer_phone = @CustomerPhone,
+            customer_name = @CustomerName,
+            promotion_id = @PromotionId,
+            total_price = @TotalPrice,
+            total_after_discount = @TotalAfterDiscount,
+            status = @Status,
+            date = @Date
+        WHERE order_id = @OrderId", conn);
+
+            cmd.Parameters.AddWithValue("@CustomerId", (object?)info.CustomerId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@CustomerPhone", (object?)info.CustomerPhone ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@CustomerName", (object?)info.CustomerName ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@PromotionId", (object?)info.PromotionId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@TotalPrice", info.TotalPrice);
+            cmd.Parameters.AddWithValue("@TotalAfterDiscount", info.TotalAfterDiscount);
+            cmd.Parameters.AddWithValue("@Status", (object?)info.Status ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Date", info.Date);
+
+
+            if (!int.TryParse(id, out int orderId))
+            {
+                throw new ArgumentException("Invalid Order ID format");
+            }
+            cmd.Parameters.AddWithValue("@OrderId", orderId);
+
+            int rowsAffected = cmd.ExecuteNonQuery();
+
+            using var deleteCmd = new NpgsqlCommand(@"DELETE FROM order_detail WHERE order_id = @OrderId", conn);
+            deleteCmd.Parameters.AddWithValue("@OrderId", orderId);
+            deleteCmd.ExecuteNonQuery();
 
             foreach (var detail in info.Details)
             {
-                _orderDetailRepository.Insert(detail);
+                _orderDetailRepository.Insert(detail, orderId);
             }
 
             return rowsAffected;
         }
+
+
     }
     public class OrderDetailRepository : BaseRepository<OrderDetail>, IRepository<OrderDetail>
     {
@@ -348,23 +388,61 @@ namespace LowLand.Services
             {
                 Id = reader.GetInt32(reader.GetOrdinal("order_detail_id")),
                 OrderId = reader.GetInt32(reader.GetOrdinal("order_id")),
-                ProductId = reader.GetInt32(reader.GetOrdinal("product_id")),
+                ProductId = reader.IsDBNull(reader.GetOrdinal("product_id")) ? null : reader.GetInt32(reader.GetOrdinal("product_id")),
                 ProductPrice = reader.GetInt32(reader.GetOrdinal("sale_price")),
                 quantity = reader.GetInt32(reader.GetOrdinal("quantity")),
                 Price = reader.GetInt32(reader.GetOrdinal("sale_price")),
                 ProductName = reader.GetString(reader.GetOrdinal("product_name")),
-                OptionId = reader.GetInt32(reader.GetOrdinal("option_id")),
-                OptionName = reader.GetString(reader.GetOrdinal("option_name"))
+                OptionId = reader.IsDBNull(reader.GetOrdinal("option_id")) ? null : reader.GetInt32(reader.GetOrdinal("option_id")),
+                OptionName = reader.IsDBNull(reader.GetOrdinal("option_name")) ? null : reader.GetString(reader.GetOrdinal("option_name"))
             })!;
         }
 
         public int Insert(OrderDetail info)
         {
-            return ExecuteNonQuery($"""
-            INSERT INTO order_detail (order_id, product_id,product_price, quantity, sale_price, product_name, option_id, option_name)
-            VALUES ({info.OrderId}, {info.ProductId}, {info.quantity}, {info.Price}, '{info.ProductName}', {info.OptionId}, '{info.OptionName}')
-        """);
+            using (var conn = new NpgsqlConnection(connectionString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand(@"
+            INSERT INTO order_detail (order_id, product_id, product_price, quantity, sale_price, product_name, option_id, option_name)
+            VALUES (@orderId, @productId, @productPrice, @quantity, @salePrice, @productName, @optionId, @optionName)", conn))
+                {
+                    cmd.Parameters.AddWithValue("@orderId", info.OrderId);
+                    cmd.Parameters.AddWithValue("@productId", info.ProductId);
+                    cmd.Parameters.AddWithValue("@productPrice", info.ProductPrice);
+                    cmd.Parameters.AddWithValue("@quantity", info.quantity);
+                    cmd.Parameters.AddWithValue("@salePrice", info.Price);
+                    cmd.Parameters.AddWithValue("@productName", info.ProductName ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@optionId", info.OptionId.HasValue ? (object)info.OptionId.Value : DBNull.Value);
+                    cmd.Parameters.AddWithValue("@optionName", string.IsNullOrEmpty(info.OptionName) ? (object)DBNull.Value : info.OptionName);
+
+                    return cmd.ExecuteNonQuery();
+                }
+            }
         }
+        public int Insert(OrderDetail info, int OrderId)
+        {
+            using (var conn = new NpgsqlConnection(connectionString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand(@"
+            INSERT INTO order_detail (order_id, product_id, product_price, quantity, sale_price, product_name, option_id, option_name)
+            VALUES (@orderId, @productId, @productPrice, @quantity, @salePrice, @productName, @optionId, @optionName)", conn))
+                {
+                    cmd.Parameters.AddWithValue("@orderId", OrderId);
+                    cmd.Parameters.AddWithValue("@productId", info.ProductId);
+                    cmd.Parameters.AddWithValue("@productPrice", info.ProductPrice);
+                    cmd.Parameters.AddWithValue("@quantity", info.quantity);
+                    cmd.Parameters.AddWithValue("@salePrice", info.Price);
+                    cmd.Parameters.AddWithValue("@productName", info.ProductName ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@optionId", info.OptionId.HasValue ? (object)info.OptionId.Value : DBNull.Value);
+                    cmd.Parameters.AddWithValue("@optionName", string.IsNullOrEmpty(info.OptionName) ? (object)DBNull.Value : info.OptionName);
+
+                    return cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
 
         public int UpdateById(string id, OrderDetail info)
         {
@@ -395,8 +473,8 @@ namespace LowLand.Services
                 quantity = reader.GetInt32(reader.GetOrdinal("quantity")),
                 Price = reader.GetInt32(reader.GetOrdinal("sale_price")),
                 ProductName = reader.GetString(reader.GetOrdinal("product_name")),
-                OptionId = reader.GetInt32(reader.GetOrdinal("option_id")),
-                OptionName = reader.GetString(reader.GetOrdinal("option_name"))
+                OptionId = reader.IsDBNull(reader.GetOrdinal("option_id")) ? null : reader.GetInt32(reader.GetOrdinal("option_id")),
+                OptionName = reader.IsDBNull(reader.GetOrdinal("option_name")) ? null : reader.GetString(reader.GetOrdinal("option_name"))
             });
 
         }
@@ -437,8 +515,11 @@ namespace LowLand.Services
         {
             return ExecuteNonQuery($"""
             INSERT INTO category (name) VALUES ('{info.Name}')
-        """);
+            """);
+
         }
+
+
 
         public int UpdateById(string id, Category info)
         {
@@ -446,6 +527,7 @@ namespace LowLand.Services
             UPDATE category SET name = '{info.Name}' WHERE category_id = '{id}'
         """);
         }
+
     }
 
     public class ProductRepository : BaseRepository<Product>, IRepository<Product>
@@ -550,12 +632,12 @@ namespace LowLand.Services
             VALUES (true, '{combo.Name}', {combo.SalePrice}, {combo.CostPrice}, '{combo.Image}')
         """);
 
-                int comboId = GetLastInsertedId();
+
                 foreach (var productId in combo.ProductIds)
                 {
                     ExecuteNonQuery($"""
                 INSERT INTO combo (product_id_combo, product_id) 
-                VALUES ({comboId}, {productId})
+                VALUES ({result}, {productId})
             """);
                 }
                 return result;
@@ -637,7 +719,7 @@ namespace LowLand.Services
 
 
     }
-    
+
     internal class ProductOptionRepository : BaseRepository<ProductOption>, IRepository<ProductOption>
     {
         public int DeleteById(string id)
