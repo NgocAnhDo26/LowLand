@@ -1,13 +1,6 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using LowLand.Model.Product;
-using LowLand.Services;
-using LowLand.Utils;
-
-namespace LowLand.View.ViewModel
+﻿namespace LowLand.View.ViewModel
 {
-    public class ProductInfoViewModel : INotifyPropertyChanged
+    public class ProductInfoViewModel //: INotifyPropertyChanged
     {
         private IDao _dao;
         private bool _isSingleProduct = true;

@@ -18,5 +18,7 @@ namespace LowLand.Services
         // Customer repositories
         IRepository<Customer> Customers { get; set; }
         IRepository<CustomerRank> CustomerRanks { get; set; }
+
+
     }
 }

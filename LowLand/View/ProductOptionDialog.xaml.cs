@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml.Controls;
@@ -24,8 +24,8 @@ namespace LowLand.View
         {
             ContentDialog infoDialog = new ContentDialog
             {
-                CloseButtonText = "OK",
-                XamlRoot = this.XamlRoot
+               CloseButtonText = "OK",
+               XamlRoot = this.XamlRoot
             };
 
             if (ViewModel.Option.OptionId == -1)
@@ -38,7 +38,7 @@ namespace LowLand.View
                     await infoDialog.ShowAsync();
                 }
 
-                return;
+               return;
             }
 
             if (!ProductInfoViewModel.UpdateProductOption(ViewModel.Option))
@@ -49,7 +49,6 @@ namespace LowLand.View
                 await infoDialog.ShowAsync();
             }
         }
-
 
         // Validate cost price
         private void CostPriceBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)

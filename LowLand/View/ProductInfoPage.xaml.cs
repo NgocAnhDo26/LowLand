@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using LowLand.Model.Product;
 using LowLand.Utils;
 using LowLand.View.ViewModel;
@@ -17,7 +17,7 @@ namespace LowLand.View
     /// </summary>
     public sealed partial class ProductInfoPage : Page
     {
-        ProductInfoViewModel ViewModel = new();
+        //ProductInfoViewModel ViewModel = new();
         public ProductInfoPage()
         {
             this.InitializeComponent();
