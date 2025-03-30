@@ -1,0 +1,23 @@
+<ContentDialog
+    x:Class="LowLand.View.ProductOptionDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LowLand.View"
+    xmlns:model="using:LowLand.Model.Product"
+    Title="Chỉnh sửa tùy chọn"
+    PrimaryButtonText="Lưu"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    CloseButtonText="Hủy"
+    DefaultButton="Primary">
+
+    <ContentDialog.Resources>
+        <Style TargetType="local:ProductOptionDialog" 
+               BasedOn="{StaticResource DefaultContentDialogStyle}"/>
+    </ContentDialog.Resources>
+
+    <StackPanel Spacing="12">
+        <!--<TextBox Header="Tên" Text="{x:Bind ViewModel.Option.Name, Mode=TwoWay}" />
+        <NumberBox Header="Giá vốn" Value="{x:Bind ViewModel.Option.CostPrice, Mode=TwoWay}" />
+        <NumberBox Header="Giá bán" Value="{x:Bind ViewModel.Option.SalePrice, Mode=TwoWay}" />-->
+    </StackPanel>
+</ContentDialog>

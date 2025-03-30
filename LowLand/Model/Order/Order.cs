@@ -1,20 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace LowLand.Model.Order
 {
     public class Order
     {
         public int Id { get; set; }
-        required public int CustomerId { get; set; }
-        required public int PromotionId { get; set; }
-        required public int TotalPrice { get; set; }
+        public int? CustomerId { get; set; }
+        public string? CustomerName { get; set; }
+        public string? CustomerPhone { get; set; }
+        public string? CustomerStatus { get; set; }
+        public int PromotionId { get; set; }
+        public int TotalPrice { get; set; }
         public int DiscountedApplied => TotalPrice - TotalAfterDiscount;
-        required public int TotalAfterDiscount { get; set; }
-        required public int Status { get; set; }
+        public int TotalAfterDiscount { get; set; }
+        public string? Status { get; set; }
+        public DateOnly Date { get; set; }
+        public ObservableCollection<OrderDetail> Details { get; set; } = new ObservableCollection<OrderDetail>();
 
     }
 }

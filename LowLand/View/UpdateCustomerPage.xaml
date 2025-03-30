@@ -14,16 +14,16 @@
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300" Spacing="10">
             <TextBox x:Name="NameBox" Header="Tên khách hàng" />
             <TextBox x:Name="PhoneBox" Header="Số điện thoại"/>
-            <TextBox x:Name="PointBox" Header="Điểm" InputScope="Number"/>
+            <TextBox x:Name="PointBox" Header="Điểm" InputScope="Number" Text="{x:Bind EditingCustomer.Point, Mode=OneWay}"  />
 
 
-            <TextBox x:Name="RankNameBox" Header="Rank Name" IsReadOnly="True"/>
+            <TextBox x:Name="RankNameBox" Header="Rank Name" IsReadOnly="True" IsEnabled="False" Text="{x:Bind EditingCustomer.Rank.Name, Mode=OneWay}"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"  >
 
-            <Button x:Name="SaveButton" Content="Lưu" Click="SaveButton_Click" Margin="0,0,30,0" />
-            <Button x:Name="CancelButton" Content="Quay lại" Click="CancelButton_Click"/>
-        </StackPanel>
+                <Button x:Name="SaveButton" Content="Lưu" Click="SaveButton_Click" Margin="0,0,30,0" />
+                <Button x:Name="CancelButton" Content="Quay lại" Click="CancelButton_Click"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Page>

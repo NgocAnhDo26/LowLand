@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LowLand.Model.Customer
 {
@@ -16,10 +12,7 @@ namespace LowLand.Model.Customer
         required public DateOnly RegistrationDate { get; set; }
 
         // Rank Details
-        required public int RankId { get; set; } = 1;
-        public string? RankName { get; set; }
-        public int? PromotionPoint { get; set; }
-        public int? DiscountPercentage { get; set; }
+        public required CustomerRank Rank { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
     }

@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 using LowLand.Model.Customer;
-using Npgsql;
 using LowLand.Model.Order;
 using LowLand.Model.Product;
+using Npgsql;
 
 namespace LowLand.Services
 {
     public class PostgreDao : IDao
     {
-      //  private readonly string connectionString = "Host=localhost;Port=5432;Username=hoangkha_ngocanhne;Password=ngocanh_hoangkhane;Database=lowland";
+        //  private readonly string connectionString = "Host=localhost;Port=5432;Username=hoangkha_ngocanhne;Password=ngocanh_hoangkhane;Database=lowland";
 
         public IRepository<Customer> Customers { get; set; } = new CustomerRepository();
         public IRepository<CustomerRank> CustomerRanks { get; set; } = new CustomerRankRepository();
@@ -20,8 +18,12 @@ namespace LowLand.Services
         public IRepository<OrderDetail> OrderDetails { get; set; } = new OrderDetailRepository();
         public IRepository<Category> Categories { get; set; } = new CategoryRepository();
         public IRepository<Product> Products { get; set; } = new ProductRepository();
-        public IRepository<ProductType> ProductTypes { get; set; } = new ProductTypeRepository();
+
+        public IRepository<ProductOption> ProductOptions { get; set; } = new ProductOptionRepository();
     }
+
+
+
     public abstract class BaseRepository<T>
     {
         protected readonly string connectionString = "Host=localhost;Port=5432;Username=hoangkha_ngocanhne;Password=ngocanh_hoangkhane;Database=lowland";
@@ -86,10 +88,13 @@ namespace LowLand.Services
                 Phone = reader.IsDBNull(reader.GetOrdinal("phone")) ? null : reader.GetString(reader.GetOrdinal("phone")),
                 Point = reader.GetInt32(reader.GetOrdinal("point")),
                 RegistrationDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("registration_date"))),
-                RankId = reader.GetInt32(reader.GetOrdinal("customer_rank_id")),
-                RankName = reader.GetString(reader.GetOrdinal("customer_rank_name")),
-                PromotionPoint = reader.IsDBNull(reader.GetOrdinal("promotion_point")) ? null : reader.GetInt32(reader.GetOrdinal("promotion_point")),
-                DiscountPercentage = reader.IsDBNull(reader.GetOrdinal("discount_percentage")) ? null : reader.GetInt32(reader.GetOrdinal("discount_percentage"))
+                Rank = reader.IsDBNull(reader.GetOrdinal("customer_rank_id")) ? null : new CustomerRank
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("customer_rank_id")),
+                    Name = reader.GetString(reader.GetOrdinal("customer_rank_name")),
+                    PromotionPoint = reader.GetInt32(reader.GetOrdinal("promotion_point")),
+                    DiscountPercentage = reader.GetInt32(reader.GetOrdinal("discount_percentage"))
+                }
             });
         }
 
@@ -108,10 +113,13 @@ namespace LowLand.Services
                 Phone = reader.IsDBNull(reader.GetOrdinal("phone")) ? null : reader.GetString(reader.GetOrdinal("phone")),
                 Point = reader.GetInt32(reader.GetOrdinal("point")),
                 RegistrationDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("registration_date"))),
-                RankId = reader.GetInt32(reader.GetOrdinal("customer_rank_id")),
-                RankName = reader.IsDBNull(reader.GetOrdinal("customer_rank_name")) ? null : reader.GetString(reader.GetOrdinal("customer_rank_name")),
-                PromotionPoint = reader.IsDBNull(reader.GetOrdinal("promotion_point")) ? null : reader.GetInt32(reader.GetOrdinal("promotion_point")),
-                DiscountPercentage = reader.IsDBNull(reader.GetOrdinal("discount_percentage")) ? null : reader.GetInt32(reader.GetOrdinal("discount_percentage"))
+                Rank = new CustomerRank
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("customer_rank_id")),
+                    Name = reader.GetString(reader.GetOrdinal("customer_rank_name")),
+                    PromotionPoint = reader.GetInt32(reader.GetOrdinal("promotion_point")),
+                    DiscountPercentage = reader.GetInt32(reader.GetOrdinal("discount_percentage"))
+                },
             })!;
         }
 
@@ -121,7 +129,7 @@ namespace LowLand.Services
              '{info.Phone}',
              {info.Point},
              '{info.RegistrationDate.ToDateTime(new TimeOnly(0, 0))}',
-             {info.RankId}
+             {info.Rank.Id}
              )
              """);
 
@@ -137,31 +145,14 @@ namespace LowLand.Services
             , phone = '{info.Phone}'
             , point = {info.Point}
             , registration_date = '{info.RegistrationDate.ToDateTime(new TimeOnly(0, 0))}'
-            , customer_rank_id = {info.RankId}
+            , customer_rank_id = {info.Rank.Id}
             WHERE customer_id = '{id}'
             """);
-
-
-            UpdateCustomerRank(id);
-
             return affectedRows;
         }
 
         // extraclass 
-        public void UpdateCustomerRank(string customerId)
-        {
-            ExecuteNonQuery($"""
-            UPDATE customer c
-            SET customer_rank_id = (
-                SELECT customer_rank_id 
-                FROM customer_rank 
-                WHERE promotion_point <= c.point 
-                ORDER BY promotion_point DESC
-                LIMIT 1
-            )
-            WHERE c.customer_id = '{customerId}'
-            """);
-        }
+
     }
 
 
@@ -182,23 +173,23 @@ namespace LowLand.Services
                 Id = reader.GetInt32(reader.GetOrdinal("customer_rank_id")),
                 Name = reader.GetString(reader.GetOrdinal("customer_rank_name")),
                 PromotionPoint = reader.GetInt32(reader.GetOrdinal("promotion_point")),
-                DiscountPercentage =  reader.GetInt32(reader.GetOrdinal("discount_percentage"))
+                DiscountPercentage = reader.GetInt32(reader.GetOrdinal("discount_percentage"))
             });
         }
 
         public CustomerRank GetById(string id)
         {
-          return ExecuteSingleQuery($"""
+            return ExecuteSingleQuery($"""
               SELECT customer_rank_id, customer_rank_name, promotion_point, discount_percentage 
               FROM customer_rank 
               WHERE customer_rank_id = '{id}'
               """, reader => new CustomerRank
-          {
-              Id = reader.GetInt32(reader.GetOrdinal("customer_rank_id")),
-              Name = reader.GetString(reader.GetOrdinal("customer_rank_name")),
-              PromotionPoint =  reader.GetInt32(reader.GetOrdinal("promotion_point")),
-              DiscountPercentage =reader.GetInt32(reader.GetOrdinal("discount_percentage"))
-          })!;
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("customer_rank_id")),
+                Name = reader.GetString(reader.GetOrdinal("customer_rank_name")),
+                PromotionPoint = reader.GetInt32(reader.GetOrdinal("promotion_point")),
+                DiscountPercentage = reader.GetInt32(reader.GetOrdinal("discount_percentage"))
+            })!;
 
         }
 
@@ -206,7 +197,7 @@ namespace LowLand.Services
             INSERT INTO customer_rank (customer_rank_name, promotion_point, discount_percentage) 
             VALUES (
             '{info.Name}'
-            , {info.PromotionPoint }
+            , {info.PromotionPoint}
             , {info.DiscountPercentage})
             """);
 
@@ -225,52 +216,183 @@ namespace LowLand.Services
 
     public class OrderRepository : BaseRepository<Order>, IRepository<Order>
     {
+        private readonly OrderDetailRepository _orderDetailRepository = new OrderDetailRepository();
         public int DeleteById(string id)
         {
-            throw new NotImplementedException();
+            return ExecuteNonQuery($"""
+            DELETE FROM "order" WHERE order_id = '{id}'
+        """);
         }
 
         public List<Order> GetAll()
         {
-            throw new NotImplementedException();
+            var orders = ExecuteQuery($"""
+        SELECT order_id, customer_id, customer_phone, total_after_discount, total_price, status, promotion_id, date,customer_name
+        FROM "order"
+    """, reader => new Order
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("order_id")),
+                CustomerId = reader.IsDBNull(reader.GetOrdinal("customer_id")) ? null : reader.GetInt32(reader.GetOrdinal("customer_id")),
+                CustomerStatus = reader.IsDBNull(reader.GetOrdinal("customer_id")) ? "Chưa đăng ký" : "Thành viên",
+                CustomerPhone = reader.IsDBNull(reader.GetOrdinal("customer_phone")) ? null : reader.GetString(reader.GetOrdinal("customer_phone")),
+                CustomerName = reader.IsDBNull(reader.GetOrdinal("customer_name")) ? null : reader.GetString(reader.GetOrdinal("customer_name")),
+                PromotionId = reader.GetInt32(reader.GetOrdinal("promotion_id")),
+                TotalPrice = reader.GetInt32(reader.GetOrdinal("total_price")),
+                TotalAfterDiscount = reader.GetInt32(reader.GetOrdinal("total_after_discount")),
+                Status = reader.GetString(reader.GetOrdinal("status")),
+                Date = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("date")))
+            });
+
+            foreach (var order in orders)
+            {
+                order.Details = new ObservableCollection<OrderDetail> { _orderDetailRepository.GetById(order.Id.ToString()) };
+            }
+
+            return orders;
         }
 
         public Order GetById(string id)
         {
-            throw new NotImplementedException();
+            var order = ExecuteSingleQuery($"""
+        SELECT order_id, customer_id, customer_phone, total_after_discount, total_price, status, promotion_id, date,customer_name
+        FROM "order" WHERE order_id = '{id}'
+    """, reader => new Order
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("order_id")),
+                CustomerId = reader.IsDBNull(reader.GetOrdinal("customer_id")) ? null : reader.GetInt32(reader.GetOrdinal("customer_id")),
+                CustomerStatus = reader.IsDBNull(reader.GetOrdinal("customer_id")) ? "Chưa đăng ký" : "Thành viên",
+                CustomerPhone = reader.IsDBNull(reader.GetOrdinal("customer_phone")) ? null : reader.GetString(reader.GetOrdinal("customer_phone")),
+                CustomerName = reader.IsDBNull(reader.GetOrdinal("customer_name")) ? null : reader.GetString(reader.GetOrdinal("customer_name")),
+                PromotionId = reader.GetInt32(reader.GetOrdinal("promotion_id")),
+                TotalPrice = reader.GetInt32(reader.GetOrdinal("total_price")),
+                TotalAfterDiscount = reader.GetInt32(reader.GetOrdinal("total_after_discount")),
+                Status = reader.GetString(reader.GetOrdinal("status")),
+                Date = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("date")))
+            });
+
+            if (order != null)
+            {
+                order.Details = new ObservableCollection<OrderDetail> { _orderDetailRepository.GetById(order.Id.ToString()) };
+            }
+
+            return order!;
         }
 
         public int Insert(Order info)
         {
-            throw new NotImplementedException();
+            var orderId = ExecuteNonQuery($"""
+        INSERT INTO "order" (customer_id, customer_phone,customer_name, promotion_id, total_price, total_after_discount, status, date)
+        VALUES ({info.CustomerId}, '{info.CustomerPhone}', '{info.CustomerName}',{info.PromotionId}, {info.TotalPrice}, {info.TotalAfterDiscount}, '{info.Status}', '{info.Date}')
+        RETURNING order_id
+    """);
+
+            foreach (var detail in info.Details)
+            {
+                _orderDetailRepository.Insert(detail);
+            }
+
+            return orderId;
         }
 
         public int UpdateById(string id, Order info)
         {
-            throw new NotImplementedException();
+            var rowsAffected = ExecuteNonQuery($"""
+        UPDATE "order" SET 
+            customer_id = {info.CustomerId},
+            customer_phone = '{info.CustomerPhone}',
+            customer_name = '{info.CustomerName}',
+            promotion_id = {info.PromotionId},
+            total_price = {info.TotalPrice},
+            total_after_discount = {info.TotalAfterDiscount},
+            status = '{info.Status}',
+            date = '{info.Date}'
+        WHERE order_id = '{id}'
+    """);
+
+            ExecuteNonQuery($"""DELETE FROM order_detail WHERE order_id = '{id}'""");
+
+            foreach (var detail in info.Details)
+            {
+                _orderDetailRepository.Insert(detail);
+            }
+
+            return rowsAffected;
         }
     }
     public class OrderDetailRepository : BaseRepository<OrderDetail>, IRepository<OrderDetail>
     {
         public int DeleteById(string id)
         {
-            throw new NotImplementedException();
+            return ExecuteNonQuery($"""
+            DELETE FROM order_detail WHERE order_detail_id = '{id}'
+        """);
         }
+
         public List<OrderDetail> GetAll()
         {
             throw new NotImplementedException();
         }
+
         public OrderDetail GetById(string id)
         {
-            throw new NotImplementedException();
+            return ExecuteSingleQuery($"""
+            SELECT order_detail_id, order_id, product_id, quantity, sale_price, product_name, option_id, option_name
+            FROM order_detail WHERE order_detail_id = '{id}'
+        """, reader => new OrderDetail
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("order_detail_id")),
+                OrderId = reader.GetInt32(reader.GetOrdinal("order_id")),
+                ProductId = reader.GetInt32(reader.GetOrdinal("product_id")),
+                ProductPrice = reader.GetInt32(reader.GetOrdinal("sale_price")),
+                quantity = reader.GetInt32(reader.GetOrdinal("quantity")),
+                Price = reader.GetInt32(reader.GetOrdinal("sale_price")),
+                ProductName = reader.GetString(reader.GetOrdinal("product_name")),
+                OptionId = reader.GetInt32(reader.GetOrdinal("option_id")),
+                OptionName = reader.GetString(reader.GetOrdinal("option_name"))
+            })!;
         }
+
         public int Insert(OrderDetail info)
         {
-            throw new NotImplementedException();
+            return ExecuteNonQuery($"""
+            INSERT INTO order_detail (order_id, product_id,product_price, quantity, sale_price, product_name, option_id, option_name)
+            VALUES ({info.OrderId}, {info.ProductId}, {info.quantity}, {info.Price}, '{info.ProductName}', {info.OptionId}, '{info.OptionName}')
+        """);
         }
+
         public int UpdateById(string id, OrderDetail info)
         {
-            throw new NotImplementedException();
+            return ExecuteNonQuery($"""
+            UPDATE order_detail SET 
+                order_id = {info.OrderId},
+                product_id = {info.ProductId},
+                product_price = {info.ProductPrice},
+                quantity = {info.quantity},
+                sale_price = {info.Price},
+                product_name = '{info.ProductName}',
+                option_id = {info.OptionId},
+                option_name = '{info.OptionName}'
+            WHERE order_detail_id = '{id}'
+        """);
+        }
+        public List<OrderDetail> GetByOrderId(string id)
+        {
+            return ExecuteQuery($"""
+            SELECT order_detail_id, order_id, product_id,product_price, quantity, sale_price, product_name, option_id, option_name
+            FROM order_detail WHERE order_id = '{id}'
+            """, reader => new OrderDetail
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("order_detail_id")),
+                OrderId = reader.GetInt32(reader.GetOrdinal("order_id")),
+                ProductId = reader.GetInt32(reader.GetOrdinal("product_id")),
+                ProductPrice = reader.GetInt32(reader.GetOrdinal("product_price")),
+                quantity = reader.GetInt32(reader.GetOrdinal("quantity")),
+                Price = reader.GetInt32(reader.GetOrdinal("sale_price")),
+                ProductName = reader.GetString(reader.GetOrdinal("product_name")),
+                OptionId = reader.GetInt32(reader.GetOrdinal("option_id")),
+                OptionName = reader.GetString(reader.GetOrdinal("option_name"))
+            });
+
         }
     }
 
@@ -278,23 +400,45 @@ namespace LowLand.Services
     {
         public int DeleteById(string id)
         {
-            throw new NotImplementedException();
+            return ExecuteNonQuery($"""
+            DELETE FROM category WHERE category_id = '{id}'
+        """);
         }
+
         public List<Category> GetAll()
         {
-            throw new NotImplementedException();
+            return ExecuteQuery($"""
+            SELECT category_id, name FROM category
+        """, reader => new Category
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("category_id")),
+                Name = reader.GetString(reader.GetOrdinal("name"))
+            });
         }
-        public Category GetById(string id)
+
+        public Category? GetById(string id)
         {
-            throw new NotImplementedException();
+            return ExecuteSingleQuery($"""
+            SELECT category_id, name FROM category WHERE category_id = '{id}'
+        """, reader => new Category
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("category_id")),
+                Name = reader.GetString(reader.GetOrdinal("name"))
+            });
         }
+
         public int Insert(Category info)
         {
-            throw new NotImplementedException();
+            return ExecuteNonQuery($"""
+            INSERT INTO category (name) VALUES ('{info.Name}')
+        """);
         }
+
         public int UpdateById(string id, Category info)
         {
-            throw new NotImplementedException();
+            return ExecuteNonQuery($"""
+            UPDATE category SET name = '{info.Name}' WHERE category_id = '{id}'
+        """);
         }
     }
 
@@ -302,48 +446,255 @@ namespace LowLand.Services
     {
         public int DeleteById(string id)
         {
-            throw new NotImplementedException();
+            return ExecuteNonQuery($"""
+                DELETE FROM product WHERE product_id = '{id}'
+            """);
         }
+
         public List<Product> GetAll()
         {
-            throw new NotImplementedException();
+            return ExecuteQuery("""
+                SELECT p.product_id, p.name, p.sale_price, p.cost_price, p.image, p.is_combo, 
+                       c.category_id, c.name AS category_name
+                      
+                FROM product p
+                LEFT JOIN category c ON p.category_id = c.category_id
+            """, reader =>
+            {
+                bool isCombo = reader.GetBoolean(reader.GetOrdinal("is_combo"));
+                return isCombo
+                    ? new ComboProduct
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("product_id")),
+                        Name = reader.GetString(reader.GetOrdinal("name")),
+                        SalePrice = reader.GetInt32(reader.GetOrdinal("sale_price")),
+                        CostPrice = reader.GetInt32(reader.GetOrdinal("cost_price")),
+                        Image = reader.GetString(reader.GetOrdinal("image")),
+                        ProductIds = GetComboProductItems(reader.GetInt32(reader.GetOrdinal("product_id")))
+                    }
+                    : new SingleProduct
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("product_id")),
+                        Name = reader.GetString(reader.GetOrdinal("name")),
+                        SalePrice = reader.GetInt32(reader.GetOrdinal("sale_price")),
+                        CostPrice = reader.GetInt32(reader.GetOrdinal("cost_price")),
+                        Image = reader.GetString(reader.GetOrdinal("image")),
+                        Category = new Category
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("category_id")),
+                            Name = reader.GetString(reader.GetOrdinal("category_name"))
+                        },
+
+                    };
+            });
         }
-        public Product GetById(string id)
+
+        public Product? GetById(string id)
         {
-            throw new NotImplementedException();
+            return ExecuteSingleQuery($"""
+                SELECT p.product_id, p.name, p.sale_price, p.cost_price, p.image, p.is_combo, 
+                       c.category_id, c.name AS category_name, 
+                  
+                FROM product p
+
+                LEFT JOIN category c ON p.category_id = c.category_id
+                WHERE p.product_id = '{id}'
+            """, reader =>
+            {
+                bool isCombo = reader.GetBoolean(reader.GetOrdinal("is_combo"));
+                return isCombo
+                    ? new ComboProduct
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("product_id")),
+                        Name = reader.GetString(reader.GetOrdinal("name")),
+                        SalePrice = reader.GetInt32(reader.GetOrdinal("sale_price")),
+                        CostPrice = reader.GetInt32(reader.GetOrdinal("cost_price")),
+                        Image = reader.GetString(reader.GetOrdinal("image")),
+                        ProductIds = GetComboProductItems(reader.GetInt32(reader.GetOrdinal("product_id")))
+                    }
+                    : new SingleProduct
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("product_id")),
+                        Name = reader.GetString(reader.GetOrdinal("name")),
+                        SalePrice = reader.GetInt32(reader.GetOrdinal("sale_price")),
+                        CostPrice = reader.GetInt32(reader.GetOrdinal("cost_price")),
+                        Image = reader.GetString(reader.GetOrdinal("image")),
+                        Category = new Category
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("category_id")),
+                            Name = reader.GetString(reader.GetOrdinal("category_name"))
+                        },
+                    };
+
+            });
         }
+
         public int Insert(Product info)
         {
-            throw new NotImplementedException();
+            if (info is SingleProduct single)
+            {
+                return ExecuteNonQuery($"""
+            INSERT INTO product (is_combo, name, sale_price, cost_price, image,category_id) 
+            VALUES (false, '{single.Name}', {single.SalePrice}, {single.CostPrice}, '{single.Image}', {single.Category.Id})
+        """);
+            }
+            else if (info is ComboProduct combo)
+            {
+                int result = ExecuteNonQuery($"""
+            INSERT INTO product (is_combo, name, sale_price, cost_price, image) 
+            VALUES (true, '{combo.Name}', {combo.SalePrice}, {combo.CostPrice}, '{combo.Image}')
+        """);
+
+                int comboId = GetLastInsertedId();
+                foreach (var productId in combo.ProductIds)
+                {
+                    ExecuteNonQuery($"""
+                INSERT INTO combo (product_id_combo, product_id) 
+                VALUES ({comboId}, {productId})
+            """);
+                }
+                return result;
+            }
+            return 0;
         }
+
         public int UpdateById(string id, Product info)
         {
-            throw new NotImplementedException();
+            if (info is SingleProduct single)
+            {
+                return ExecuteNonQuery($"""
+            UPDATE product 
+            SET name = '{single.Name}', 
+                sale_price = {single.SalePrice}, 
+                cost_price = {single.CostPrice}, 
+                image = '{single.Image}',
+              
+                category_id = {single.Category.Id}
+            WHERE product_id = '{id}'
+        """);
+            }
+            else if (info is ComboProduct combo)
+            {
+                int result = ExecuteNonQuery($"""
+            UPDATE product 
+            SET name = '{combo.Name}', 
+                sale_price = {combo.SalePrice}, 
+                cost_price = {combo.CostPrice}, 
+                image = '{combo.Image}', 
+                is_combo = true
+            WHERE product_id = '{id}'
+        """);
+
+                ExecuteNonQuery($"""
+            DELETE FROM combo WHERE product_id_combo = '{id}'
+        """);
+                foreach (var productId in combo.ProductIds)
+                {
+                    ExecuteNonQuery($"""
+                INSERT INTO combo (product_id_combo, product_id) 
+                VALUES ({id}, {productId})
+            """);
+                }
+                return result;
+            }
+            return 0;
         }
+        private List<int> GetComboProductItems(int comboId)
+        {
+            var results = new List<int>();
+            using (var conn = new NpgsqlConnection(connectionString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand($"""
+        SELECT product_id FROM combo WHERE product_id_combo = {comboId}
+        """, conn))
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        results.Add(reader.GetInt32(reader.GetOrdinal("product_id")));
+                    }
+                }
+            }
+            return results;
+        }
+        private int GetLastInsertedId()
+        {
+            using (var conn = new NpgsqlConnection(connectionString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand("SELECT LAST_INSERT_ID()", conn))
+                using (var reader = cmd.ExecuteReader())
+                {
+                    return reader.Read() ? reader.GetInt32(0) : 0;
+                }
+            }
+        }
+
+
     }
-
-
-    public class ProductTypeRepository : BaseRepository<ProductType>, IRepository<ProductType>
+    internal class ProductOptionRepository : BaseRepository<ProductOption>, IRepository<ProductOption>
     {
         public int DeleteById(string id)
         {
-            throw new NotImplementedException();
+            return ExecuteNonQuery($"""
+                DELETE FROM option WHERE option_id = '{id}'
+            """);
         }
-        public List<ProductType> GetAll()
+
+        public List<ProductOption> GetAll()
         {
-            throw new NotImplementedException();
+
+            return ExecuteQuery("""
+                SELECT option_id, product_id, name, cost_price, sale_price   
+                FROM option 
+            """, reader => new ProductOption
+            {
+                OptionId = reader.GetInt32(reader.GetOrdinal("option_id")),
+                ProductId = reader.GetInt32(reader.GetOrdinal("product_id")),
+                Name = reader.GetString(reader.GetOrdinal("name")),
+                CostPrice = reader.GetInt32(reader.GetOrdinal("cost_price")),
+                SalePrice = reader.GetInt32(reader.GetOrdinal("sale_price"))
+            });
         }
-        public ProductType GetById(string id)
+
+        public ProductOption GetById(string id)
         {
-            throw new NotImplementedException();
+            return ExecuteSingleQuery($"""
+                SELECT option_id, product_id, name, cost_price, sale_price
+                  
+                FROM option WHERE option_id = '{id}'
+
+            """, reader => new ProductOption
+            {
+                OptionId = reader.GetInt32(reader.GetOrdinal("option_id")),
+                ProductId = reader.GetInt32(reader.GetOrdinal("product_id")),
+                Name = reader.GetString(reader.GetOrdinal("name")),
+                CostPrice = reader.GetInt32(reader.GetOrdinal("cost_price")),
+                SalePrice = reader.GetInt32(reader.GetOrdinal("sale_price"))
+            })!;
         }
-        public int Insert(ProductType info)
+
+        public int Insert(ProductOption info)
         {
-            throw new NotImplementedException();
+            return ExecuteNonQuery($"""
+            INSERT INTO option (product_id, name, cost_price, sale_price)
+            VALUES ({info.ProductId}, '{info.Name}', {info.CostPrice}, {info.SalePrice})
+            """);
+
         }
-        public int UpdateById(string id, ProductType info)
+
+        public int UpdateById(string id, ProductOption info)
         {
-            throw new NotImplementedException();
+            return ExecuteNonQuery($"""
+            UPDATE option SET 
+                product_id = {info.ProductId},
+                name = '{info.Name}',
+                cost_price = {info.CostPrice},
+                sale_price = {info.SalePrice}
+            WHERE option_id = '{id}'
+            """);
         }
     }
+
 }

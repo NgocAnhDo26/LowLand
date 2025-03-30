@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
@@ -16,10 +16,19 @@
     <Content Remove="Assets\product_default.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="View\AddOrderPage.xaml" />
+    <None Remove="View\CategoriesPage.xaml" />
+    <None Remove="View\CustomerRankDialog.xaml" />
+    <None Remove="View\CustomerRankPage.xaml" />
     <None Remove="View\DashboardPage.xaml" />
     <None Remove="View\DashboardWindow.xaml" />
     <None Remove="View\LoginWindow.xaml" />
+    <None Remove="View\OrderDetailPage.xaml" />
+    <None Remove="View\OrderPage.xaml" />
+    <None Remove="View\ProductInfoPage.xaml" />
+    <None Remove="View\ProductOptionDialog.xaml" />
     <None Remove="View\ProductsPage.xaml" />
+    <None Remove="View\UpdateOrderPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,15 +61,37 @@
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.0-preview.2.25163.2" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="View\Converter\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Update="Assets\product_default.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
+    <Page Update="View\CustomerRankDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\CustomerRankPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\OrderDetailPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\UpdateOrderPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\AddOrderPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\OrderPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\ProductOptionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\CategoriesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="View\ProductsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\ProductInfoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -95,5 +126,6 @@
     <PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
     <PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
     <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 </Project>

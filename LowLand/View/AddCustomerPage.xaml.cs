@@ -1,19 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using LowLand.Model.Customer;
 using LowLand.View.ViewModel;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,8 +22,8 @@ namespace LowLand.View
             customerVM = new CustomerViewModel();
         }
 
-      
-       
+
+
 
         private async void ShowMessage(string message)
         {
@@ -58,13 +47,25 @@ namespace LowLand.View
                 ShowMessage("Tên không được để trống!");
                 return;
             }
-
+            // check format phone 10 or 11 number @"(\d{4,5})(\d{3})(\d{3})",
+            if (!System.Text.RegularExpressions.Regex.IsMatch(phone, @"^0\d{9,10}$"))
+            {
+                ShowMessage("Số điện thoại không hợp lệ!");
+                return;
+            }
             var newCustomer = new Customer
             {
+
                 Name = name,
                 Phone = phone,
                 RegistrationDate = DateOnly.FromDateTime(DateTime.Today),
-                RankId = 1,
+                Rank = new CustomerRank
+                {
+                    Id = 1,
+                    Name = "",
+                    DiscountPercentage = 0,
+                    PromotionPoint = 0
+                },
                 Point = 0
 
             };
@@ -81,3 +82,4 @@ namespace LowLand.View
         }
     }
 }
+
