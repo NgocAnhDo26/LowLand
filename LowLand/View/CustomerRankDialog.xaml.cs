@@ -54,11 +54,11 @@ namespace LowLand.View
             if (ViewModel.updateMode == false)
             {
                 // check cac box
-                if (string.IsNullOrWhiteSpace(ViewModel.EditorAddCustomerRank.Name) ||
-                    ViewModel.EditorAddCustomerRank.PromotionPoint <= 0 ||
-                    ViewModel.EditorAddCustomerRank.DiscountPercentage < 0)
+                if (string.IsNullOrWhiteSpace(ViewModel.EditorAddCustomerRank.Name))
+
+
                 {
-                    errorTextBlock.Text = "Vui lòng điền đầy đủ thông tin và đảm bảo số điểm hoặc giảm giá hợp lệ.";
+                    errorTextBlock.Content = "Vui lòng điền đầy đủ thông tin ";
                     errorTextBlock.Visibility = Visibility.Visible;
                     args.Cancel = true;
                     return;
@@ -66,7 +66,14 @@ namespace LowLand.View
 
                 if (ViewModel.EditorAddCustomerRank.PromotionPoint <= 0)
                 {
-                    errorTextBlock.Text = "Số điểm cần thiết phải lớn hơn 0.";
+                    errorTextBlock.Content = "Số điểm cần thiết phải lớn hơn 0.";
+                    errorTextBlock.Visibility = Visibility.Visible;
+                    args.Cancel = true;
+                    return;
+                }
+                if (ViewModel.EditorAddCustomerRank.DiscountPercentage <= 0)
+                {
+                    errorTextBlock.Content = "Tỉ lệ giảm giá phải lớn hơn 0.";
                     errorTextBlock.Visibility = Visibility.Visible;
                     args.Cancel = true;
                     return;
@@ -74,7 +81,7 @@ namespace LowLand.View
 
                 if (ViewModel.CustomerRanks.ToList().Any(c => c.PromotionPoint == ViewModel.EditorAddCustomerRank.PromotionPoint))
                 {
-                    errorTextBlock.Text = "Số điểm này đã tồn tại.";
+                    errorTextBlock.Content = "Số điểm này đã tồn tại.";
                     errorTextBlock.Visibility = Visibility.Visible;
                     args.Cancel = true;
                     return;
@@ -89,6 +96,38 @@ namespace LowLand.View
             }
             else
             {
+                if (string.IsNullOrWhiteSpace(ViewModel.EditorAddCustomerRank.Name))
+
+
+                {
+                    errorTextBlock.Content = "Vui lòng điền đầy đủ thông tin ";
+                    errorTextBlock.Visibility = Visibility.Visible;
+                    args.Cancel = true;
+                    return;
+                }
+
+                if (ViewModel.EditorAddCustomerRank.PromotionPoint <= 0)
+                {
+                    errorTextBlock.Content = "Số điểm cần thiết phải lớn hơn 0.";
+                    errorTextBlock.Visibility = Visibility.Visible;
+                    args.Cancel = true;
+                    return;
+                }
+                if (ViewModel.EditorAddCustomerRank.DiscountPercentage <= 0)
+                {
+                    errorTextBlock.Content = "Tỉ lệ giảm giá phải lớn hơn 0.";
+                    errorTextBlock.Visibility = Visibility.Visible;
+                    args.Cancel = true;
+                    return;
+                }
+
+                if (ViewModel.CustomerRanks.ToList().Any(c => c.PromotionPoint == ViewModel.EditorAddCustomerRank.PromotionPoint))
+                {
+                    errorTextBlock.Content = "Số điểm này đã tồn tại.";
+                    errorTextBlock.Visibility = Visibility.Visible;
+                    args.Cancel = true;
+                    return;
+                }
                 ViewModel.Update(ViewModel.EditorAddCustomerRank);
                 ViewModel.EditorAddCustomerRank = new CustomerRank
                 {

@@ -578,9 +578,10 @@ namespace LowLand.Services
 
         public Product? GetById(string id)
         {
+
             return ExecuteSingleQuery($"""
                 SELECT p.product_id, p.name, p.sale_price, p.cost_price, p.image, p.is_combo, 
-                       c.category_id, c.name AS category_name, 
+                       c.category_id, c.name AS category_name
                   
                 FROM product p
 

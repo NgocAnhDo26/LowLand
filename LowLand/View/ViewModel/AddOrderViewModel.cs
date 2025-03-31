@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using LowLand.Model.Customer;
 using LowLand.Model.Order;
@@ -27,6 +28,7 @@ namespace LowLand.View.ViewModel
                 Details = new ObservableCollection<OrderDetail>()
 
             };
+
             ProductOptions = new ObservableCollection<ProductOption>(_dao.ProductOptions.GetAll());
             Customers = new ObservableCollection<Customer>(_dao.Customers.GetAll());
             Products = new ObservableCollection<Product>(_dao.Products.GetAll());
@@ -55,6 +57,7 @@ namespace LowLand.View.ViewModel
             item.Status = "Pending";
             //   if (item.PromotionId == null)
             //  {
+            Debug.WriteLine("item.Total: " + item.TotalPrice, item.TotalAfterDiscount);
             item.TotalAfterDiscount = item.TotalPrice;
             //   }
 

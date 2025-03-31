@@ -17,8 +17,8 @@
                BasedOn="{StaticResource DefaultContentDialogStyle}"/>
     </ContentDialog.Resources>
 
-    <StackPanel Spacing="12">
-        <TextBlock x:Name="errorTextBlock" Foreground="Red" Visibility="Collapsed"/>
+    <StackPanel Spacing="12" Width="400">
+        <InfoBar x:Name="errorTextBlock" IsOpen="True" Severity="Warning" IsClosable="False" Visibility="Collapsed"/>
         <TextBox  x:Name="nameTextBox" Header="Tên Rank" Text="{x:Bind ViewModel.EditorAddCustomerRank.Name, Mode=TwoWay}" />
         <NumberBox x:Name="promotionPointTextBox" Header="Số điểm cần thiết" Value="{x:Bind ViewModel.EditorAddCustomerRank.PromotionPoint, Mode=TwoWay}" />
         <NumberBox x:Name="discountPercentageTextBox" Header="Được giảm " Value="{x:Bind ViewModel.EditorAddCustomerRank.DiscountPercentage, Mode=TwoWay}" />

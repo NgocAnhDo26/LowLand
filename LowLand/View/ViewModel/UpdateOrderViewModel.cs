@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using LowLand.Model.Customer;
 using LowLand.Model.Order;
@@ -21,17 +22,33 @@ namespace LowLand.View.ViewModel
         {
             _dao = Services.Services.GetKeyedSingleton<IDao>();
             Orders = new ObservableCollection<Order>(_dao.Orders.GetAll());
+
             EditorAddOrder = new Order
             {
-
                 Details = new ObservableCollection<OrderDetail>()
-
             };
+
             ProductOptions = new ObservableCollection<ProductOption>(_dao.ProductOptions.GetAll());
             Customers = new ObservableCollection<Customer>(_dao.Customers.GetAll());
             Products = new ObservableCollection<Product>(_dao.Products.GetAll());
 
         }
+        public void AddOptionToOrderDetail(Order order)
+        {
+
+            if (order.Details == null) return;
+            foreach (var detail in order.Details)
+            {
+                Debug.WriteLine("detail.ProductId: " + detail.ProductId);
+                if (detail.ProductId != null)
+                {
+                    detail.ProductOptions = new ObservableCollection<ProductOption>(
+                        ProductOptions.Where(po => po.ProductId == detail.ProductId)
+                    );
+                }
+            }
+        }
+
         public OrderDetail CreateOrderDetail(Product selectedProduct)
         {
             if (selectedProduct == null) return null;
@@ -91,10 +108,11 @@ namespace LowLand.View.ViewModel
         }
         public void Update(Order item)
         {
-            if (item.PromotionId == null)
-            {
-                item.TotalAfterDiscount = item.TotalPrice;
-            }
+            // if (item.PromotionId == null)
+            //
+            //{
+            item.TotalAfterDiscount = item.TotalPrice;
+            // }
             var orderToUpdate = Orders.FirstOrDefault(o => o.Id == item.Id);
             if (orderToUpdate != null)
             {

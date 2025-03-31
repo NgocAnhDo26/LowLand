@@ -32,13 +32,6 @@ namespace LowLand.View
                 ShowMessage("Vui lòng chọn sản phẩm cho đơn hàng!");
                 return;
             }
-
-            if (ViewModel.EditorAddOrder.CustomerId == 0 || string.IsNullOrEmpty(ViewModel.EditorAddOrder.CustomerPhone))
-            {
-                ShowMessage("Vui lòng chọn khách hàng!");
-                return;
-            }
-
             ViewModel.Add(ViewModel.EditorAddOrder);
             ShowMessage("Cập nhật thông tin khách hàng thành công!");
             Frame.GoBack();
@@ -127,12 +120,13 @@ namespace LowLand.View
                     var productTotalText = textBox.FindName("ProductTotalText") as TextBlock;
                     if (productTotalText != null)
                     {
-                        productTotalText.Text = $"{orderDetail.Price}";
+                        ViewModel.EditorAddOrder.TotalPrice = orderDetail.Price;
+
                     }
 
                     if (ViewModel.EditorAddOrder.Details != null)
                     {
-                        TotalAmountValue.Text = $"{ViewModel.EditorAddOrder.Details.Sum(d => d.Price)}";
+                        ViewModel.EditorAddOrder.TotalPrice = ViewModel.EditorAddOrder.Details.Sum(d => d.Price);
                     }
                 }
             }
@@ -148,6 +142,9 @@ namespace LowLand.View
                 if (ViewModel.EditorAddOrder.Details != null)
                 {
                     ViewModel.EditorAddOrder.Details.Add(newOrderDetail);
+                    ViewModel.EditorAddOrder.TotalPrice = ViewModel.EditorAddOrder.Details.Sum(d => d.Price);
+
+
 
                 }
             }
@@ -172,7 +169,7 @@ namespace LowLand.View
                 {
                     ViewModel.EditorAddOrder.TotalPrice = ViewModel.EditorAddOrder.Details.Sum(d => d.Price);
                 }
-                TotalAmountValue.Text = $"{ViewModel.EditorAddOrder.TotalPrice} VND";
+
             }
         }
 
@@ -185,7 +182,7 @@ namespace LowLand.View
                 {
                     ViewModel.EditorAddOrder.Details.Remove(orderDetail);
                     ViewModel.EditorAddOrder.TotalPrice = ViewModel.EditorAddOrder.Details.Sum(d => d.Price);
-                    TotalAmountValue.Text = $"{ViewModel.EditorAddOrder.TotalPrice} VND";
+
                 }
             }
         }

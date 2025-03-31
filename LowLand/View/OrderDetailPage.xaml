@@ -35,7 +35,7 @@
 
                 <TextBlock Text="Khách hàng:" Grid.Row="1" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,10"/>
                 <TextBlock Text="{x:Bind ViewModel.EditorAddOrder.CustomerName}" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,10"/>
-                <TextBlock Text="Trạng thái khách hàng:" Grid.Row="2" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,10"/>
+                <TextBlock Text="Loại khách hàng:" Grid.Row="2" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,10"/>
                 <TextBlock Text="{x:Bind ViewModel.EditorAddOrder.CustomerStatus}" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,10"/>
 
                 <TextBlock Text="Số điện thoại:" Grid.Row="3" Grid.Column="0" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,10"/>

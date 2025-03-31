@@ -27,6 +27,7 @@ namespace LowLand.View
             if (e.Parameter is Order order)
             {
                 ViewModel.EditorAddOrder = order;
+                ViewModel.AddOptionToOrderDetail(ViewModel.EditorAddOrder);
             }
         }
 
