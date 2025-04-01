@@ -20,12 +20,23 @@
                         </NavigationViewItem>
                         <NavigationViewItem Icon="Tag" Content="Danh mục sản phẩm" Tag="CategoriesPage"/>
                         <NavigationViewItem Icon="People" Content="Khách hàng" Tag="CustomerPage"/>
-                        <NavigationViewItem Icon="Refresh" Content="Danh sách hạng khách hàng" Tag="CustomerRankPage"/>
+                        <NavigationViewItem Content="Hạng thành viên" Tag="CustomerRankPage">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xE728;"/>
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
-                <NavigationViewItem Icon="Shop" Content="Dữ liệu liên quan" IsExpanded="True">
+                <NavigationViewItem Content="Dữ liệu phát sinh theo thời gian" IsExpanded="True">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xECC5;"/>
+                    </NavigationViewItem.Icon>
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Icon="Refresh" Content="Lịch sử Mua hàng" Tag="OrderPage"/>
+                        <NavigationViewItem Content="Lịch sử Mua hàng" Tag="OrderPage">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xE7BF;"/>
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
             </NavigationView.MenuItems>

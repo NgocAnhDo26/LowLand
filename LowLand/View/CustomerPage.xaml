@@ -7,8 +7,7 @@
     xmlns:model="using:LowLand.Model.Customer"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    mc:Ignorable="d">
 
 
     <Grid>
@@ -44,7 +43,7 @@
             </Button>
         </Grid>
 
-        <Grid Grid.Row="2" x:Name="HeaderGrid" Margin="36, 0, 36, 8" Padding="16" CornerRadius="4" Background="{StaticResource LayerFillColorDefaultBrush}">
+        <Grid Grid.Row="2" x:Name="HeaderGrid" Margin="36, 0, 36, 8" Padding="20, 16, 18, 16" CornerRadius="8" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{StaticResource LayerFillColorDefaultBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.5*"/>
                 <ColumnDefinition Width="2*" />
@@ -56,17 +55,17 @@
 
             <TextBlock Text="ID" Grid.Column="0" TextAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
             <TextBlock Text="Tên khách hàng" Grid.Column="1" TextAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-            <TextBlock Text="Điểm" Grid.Column="2" TextAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-            <TextBlock Text="Đăng ký" Grid.Column="3" TextAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+            <TextBlock Text="Điểm tích lũy" Grid.Column="2" TextAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+            <TextBlock Text="Số điện thoại" Grid.Column="3" TextAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
             <TextBlock Text="Hạng" Grid.Column="4" TextAlignment="Center" Style="{StaticResource BodyStrongTextBlockStyle}"/>
             <TextBlock Grid.Column="5" TextAlignment="Center"/>
         </Grid>
 
-        <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.Customers}" SelectionMode="None" CornerRadius="4" Margin="36, 0, 36, 24"
-       Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+        <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.Customers}" SelectionMode="Single" CornerRadius="8" Margin="36, 0, 36, 24"
+       Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="model:Customer">
-                    <Grid>
+                    <Grid Padding="4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="0.5*"/>
                             <ColumnDefinition Width="2*" />
@@ -78,7 +77,7 @@
 
                         <TextBlock Grid.Column="0" Text="{x:Bind Id}" TextAlignment="Center" VerticalAlignment="Center"/>
 
-                        <StackPanel Grid.Column="1" Orientation="Vertical" Spacing="16" Margin="8"  VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <StackPanel Grid.Column="1" Orientation="Vertical" Spacing="4" Margin="8" VerticalAlignment="Center" HorizontalAlignment="Center">
 
                             <TextBlock Text="{x:Bind Name}" Style="{StaticResource BodyTextBlockStyle}" TextAlignment="Center" />
                             <TextBlock Text="{x:Bind RegistrationDate}" Style="{StaticResource CaptionTextBlockStyle}" TextAlignment="Center"/>
@@ -95,7 +94,7 @@
                             </DropDownButton.Content>
                             <DropDownButton.Flyout>
                                 <MenuFlyout Placement="Bottom" >
-                                    <MenuFlyoutItem Text="Chỉnh Sửa" x:Name="updateButton" Click="updateButton_Click" >
+                                    <MenuFlyoutItem Text="Chỉnh sửa" x:Name="updateButton" Click="updateButton_Click" >
                                         <MenuFlyoutItem.Icon>
                                             <FontIcon Glyph="&#xE70F;"/>
                                         </MenuFlyoutItem.Icon>
@@ -103,7 +102,7 @@
 
                                     <MenuFlyoutItem Text="Xóa" Foreground="Red" x:Name="deleteButton" Click="deleteButton_Click">
                                         <MenuFlyoutItem.Icon>
-                                            <FontIcon Glyph="&#xE74D;"/>
+                                            <FontIcon Glyph="&#xE74D;" Foreground="Red"/>
                                         </MenuFlyoutItem.Icon>
                                     </MenuFlyoutItem>
                                 </MenuFlyout>

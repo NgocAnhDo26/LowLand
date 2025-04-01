@@ -24,6 +24,7 @@ namespace LowLand.View
             {
                 ViewModel.EditorAddCustomerRank = viewModel.EditorAddCustomerRank;
                 this.Loaded += CustomerRankDialog_Loaded;
+                Title = "Chỉnh sửa hạng thành viên";
             }
             else
             {
@@ -33,6 +34,7 @@ namespace LowLand.View
                     PromotionPoint = 0,
                     DiscountPercentage = 0
                 };
+                Title = "Thêm hạng thành viên";
 
             }
         }
@@ -40,11 +42,9 @@ namespace LowLand.View
         {
             if (ViewModel.EditorAddCustomerRank != null && ViewModel.EditorAddCustomerRank.Id == 1)
             {
-
                 nameTextBox.IsEnabled = true;
                 discountPercentageTextBox.IsEnabled = true;
                 promotionPointTextBox.IsEnabled = false;
-
             }
         }
 
@@ -81,7 +81,7 @@ namespace LowLand.View
 
                 if (ViewModel.CustomerRanks.ToList().Any(c => c.PromotionPoint == ViewModel.EditorAddCustomerRank.PromotionPoint))
                 {
-                    errorTextBlock.Content = "Số điểm này đã tồn tại.";
+                    errorTextBlock.Text = "Số điểm này đã được thiết lập.";
                     errorTextBlock.Visibility = Visibility.Visible;
                     args.Cancel = true;
                     return;
@@ -141,8 +141,12 @@ namespace LowLand.View
 
         private void CloseButton_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            // Close the dialog
-
+            ViewModel.EditorAddCustomerRank = new CustomerRank
+            {
+                Name = string.Empty,
+                PromotionPoint = 0,
+                DiscountPercentage = 0
+            };
         }
     }
 }

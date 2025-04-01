@@ -9,5 +9,6 @@
         NegativeValueNotAllowed = 5,
         InvalidValue = 6,
         NotFound = 7,
+        ItemHaveDependency = 8,
     }
 }

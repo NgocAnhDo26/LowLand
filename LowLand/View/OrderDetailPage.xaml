@@ -7,14 +7,13 @@
     xmlns:model="using:LowLand.Model.Order"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="#F5F5F5">
+    mc:Ignorable="d">
 
     <Grid Padding="36">
         <StackPanel Spacing="24">
             <TextBlock Text="Chi tiết đơn hàng" FontSize="24" FontWeight="Bold"/>
 
-            <Grid Background="White" CornerRadius="8" Padding="16" >
+            <Grid CornerRadius="8" Padding="16" Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
                 
 
                 <Grid.ColumnDefinitions>
@@ -46,7 +45,7 @@
             </Grid>
 
             <StackPanel>
-                <Grid Padding="16" CornerRadius="8" Background="#E0E0E0">
+                <Grid Padding="16" CornerRadius="8">
                     <Grid.ColumnDefinitions>
                       
                         <ColumnDefinition Width="3*"/>
@@ -61,8 +60,7 @@
                     <TextBlock Text="Lựa chọn thêm" Grid.Column="3" TextAlignment="Center" FontWeight="Bold"/>
                 </Grid>
 
-                <ListView ItemsSource="{x:Bind ViewModel.EditorAddOrder.Details}" SelectionMode="None" CornerRadius="8" Margin="0, 8, 0, 0"
-                      Background="White">
+                <ListView ItemsSource="{x:Bind ViewModel.EditorAddOrder.Details}" SelectionMode="None" CornerRadius="8" Margin="0, 8, 0, 0">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="model:OrderDetail">
                             <Grid Padding="12" >

@@ -88,7 +88,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Grid.Column="0" Padding="24" CornerRadius="8">
+            <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Padding="24" CornerRadius="8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -100,12 +100,12 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    
-                    <Grid Grid.Row="0" CornerRadius="4" MaxWidth="170" MaxHeight="170" VerticalAlignment="Center">
+
+                    <Grid CornerRadius="4" MaxWidth="200">
                         <Image Stretch="UniformToFill" VerticalAlignment="Center" Source="{x:Bind ViewModel.Product.Image, Converter={StaticResource AbsolutePathConverter}, Mode=OneWay}"/>
                     </Grid>
-   
-                    <TextBlock Grid.Row="1" Text="Ảnh đại diện" Margin="0, 24, 0, 12"/>
+
+                    <TextBlock Grid.Row="1" Text="Ảnh đại diện" Margin="0, 12, 0, 12"/>
                     <Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>

@@ -26,7 +26,7 @@ namespace LowLand.Services
 
     public abstract class BaseRepository<T>
     {
-        protected readonly string connectionString = "Host=localhost;Port=5432;Username=hoangkha_ngocanhne;Password=ngocanh_hoangkhane;Database=lowland";
+        protected readonly string connectionString = "Host=localhost;Port=5432;Username=admin;Password=1234;Database=myshop";
 
         protected List<T> ExecuteQuery(string query, Func<NpgsqlDataReader, T> mapFunction)
         {

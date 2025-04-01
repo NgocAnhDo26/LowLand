@@ -102,6 +102,14 @@ namespace LowLand.View.ViewModel
 
         public ResponseCode DeleteCategory(int categoryId)
         {
+            // Check if any product is using this category
+            if (_dao.Products.GetAll().Any(p => (p is SingleProduct sp
+                && sp.Category?.Id == categoryId)
+            ))
+            {
+                return ResponseCode.ItemHaveDependency;
+            }
+
             // Delete the category in the database
             int result = _dao.Categories.DeleteById(categoryId.ToString());
             if (result != -1)

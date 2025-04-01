@@ -127,6 +127,7 @@ namespace LowLand.View
                 // Show appropriate messages based on response code
                 string message = responseCode switch
                 {
+                    ResponseCode.ItemHaveDependency => "Không thể xóa! Danh mục này đang được sử dụng bởi một hoặc nhiều sản phẩm!",
                     ResponseCode.Success => "Xóa danh mục thành công!",
                     ResponseCode.Error => "Lỗi khi xóa danh mục!",
                     _ => "Lỗi không xác định!"

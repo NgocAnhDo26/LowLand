@@ -39,7 +39,7 @@
                 </Button.Content>
             </Button>
 
-            <ScrollViewer Grid.Row="2" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4" Margin="0, 16, 0, 0">
+            <ScrollViewer Grid.Row="2" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" CornerRadius="4" Margin="0, 16, 0, 0" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1">
                 <ListView x:Name="CategoriesListView" ItemsSource="{x:Bind ViewModel.Categories}" SelectionMode="Single">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="model:Category">

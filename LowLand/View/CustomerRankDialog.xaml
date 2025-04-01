@@ -4,23 +4,22 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:LowLand.View"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Title="Customer Rank"
-    PrimaryButtonText="Save"
-    CloseButtonText="Cancel"
-    PrimaryButtonClick="PrimaryButton_Click">
+    Title="Chỉnh sửa hạng thành viên"
+    PrimaryButtonText="Lưu"
+    PrimaryButtonClick="PrimaryButton_Click"
+    CloseButtonText="Hủy"
+    CloseButtonClick="CloseButton_Click"
+    DefaultButton="Primary">
 
     <ContentDialog.Resources>
-        <Style TargetType="local:CustomerRankPage" 
+        <Style TargetType="local:CustomerRankDialog" 
                BasedOn="{StaticResource DefaultContentDialogStyle}"/>
     </ContentDialog.Resources>
 
     <StackPanel Spacing="12" Width="400">
         <InfoBar x:Name="errorTextBlock" IsOpen="True" Severity="Warning" IsClosable="False" Visibility="Collapsed"/>
-        <TextBox  x:Name="nameTextBox" Header="Tên Rank" Text="{x:Bind ViewModel.EditorAddCustomerRank.Name, Mode=TwoWay}" />
-        <NumberBox x:Name="promotionPointTextBox" Header="Số điểm cần thiết" Value="{x:Bind ViewModel.EditorAddCustomerRank.PromotionPoint, Mode=TwoWay}" />
-        <NumberBox x:Name="discountPercentageTextBox" Header="Được giảm " Value="{x:Bind ViewModel.EditorAddCustomerRank.DiscountPercentage, Mode=TwoWay}" />
+        <TextBox  x:Name="nameTextBox" Header="Tên hạng" Text="{x:Bind ViewModel.EditorAddCustomerRank.Name, Mode=TwoWay}" />
+        <NumberBox x:Name="promotionPointTextBox" Header="Mốc điểm" Value="{x:Bind ViewModel.EditorAddCustomerRank.PromotionPoint, Mode=TwoWay}" />
+        <NumberBox x:Name="discountPercentageTextBox" Header="Mức ưu đãi giảm giá (%)" Value="{x:Bind ViewModel.EditorAddCustomerRank.DiscountPercentage, Mode=TwoWay}" />
     </StackPanel>
 </ContentDialog>

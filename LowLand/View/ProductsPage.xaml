@@ -111,7 +111,7 @@
                             </DropDownButton.Content>
                             <DropDownButton.Flyout>
                                 <MenuFlyout Placement="Bottom">
-                                    <MenuFlyoutItem Text="Thay đổi" Click="ViewDetails_Click">
+                                    <MenuFlyoutItem Text="Chỉnh sửa" Click="ViewDetails_Click">
                                         <MenuFlyoutItem.Icon>
                                             <FontIcon Glyph="&#xE70F;"/>
                                         </MenuFlyoutItem.Icon>
