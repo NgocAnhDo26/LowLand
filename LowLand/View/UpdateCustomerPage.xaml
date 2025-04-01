@@ -13,9 +13,9 @@
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300" Padding="24" Spacing="16" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8">
             <TextBox x:Name="NameBox" Header="Tên khách hàng" />
             <TextBox x:Name="PhoneBox" Header="Số điện thoại"/>
-            <TextBox x:Name="PointBox" Header="Điểm tích lũy" InputScope="Number" Text="{x:Bind EditingCustomer.Point, Mode=OneWay}"  />
+            <TextBox x:Name="PointBox" Header="Điểm tích lũy" InputScope="Number" Text="{x:Bind ViewModel.EditingCustomer.Point, Mode=OneWay}"  />
 
-            <TextBox x:Name="RankNameBox" Header="Tên hạng thành viên" IsReadOnly="True" IsEnabled="False" Text="{x:Bind EditingCustomer.Rank.Name, Mode=OneWay}"/>
+            <TextBox x:Name="RankNameBox" Header="Tên hạng thành viên" IsReadOnly="True" IsEnabled="False" Text="{x:Bind ViewModel.EditingCustomer.Rank.Name, Mode=OneWay}"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button x:Name="SaveButton" Content="Lưu" Click="SaveButton_Click" Margin="0,0,8,0" Width="60" Style="{StaticResource AccentButtonStyle}"/>

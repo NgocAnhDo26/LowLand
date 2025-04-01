@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using LowLand.Model.Customer;
 using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -18,7 +17,7 @@ namespace LowLand.View
     public sealed partial class UpdateCustomerPage : Page
     {
         private CustomerViewModel ViewModel = new CustomerViewModel();
-        private Customer EditingCustomer;
+
 
         public UpdateCustomerPage()
         {
@@ -29,13 +28,13 @@ namespace LowLand.View
             base.OnNavigatedTo(e);
             if (e.Parameter is int customerId)
             {
-                EditingCustomer = ViewModel.Customers.FirstOrDefault(c => c.Id == customerId);
-                if (EditingCustomer != null)
+                ViewModel.EditingCustomer = ViewModel.Customers.FirstOrDefault(c => c.Id == customerId);
+                if (ViewModel.EditingCustomer != null)
                 {
-                    NameBox.Text = EditingCustomer.Name;
-                    PhoneBox.Text = EditingCustomer.Phone;
-                    PointBox.Text = EditingCustomer.Point.ToString();
-                    RankNameBox.Text = EditingCustomer.Rank.Name;
+                    NameBox.Text = ViewModel.EditingCustomer.Name;
+                    PhoneBox.Text = ViewModel.EditingCustomer.Phone;
+                    PointBox.Text = ViewModel.EditingCustomer.Point.ToString();
+                    RankNameBox.Text = ViewModel.EditingCustomer.Rank.Name;
                 }
             }
         }
@@ -55,13 +54,30 @@ namespace LowLand.View
         }
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            if (EditingCustomer != null)
+            if (ViewModel.EditingCustomer != null)
             {
-                EditingCustomer.Name = NameBox.Text;
-                EditingCustomer.Phone = PhoneBox.Text;
-                EditingCustomer.Point = int.TryParse(PointBox.Text, out int point) ? point : 0;
+                // check
+                if (string.IsNullOrWhiteSpace(NameBox.Text))
+                {
+                    await ShowMessage("Tên không được để trống!");
+                    return;
+                }
+                if (!System.Text.RegularExpressions.Regex.IsMatch(PhoneBox.Text, @"^0\d{9,10}$"))
+                {
+                    await ShowMessage("Số điện thoại không hợp lệ!");
+                    return;
+                }
+                if (!int.TryParse(PointBox.Text, out int point) || point < 0)
+                {
+                    await ShowMessage("Điểm phải là số nguyên và lớn hơn hoặc bằng 0!");
+                    return;
+                }
 
-                ViewModel.Update(EditingCustomer);
+                ViewModel.EditingCustomer.Name = NameBox.Text;
+                ViewModel.EditingCustomer.Phone = PhoneBox.Text;
+                ViewModel.EditingCustomer.Point = point;
+
+                ViewModel.Update(ViewModel.EditingCustomer);
 
                 var result = await ShowMessage("Cập nhật thông tin khách hàng thành công!");
                 if (result == ContentDialogResult.Primary)

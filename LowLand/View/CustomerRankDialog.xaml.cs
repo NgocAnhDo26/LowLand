@@ -64,16 +64,16 @@ namespace LowLand.View
                     return;
                 }
 
-                if (ViewModel.EditorAddCustomerRank.PromotionPoint <= 0)
+                if (ViewModel.EditorAddCustomerRank.PromotionPoint < 0)
                 {
-                    errorTextBlock.Content = "Mốc điểm cần thiết phải lớn hơn 0.";
+                    errorTextBlock.Content = "Mốc điểm cần thiết phải lớn hơn hoặc bằng 0.";
                     errorTextBlock.Visibility = Visibility.Visible;
                     args.Cancel = true;
                     return;
                 }
-                if (ViewModel.EditorAddCustomerRank.DiscountPercentage <= 0)
+                if (ViewModel.EditorAddCustomerRank.DiscountPercentage < 0)
                 {
-                    errorTextBlock.Content = "Mức ưu đãi phải lớn hơn 0.";
+                    errorTextBlock.Content = "Mức ưu đãi phải lớn hơn hoặc bằng 0.";
                     errorTextBlock.Visibility = Visibility.Visible;
                     args.Cancel = true;
                     return;
@@ -106,24 +106,25 @@ namespace LowLand.View
                     return;
                 }
 
-                if (ViewModel.EditorAddCustomerRank.PromotionPoint <= 0)
+                if (ViewModel.EditorAddCustomerRank.PromotionPoint < 0)
                 {
-                    errorTextBlock.Content = "Số điểm cần thiết phải lớn hơn 0.";
+                    errorTextBlock.Content = "Số điểm cần thiết phải lớn hơn hoặc bằng 0.";
                     errorTextBlock.Visibility = Visibility.Visible;
                     args.Cancel = true;
                     return;
                 }
-                if (ViewModel.EditorAddCustomerRank.DiscountPercentage <= 0)
+                if (ViewModel.EditorAddCustomerRank.DiscountPercentage < 0)
                 {
-                    errorTextBlock.Content = "Tỉ lệ giảm giá phải lớn hơn 0.";
+                    errorTextBlock.Content = "Tỉ lệ giảm giá phải lớn hơn hoặc bằng 0.";
                     errorTextBlock.Visibility = Visibility.Visible;
                     args.Cancel = true;
                     return;
                 }
 
-                if (ViewModel.CustomerRanks.ToList().Any(c => c.PromotionPoint == ViewModel.EditorAddCustomerRank.PromotionPoint))
+                // check trung moc diem khac ngoai moc nay
+                if (ViewModel.CustomerRanks.ToList().Any(c => c.PromotionPoint == ViewModel.EditorAddCustomerRank.PromotionPoint && c.Id != ViewModel.EditorAddCustomerRank.Id))
                 {
-                    errorTextBlock.Content = "Số điểm này đã tồn tại.";
+                    errorTextBlock.Content = "Mốc điểm này đã được thiết lập.";
                     errorTextBlock.Visibility = Visibility.Visible;
                     args.Cancel = true;
                     return;

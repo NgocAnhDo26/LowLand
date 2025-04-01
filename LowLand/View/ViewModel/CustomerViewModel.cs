@@ -11,6 +11,7 @@ namespace LowLand.View.ViewModel
         private IDao _dao;
         public FullObservableCollection<Customer> Customers { get; set; }
         public FullObservableCollection<CustomerRank> CustomerRanks { get; set; }
+        public Customer EditingCustomer;
         public CustomerViewModel()
         {
             _dao = Services.Services.GetKeyedSingleton<IDao>();
@@ -20,6 +21,8 @@ namespace LowLand.View.ViewModel
             CustomerRanks = new FullObservableCollection<CustomerRank>(
                 _dao.CustomerRanks.GetAll()
             );
+
+            EditingCustomer = null;
         }
 
         public void Add(Customer item)

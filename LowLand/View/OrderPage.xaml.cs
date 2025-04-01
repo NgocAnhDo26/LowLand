@@ -102,5 +102,16 @@ namespace LowLand.View
             return Visibility.Collapsed;
         }
 
+        private void completeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is Order selectedOrder)
+            {
+                selectedOrder.Status = "Hoàn thành";
+                ViewModel.Update(selectedOrder);
+
+            }
+        }
+
+
     }
 }

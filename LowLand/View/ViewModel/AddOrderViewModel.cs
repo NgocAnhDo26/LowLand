@@ -17,6 +17,7 @@ namespace LowLand.View.ViewModel
         public ObservableCollection<Customer> Customers { get; set; }
         public ObservableCollection<Product> Products { get; set; }
         public ObservableCollection<ProductOption> ProductOptions { get; set; }
+        public ObservableCollection<CustomerRank> CustomerRanks { get; set; } // Added this property
 
         public AddOrderViewModel()
         {
@@ -24,15 +25,13 @@ namespace LowLand.View.ViewModel
             Orders = new ObservableCollection<Order>(_dao.Orders.GetAll());
             EditorAddOrder = new Order
             {
-
                 Details = new ObservableCollection<OrderDetail>()
-
             };
 
             ProductOptions = new ObservableCollection<ProductOption>(_dao.ProductOptions.GetAll());
             Customers = new ObservableCollection<Customer>(_dao.Customers.GetAll());
             Products = new ObservableCollection<Product>(_dao.Products.GetAll());
-
+            CustomerRanks = new ObservableCollection<CustomerRank>(_dao.CustomerRanks.GetAll()); // Initialize it here
         }
         public OrderDetail CreateOrderDetail(Product selectedProduct)
         {
@@ -55,11 +54,28 @@ namespace LowLand.View.ViewModel
         {
             item.Date = DateTime.Now;
             item.Status = "Đang xử lý";
-            //   if (item.PromotionId == null)
-            //  {
             Debug.WriteLine("item.Total: " + item.TotalPrice, item.TotalAfterDiscount);
+            var customer = Customers.FirstOrDefault(c => c.Id == item.CustomerId);
+            if (customer != null)
+            {
+                customer.Point += (int)Math.Round((double)item.TotalPrice / 1000);
+
+                int newRankId = CustomerRanks
+                    .Where(r => r.PromotionPoint <= customer.Point)
+                    .OrderByDescending(r => r.PromotionPoint)
+                    .Select(r => r.Id)
+                    .FirstOrDefault();
+
+                if (newRankId != 0)
+                {
+                    customer.Rank = CustomerRanks.FirstOrDefault(r => r.Id == newRankId);
+                }
+                _dao.Customers.UpdateById(customer.Id.ToString(), customer);
+
+
+            }
+
             item.TotalAfterDiscount = item.TotalPrice;
-            //   }
 
             int result = _dao.Orders.Insert(item);
             if (result == 1)
