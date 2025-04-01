@@ -1,10 +1,16 @@
 {
-  "profiles": {
-    "LowLand (Package)": {
-      "commandName": "MsixPackage"
-    },
-    "LowLand (Unpackaged)": {
-      "commandName": "Project"
+    "profiles": {
+        "LowLand (Package)": {
+            "commandName": "MsixPackage",
+            "environmentVariables": {
+                "DB_CONNECTION": "Host=localhost;Port=5432;Username=admin;Password=1234;Database=myshop"
+            }
+        },
+        "LowLand (Unpackaged)": {
+            "commandName": "Project",
+            "environmentVariables": {
+                "DB_CONNECTION": "Host=localhost;Port=5432;Username=admin;Password=1234;Database=myshop"
+            }
+        }
     }
-  }
 }

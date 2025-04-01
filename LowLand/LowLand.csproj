@@ -62,10 +62,23 @@
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.0-preview.2.25163.2" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <None Update="Assets\product_default.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Page Update="View\AddSingleProductPage.xaml"/>
+    <Page Update="View\AddSingleProductPage.xaml" />
     <Page Update="View\CustomerRankDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -127,7 +140,23 @@
     <PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
     <PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
     <PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
-    <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
+    <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">False</PublishTrimmed>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <PackageCertificateKeyFile>LowLand_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <AppxBundle>Never</AppxBundle>
+    <AppInstallerUri>D:\Uni\Year 3\2nd semester\Windows Programming\Final Project\LowLand\LowLand\build</AppInstallerUri>
+    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+	<AppxPackageSigningEnabled>true</AppxPackageSigningEnabled>
+	<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+	<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+	<GenerateTestArtifacts>False</GenerateTestArtifacts>
+	<AppxBundle>Never</AppxBundle>
+	<StripSymbols>true</StripSymbols>
   </PropertyGroup>
 </Project>

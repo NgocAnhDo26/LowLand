@@ -32,7 +32,7 @@
                         <FontIcon Glyph="&#xECC5;"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Lịch sử Mua hàng" Tag="OrderPage">
+                        <NavigationViewItem Content="Đơn hàng" Tag="OrderPage">
                             <NavigationViewItem.Icon>
                                 <FontIcon Glyph="&#xE7BF;"/>
                             </NavigationViewItem.Icon>

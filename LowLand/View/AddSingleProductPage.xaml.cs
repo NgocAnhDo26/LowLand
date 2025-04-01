@@ -39,6 +39,7 @@ namespace LowLand.View
                 ResponseCode.EmptyName => "Tên sản phẩm không được để trống!",
                 ResponseCode.NegativeValueNotAllowed => "Giá bán và giá vốn phải lớn hơn 0!",
                 ResponseCode.InvalidValue => "Giá bán không được thấp hơn giá vốn!",
+                ResponseCode.CategoryEmpty => "Vui lòng chọn danh mục cho sản phẩm!",
                 ResponseCode.Error => "Lỗi khi thêm sản phẩm!",
                 _ => "Lỗi không xác định!"
             };

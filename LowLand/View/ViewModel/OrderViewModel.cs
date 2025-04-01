@@ -20,7 +20,7 @@ namespace LowLand.View.ViewModel
         public void Add(Order item)
         {
             item.Date = DateTime.Now;
-            item.Status = "Pending";
+            item.Status = "Đang xử lý";
             int result = _dao.Orders.Insert(item);
             if (result == 1)
             {

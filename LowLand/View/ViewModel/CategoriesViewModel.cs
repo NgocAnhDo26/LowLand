@@ -89,10 +89,10 @@ namespace LowLand.View.ViewModel
 
             // Add the new category to the database
             int result = _dao.Categories.Insert(newCategory);
-            if (result != -1)
+            if (result == 1)
             {
                 // Update the category in the collection
-                newCategory.Id = result;
+                newCategory.Id = _dao.Categories.GetAll().Max(r => r.Id);
                 Categories.Add(newCategory);
                 return ResponseCode.Success;
             }

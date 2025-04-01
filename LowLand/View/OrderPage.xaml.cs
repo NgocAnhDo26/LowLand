@@ -41,9 +41,10 @@ namespace LowLand.View
                     ContentDialog deleteDialog = new ContentDialog
                     {
                         Title = "Xác nhận xóa",
-                        Content = $"Bạn có chắc muốn xóa đơn hàng {selectedOrder.Id}?",
+                        Content = $"Bạn có chắc muốn xóa đơn hàng #{selectedOrder.Id}?",
                         PrimaryButtonText = "Xóa",
                         CloseButtonText = "Hủy",
+                        DefaultButton = ContentDialogButton.Primary,
                         XamlRoot = this.XamlRoot
                     };
 
@@ -56,7 +57,7 @@ namespace LowLand.View
             }
             catch (Exception ex)
             {
-                Console.WriteLine("aaa", ex.Message);
+                Debug.WriteLine(ex.Message);
             }
         }
 

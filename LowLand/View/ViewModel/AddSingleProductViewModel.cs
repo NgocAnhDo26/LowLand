@@ -50,14 +50,23 @@ namespace LowLand.View.ViewModel
                 return ResponseCode.InvalidValue;
             }
 
-            // Save the image to the folder
-            string newImageName = FileUtils.SaveImage(Product.Image);
-            if (newImageName == "")
+            // Validate if category is not empty
+            if (Product.Category == null)
             {
-                return ResponseCode.Error;
+                return ResponseCode.CategoryEmpty;
             }
 
-            Product.Image = newImageName;
+            if (Product.Image != "product_default.jpg")
+            {
+                // Save the image to the folder
+                string newImageName = FileUtils.SaveImage(Product.Image);
+                if (newImageName == "")
+                {
+                    return ResponseCode.Error;
+                }
+
+                Product.Image = newImageName;
+            }
 
             // Add the product to the database
             int result = _dao.Products.Insert(Product);

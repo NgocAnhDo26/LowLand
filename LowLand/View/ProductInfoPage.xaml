@@ -65,14 +65,14 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid>
+        <Grid Margin="36, 40, 0, 36">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             
-            <TextBlock Grid.Column="0" Text="Thay đổi thông tin sản phẩm" Style="{StaticResource TitleTextBlockStyle}" Margin="36, 40, 0, 36"/>
+            <TextBlock Grid.Column="0" Text="Thay đổi thông tin sản phẩm" Style="{StaticResource TitleTextBlockStyle}"/>
             <Rectangle Grid.Column="1"/>
             <Button Grid.Column="2" x:Name="CancelButton" Content="Quay lại" Click="CancelButton_Click" Margin="0, 0, 36, 0"/>
         </Grid>
@@ -143,25 +143,21 @@
                     Grid.Row="0" Grid.Column="0"
                     IsEnabled="False"
                     Text="{x:Bind ViewModel.Product.Id}" 
-                    Style="{StaticResource BodyTextBlockStyle}" 
                     VerticalAlignment="Center"/>
                         <TextBox 
                     Header="Tên sản phẩm" 
                     Grid.Row="0" Grid.Column="1"
                     Text="{x:Bind ViewModel.Product.Name, Mode=TwoWay}" 
-                    Style="{StaticResource BodyTextBlockStyle}" 
                     VerticalAlignment="Center"/>
                         <NumberBox 
                     Header="Giá bán mặc định" 
                     Grid.Row="1" Grid.Column="0"
-                    Text="{x:Bind ViewModel.Product.SalePrice, Mode=TwoWay}" 
-                    Style="{StaticResource BodyTextBlockStyle}" 
+                    Text="{x:Bind ViewModel.Product.SalePrice, Mode=TwoWay}"  
                     VerticalAlignment="Center"/>
                         <NumberBox 
                     Header="Giá vốn mặc định" 
                     Grid.Row="1" Grid.Column="1"
                     Text="{x:Bind ViewModel.Product.CostPrice, Mode=TwoWay}" 
-                    Style="{StaticResource BodyTextBlockStyle}" 
                     VerticalAlignment="Center"/>
                     </Grid>
                 </ScrollViewer>
@@ -196,7 +192,7 @@
                 </Button>
             </Grid>
 
-            <Grid Grid.Row="1" Margin="0, 0, 0, 8" Padding="18, 16, 18, 16" CornerRadius="4" Background="{StaticResource CardBackgroundFillColorDefaultBrush}">
+            <Grid Grid.Row="1" Margin="0, 0, 0, 8" Padding="18, 12, 18, 12" CornerRadius="4" Background="{StaticResource CardBackgroundFillColorSecondaryBrush}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="3*"/>

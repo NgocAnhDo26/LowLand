@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using DemoListBinding.View.ViewModel;
-using LowLand.Model.Product;
-using LowLand.Services;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 
@@ -48,60 +45,6 @@ namespace LowLand.View
             var password = Encoding.UTF8.GetString(passwordInBytes);
             ViewModel.Password = password;
             ViewModel.Username = username;
-        }
-        static void test()
-        {
-            ProductRepository repository = new ProductRepository();
-
-            // ========== Test GetAll ==========
-            Debug.WriteLine("===== GetAll Products =====");
-            List<Product> products = repository.GetAll();
-            foreach (var p in products)
-            {
-                Debug.WriteLine($"ID: {p.Id}, Name: {p.Name}, Price: {p.SalePrice}");
-            }
-
-            // ========== Test GetById ==========
-            string testId = "999";
-            Debug.WriteLine($"\n===== GetById ({testId}) =====");
-            Product product = repository.GetById(testId);
-            if (product != null)
-            {
-                Debug.WriteLine($"ID: {product.Id}, Name: {product.Name}, Price: {product.SalePrice}");
-            }
-            else
-            {
-                Debug.WriteLine("Product not found!");
-            }
-
-            // ========== Test Insert ==========
-            Debug.WriteLine("\n===== Insert New Product =====");
-            SingleProduct newProduct = new SingleProduct
-            {
-
-                Name = "New Product",
-                SalePrice = 1999,
-                CostPrice = 1050,
-                Image = "new_product.jpg",
-                Category = new Category { Id = 1, Name = "Electronics" },
-            };
-            int insertResult = repository.Insert(newProduct);
-            Debug.WriteLine($"Insert Result: {insertResult}");
-
-            // ========== Test Update ==========
-            Debug.WriteLine("\n===== Update Product (1000) =====");
-            newProduct.Name = "Updated Product Name";
-            newProduct.SalePrice = 2499;
-            int updateResult = repository.UpdateById("2", newProduct);
-            Debug.WriteLine($"Update Result: {updateResult}");
-
-            // ========== Test Delete ==========
-            Debug.WriteLine("\n===== Delete Product (1000) =====");
-            int deleteResult = repository.DeleteById("3");
-            Debug.WriteLine($"Delete Result: {deleteResult}");
-
-            Debug.WriteLine("\n===== Test Completed! =====");
-
         }
 
         private void loginButton_Click(object sender, RoutedEventArgs e)

@@ -11,8 +11,6 @@ namespace LowLand.Services
 {
     public class PostgreDao : IDao
     {
-        //  private readonly string connectionString = "Host=localhost;Port=5432;Username=hoangkha_ngocanhne;Password=ngocanh_hoangkhane;Database=lowland";
-
         public IRepository<Customer> Customers { get; set; } = new CustomerRepository();
         public IRepository<CustomerRank> CustomerRanks { get; set; } = new CustomerRankRepository();
         public IRepository<Order> Orders { get; set; } = new OrderRepository();
@@ -26,7 +24,7 @@ namespace LowLand.Services
 
     public abstract class BaseRepository<T>
     {
-        protected readonly string connectionString = "Host=localhost;Port=5432;Username=admin;Password=1234;Database=myshop";
+        protected readonly string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION");
 
         protected List<T> ExecuteQuery(string query, Func<NpgsqlDataReader, T> mapFunction)
         {
@@ -137,7 +135,7 @@ namespace LowLand.Services
              VALUES ('{info.Name}', 
              '{info.Phone}',
              {info.Point},
-             '{info.RegistrationDate.ToDateTime(new TimeOnly(0, 0))}',
+             '{info.RegistrationDate.ToString("yyyy-MM-dd")}',
              {info.Rank.Id}
              )
              """);
@@ -153,7 +151,7 @@ namespace LowLand.Services
             name = '{info.Name}'
             , phone = '{info.Phone}'
             , point = {info.Point}
-            , registration_date = '{info.RegistrationDate.ToDateTime(new TimeOnly(0, 0))}'
+            , registration_date = '{info.RegistrationDate.ToString("yyyy-MM-dd")}'
             , customer_rank_id = {info.Rank.Id}
             WHERE customer_id = '{id}'
             """);
@@ -241,7 +239,7 @@ namespace LowLand.Services
             {
                 Id = reader.GetInt32(reader.GetOrdinal("order_id")),
                 CustomerId = reader.IsDBNull(reader.GetOrdinal("customer_id")) ? null : reader.GetInt32(reader.GetOrdinal("customer_id")),
-                CustomerStatus = reader.IsDBNull(reader.GetOrdinal("customer_id")) ? "Chưa đăng ký" : "Thành viên",
+                CustomerStatus = reader.IsDBNull(reader.GetOrdinal("customer_id")) ? "Vãng lai" : "Thành viên",
                 CustomerPhone = reader.IsDBNull(reader.GetOrdinal("customer_phone")) ? null : reader.GetString(reader.GetOrdinal("customer_phone")),
                 CustomerName = reader.IsDBNull(reader.GetOrdinal("customer_name")) ? null : reader.GetString(reader.GetOrdinal("customer_name")),
                 PromotionId = reader.IsDBNull(reader.GetOrdinal("promotion_id")) ? null : reader.GetInt32(reader.GetOrdinal("promotion_id")),
@@ -268,7 +266,7 @@ namespace LowLand.Services
             {
                 Id = reader.GetInt32(reader.GetOrdinal("order_id")),
                 CustomerId = reader.IsDBNull(reader.GetOrdinal("customer_id")) ? null : reader.GetInt32(reader.GetOrdinal("customer_id")),
-                CustomerStatus = reader.IsDBNull(reader.GetOrdinal("customer_id")) ? "Chưa đăng ký" : "Thành viên",
+                CustomerStatus = reader.IsDBNull(reader.GetOrdinal("customer_id")) ? "Vãng lai" : "Thành viên",
                 CustomerPhone = reader.IsDBNull(reader.GetOrdinal("customer_phone")) ? null : reader.GetString(reader.GetOrdinal("customer_phone")),
                 CustomerName = reader.IsDBNull(reader.GetOrdinal("customer_name")) ? null : reader.GetString(reader.GetOrdinal("customer_name")),
                 PromotionId = reader.GetInt32(reader.GetOrdinal("promotion_id")),

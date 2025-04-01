@@ -66,14 +66,14 @@ namespace LowLand.View
 
                 if (ViewModel.EditorAddCustomerRank.PromotionPoint <= 0)
                 {
-                    errorTextBlock.Content = "Số điểm cần thiết phải lớn hơn 0.";
+                    errorTextBlock.Content = "Mốc điểm cần thiết phải lớn hơn 0.";
                     errorTextBlock.Visibility = Visibility.Visible;
                     args.Cancel = true;
                     return;
                 }
                 if (ViewModel.EditorAddCustomerRank.DiscountPercentage <= 0)
                 {
-                    errorTextBlock.Content = "Tỉ lệ giảm giá phải lớn hơn 0.";
+                    errorTextBlock.Content = "Mức ưu đãi phải lớn hơn 0.";
                     errorTextBlock.Visibility = Visibility.Visible;
                     args.Cancel = true;
                     return;
@@ -81,7 +81,7 @@ namespace LowLand.View
 
                 if (ViewModel.CustomerRanks.ToList().Any(c => c.PromotionPoint == ViewModel.EditorAddCustomerRank.PromotionPoint))
                 {
-                    errorTextBlock.Text = "Số điểm này đã được thiết lập.";
+                    errorTextBlock.Content = "Mốc điểm này đã được thiết lập.";
                     errorTextBlock.Visibility = Visibility.Visible;
                     args.Cancel = true;
                     return;

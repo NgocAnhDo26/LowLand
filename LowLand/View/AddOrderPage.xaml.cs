@@ -33,7 +33,7 @@ namespace LowLand.View
                 return;
             }
             ViewModel.Add(ViewModel.EditorAddOrder);
-            ShowMessage("Cập nhật thông tin khách hàng thành công!");
+            ShowMessage("Tạo đơn hàng thành công!");
             Frame.GoBack();
         }
 
@@ -108,29 +108,7 @@ namespace LowLand.View
 
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (sender is TextBox textBox && textBox.DataContext is OrderDetail orderDetail)
-            {
-                if (int.TryParse(textBox.Text, out int quantity))
-                {
-                    orderDetail.quantity = quantity;
-                    orderDetail.Price = orderDetail.ProductPrice * quantity;
 
-                    var productTotalText = textBox.FindName("ProductTotalText") as TextBlock;
-                    if (productTotalText != null)
-                    {
-                        ViewModel.EditorAddOrder.TotalPrice = orderDetail.Price;
-
-                    }
-
-                    if (ViewModel.EditorAddOrder.Details != null)
-                    {
-                        ViewModel.EditorAddOrder.TotalPrice = ViewModel.EditorAddOrder.Details.Sum(d => d.Price);
-                    }
-                }
-            }
-        }
 
         private void ProductGridView_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
         {
@@ -176,17 +154,39 @@ namespace LowLand.View
 
         private void deleteButton_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is OrderDetail orderDetail)
+
+            if (sender is Button button && button.DataContext is OrderDetail orderDetail)
             {
-                if (orderDetail != null)
+                if (orderDetail != null && ViewModel.EditorAddOrder.Details != null)
                 {
                     ViewModel.EditorAddOrder.Details.Remove(orderDetail);
                     ViewModel.EditorAddOrder.TotalPrice = ViewModel.EditorAddOrder.Details.Sum(d => d.Price);
-
                 }
             }
         }
 
+        private void ProductQuantityTextBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+        {
+            if (sender is NumberBox numberBox && numberBox.DataContext is OrderDetail orderDetail)
+            {
+                if (int.TryParse(numberBox.Text, out int quantity))
+                {
+                    orderDetail.quantity = quantity;
+                    orderDetail.Price = orderDetail.ProductPrice * quantity;
 
+                    var productTotalText = numberBox.FindName("ProductTotalText") as TextBlock;
+                    if (productTotalText != null)
+                    {
+                        ViewModel.EditorAddOrder.TotalPrice = orderDetail.Price;
+
+                    }
+
+                    if (ViewModel.EditorAddOrder.Details != null)
+                    {
+                        ViewModel.EditorAddOrder.TotalPrice = ViewModel.EditorAddOrder.Details.Sum(d => d.Price);
+                    }
+                }
+            }
+        }
     }
 }

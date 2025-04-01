@@ -66,7 +66,7 @@ namespace LowLand.View
                         ContentDialog deleteDialog = new ContentDialog
                         {
                             Title = "Không thể xóa",
-                            Content = $"Không thể xóa hạng {selectedCustomerRank.Name}!",
+                            Content = $"Không thể xóa hạng mặc định {selectedCustomerRank.Name}!",
                             CloseButtonText = "Đóng",
                             XamlRoot = this.XamlRoot
                         };
@@ -77,7 +77,7 @@ namespace LowLand.View
                         ContentDialog deleteDialog = new ContentDialog
                         {
                             Title = "Xác nhận xóa",
-                            Content = $"Bạn có chắc muốn xóa hạng  {selectedCustomerRank.Name}?",
+                            Content = $"Bạn có chắc muốn xóa hạng {selectedCustomerRank.Name}?",
                             PrimaryButtonText = "Xóa",
                             CloseButtonText = "Hủy",
                             XamlRoot = this.XamlRoot

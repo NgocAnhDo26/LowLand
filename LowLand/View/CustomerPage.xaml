@@ -43,7 +43,7 @@
             </Button>
         </Grid>
 
-        <Grid Grid.Row="2" x:Name="HeaderGrid" Margin="36, 0, 36, 8" Padding="20, 16, 18, 16" CornerRadius="8" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{StaticResource LayerFillColorDefaultBrush}">
+        <Grid Grid.Row="2" x:Name="HeaderGrid" Margin="36, 0, 36, 8" Padding="20, 16, 18, 16" CornerRadius="8" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Background="{StaticResource CardBackgroundFillColorSecondaryBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.5*"/>
                 <ColumnDefinition Width="2*" />

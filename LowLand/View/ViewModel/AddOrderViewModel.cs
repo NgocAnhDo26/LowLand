@@ -54,7 +54,7 @@ namespace LowLand.View.ViewModel
         public void Add(Order item)
         {
             item.Date = DateTime.Now;
-            item.Status = "Pending";
+            item.Status = "Đang xử lý";
             //   if (item.PromotionId == null)
             //  {
             Debug.WriteLine("item.Total: " + item.TotalPrice, item.TotalAfterDiscount);
@@ -69,7 +69,7 @@ namespace LowLand.View.ViewModel
             }
             else
             {
-                Console.WriteLine("Insert failed: No rows affected.");
+                Debug.WriteLine("Insert failed: No rows affected.");
             }
         }
 

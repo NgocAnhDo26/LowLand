@@ -6,20 +6,19 @@
     xmlns:local="using:LowLand.View"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    mc:Ignorable="d">
 
-    <Grid Padding="20">
-        <TextBlock Text="Thêm khách hàng" FontSize="24" Margin="36, 40, 0, 36"/>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300" Spacing="10">
+    <Grid>
+        <TextBlock Text="Thêm khách hàng" Margin="36, 40, 0, 36" Style="{StaticResource TitleTextBlockStyle}"/>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300" Padding="24" Spacing="16" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8">
             <TextBox x:Name="NameTextBox" Header="Tên khách hàng" PlaceholderText="Nhập tên..." />
             <TextBox x:Name="PhoneTextBox" Header="Số điện thoại" PlaceholderText="Nhập số điện thoại..." />
-           
-            <StackPanel Orientation="Horizontal">
 
-            <Button x:Name="addButton" Content="Thêm khách hàng" Click="addButton_Click" Margin="0,0,30,0"/>
-            <Button x:Name="CancelButton" Content="Hủy" Click="CancelButton_Click"/>
-        </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,16,0,0" Spacing="8" HorizontalAlignment="Right">
+
+                <Button x:Name="addButton" Content="Thêm" Width="70" Click="addButton_Click"  Style="{StaticResource AccentButtonStyle}"/>
+                <Button x:Name="CancelButton" Content="Hủy" Width="70" Click="CancelButton_Click"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Page>

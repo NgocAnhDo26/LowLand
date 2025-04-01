@@ -1,6 +1,9 @@
-﻿using LowLand.Services;
+﻿using System;
+using System.Diagnostics;
+using LowLand.Services;
 using LowLand.View;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
@@ -21,6 +24,23 @@ namespace LowLand
         {
             this.InitializeComponent();
             Services.Services.AddKeyedSingleton<IDao, PostgreDao>();
+            UnhandledException += App_UnhandledException;
+        }
+
+        private async void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            Debug.WriteLine($"Unhandled exception: {e.Exception}");
+            e.Handled = true;
+            // ContentDialog to show error message
+            ContentDialog errorDialog = new ContentDialog
+            {
+                Title = "Lỗi",
+                Content = e.Exception.Message,
+                CloseButtonText = "OK",
+                XamlRoot = m_window?.Content.XamlRoot
+            };
+
+            await errorDialog.ShowAsync();
         }
 
         /// <summary>

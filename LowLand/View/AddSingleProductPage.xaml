@@ -73,25 +73,21 @@
                 Grid.Row="0" Grid.Column="0"
                 IsEnabled="False"
                 Text="" 
-                Style="{StaticResource BodyTextBlockStyle}" 
                 VerticalAlignment="Center"/>
                         <TextBox 
                 Header="Tên sản phẩm" 
                 Grid.Row="0" Grid.Column="1"
                 Text="{x:Bind ViewModel.Product.Name, Mode=TwoWay}" 
-                Style="{StaticResource BodyTextBlockStyle}" 
                 VerticalAlignment="Center"/>
                         <NumberBox 
                 Header="Giá bán mặc định" 
                 Grid.Row="1" Grid.Column="0"
                 Text="{x:Bind ViewModel.Product.SalePrice, Mode=TwoWay}" 
-                Style="{StaticResource BodyTextBlockStyle}" 
                 VerticalAlignment="Center"/>
                         <NumberBox 
                 Header="Giá vốn mặc định" 
                 Grid.Row="1" Grid.Column="1"
                 Text="{x:Bind ViewModel.Product.CostPrice, Mode=TwoWay}" 
-                Style="{StaticResource BodyTextBlockStyle}" 
                 VerticalAlignment="Center"/>
                         <ComboBox Header="Danh mục sản phẩm" SelectionChanged="Category_SelectionChanged" ItemsSource="{x:Bind ViewModel.Categories}" DisplayMemberPath="Name" />
                     </StackPanel>

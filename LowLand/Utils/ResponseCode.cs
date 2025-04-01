@@ -10,5 +10,6 @@
         InvalidValue = 6,
         NotFound = 7,
         ItemHaveDependency = 8,
+        CategoryEmpty = 9,
     }
 }

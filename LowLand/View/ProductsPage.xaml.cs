@@ -31,7 +31,23 @@ namespace LowLand.View
 
         private void AddNewSingleProduct(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(AddSingleProductPage));
+            try
+            {
+                Frame.Navigate(typeof(AddSingleProductPage));
+            }
+            catch (Exception ex)
+            {
+                // ContentDialog to show error message
+                ContentDialog errorDialog = new ContentDialog
+                {
+                    Title = "Lỗi",
+                    Content = ex.Message,
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+
+                errorDialog.ShowAsync();
+            }
         }
 
         private void ViewDetails_Click(object sender, RoutedEventArgs e)
