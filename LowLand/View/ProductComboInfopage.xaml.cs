@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using LowLand.Model.Product;
 using LowLand.Utils;
 using LowLand.View.ViewModel;
@@ -15,10 +16,11 @@ namespace LowLand.View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ProductInfoPage : Page
+    public sealed partial class ProductComboInfopage : Page
     {
-        ProductInfoViewModel ViewModel = new();
-        public ProductInfoPage()
+        ProductComboInfoViewModel ViewModel = new();
+
+        public ProductComboInfopage()
         {
             this.InitializeComponent();
             DataContext = ViewModel;
@@ -27,39 +29,39 @@ namespace LowLand.View
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             ViewModel.LoadProduct(e.Parameter.ToString()!);
-            // Add categories to ProductBasicInfo StackPanel
-            if (ViewModel.Product is SingleProduct product)
-            {
-                var category = new ComboBox
-                {
-                    Name = "ProductCategory",
-                    Header = "Danh mục sản phẩm",
-                    SelectedValuePath = "Id",
-                    ItemsSource = ViewModel.Categories,
-                    ItemTemplate = (DataTemplate)Resources["ComboBoxTemplate1"],
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-                category.SelectionChanged += Category_SelectionChanged;
-
-                category.SelectedValue = product?.Category?.Id;
-                Grid.SetRow(category, 2);
-                Grid.SetColumn(category, 0);
-
-                ProductBasicInfo.Children.Add(category);
-
-                OptionContainerTitle.Text = "Tùy chọn của sản phẩm";
-                NewItemButtonText.Text = "Thêm tùy chọn";
-                OptionListView.ItemsSource = ViewModel.ProductOptions;
-                OptionListView.ItemTemplate = (DataTemplate)Resources["ProductOptionTemplate"];
-            }
-
             base.OnNavigatedTo(e);
         }
 
-        private void Category_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void FindProductBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            var category = (sender as ComboBox)!.SelectedItem as Category;
-            ViewModel.OnCategoryChange(category!);
+            // Since selecting an item will also change the text,
+            // only listen to changes caused by user entering text.
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                var prompt = sender.Text.ToLower().Trim();
+
+                List<string> suitableItems = ViewModel.SearchForProducts(prompt);
+                sender.ItemsSource = suitableItems;
+            }
+        }
+
+        private void FindProductBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            // Add the selected item to the list of selected products
+            var selectedItemString = args.SelectedItem.ToString();
+
+            if (selectedItemString == "Không tìm thấy sản phẩm nào...")
+            {
+                // If no product is found, do nothing
+                return;
+            }
+
+            // Extract the product ID from the selected item string
+            var productId = selectedItemString.Split('-')[0].Trim();
+            ViewModel.AddProductToCombo(int.Parse(productId));
+
+            // Clear the AutoSuggestBox
+            sender.Text = string.Empty;
         }
 
         private async void ApplyButton_Click(object sender, RoutedEventArgs e)
@@ -92,43 +94,6 @@ namespace LowLand.View
         {
             Frame.Navigate(typeof(ProductsPage));
         }
-
-        private async void EditProductOption_Click(object sender, RoutedEventArgs e)
-        {
-            var selectedOption = (ProductOption)((MenuFlyoutItem)sender).DataContext;
-            var editDialog = new ProductOptionDialog(ViewModel, selectedOption.OptionId);
-            editDialog.XamlRoot = Content.XamlRoot;
-            await editDialog.ShowAsync();
-        }
-        private async void AddNewOptionButton_Click(object sender, RoutedEventArgs e)
-        {
-            var addDialog = new ProductOptionDialog(ViewModel, -1);
-            addDialog.XamlRoot = Content.XamlRoot;
-            await addDialog.ShowAsync();
-        }
-
-        private async void DeleteProductOption_Click(object sender, RoutedEventArgs e)
-        {
-            var selectedOption = (ProductOption)((MenuFlyoutItem)sender).DataContext;
-
-            // Show confirmation dialog
-            ContentDialog contentDialog = new ContentDialog
-            {
-                Title = "Xác nhận xóa",
-                Content = "Bạn có chắc chắn muốn xóa tùy chọn này?",
-                PrimaryButtonText = "Xóa",
-                CloseButtonText = "Hủy",
-                DefaultButton = ContentDialogButton.Primary,
-                XamlRoot = Content.XamlRoot
-            };
-
-            var result = await contentDialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
-            {
-                ViewModel.DeleteProductOption(selectedOption.OptionId);
-            }
-        }
-
         private async void ChooseNewImageFile(object sender, RoutedEventArgs e)
         {
             //disable the button to avoid double-clicking
@@ -164,6 +129,36 @@ namespace LowLand.View
 
             //re-enable the button
             senderButton.IsEnabled = true;
+        }
+
+        private void ProductOption_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Set the selected option for the product
+            var item = (ComboItem)((ComboBox)sender).DataContext;
+            var selectedOption = (ProductOption)((ComboBox)sender).SelectedItem;
+
+            if (selectedOption != null && item != null)
+            {
+                ViewModel.SetProductOption(item, selectedOption);
+            }
+        }
+        private void NumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+        {
+            var item = (ComboItem)sender.DataContext;
+            if (item != null)
+            {
+                item.Quantity = (int)sender.Value;
+                ViewModel.CalculatePrice();
+            }
+        }
+
+        private void RemoveChildProductButton_Click(object sender, RoutedEventArgs e)
+        {
+            var item = (ComboItem)((Button)sender).DataContext;
+            if (item != null)
+            {
+                ViewModel.RemoveItemFromCombo(item);
+            }
         }
     }
 }

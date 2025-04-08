@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using LowLand.Model.Product;
 using LowLand.Services;
@@ -7,13 +6,9 @@ using LowLand.Utils;
 
 namespace LowLand.View.ViewModel
 {
-    public class ProductInfoViewModel //: INotifyPropertyChanged
+    public class ProductInfoViewModel
     {
         private IDao _dao;
-        private bool _isSingleProduct = true;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
         public Product Product { get; set; }
         public string OldImage { get; set; }
         public List<Category> Categories { get; }
@@ -30,11 +25,7 @@ namespace LowLand.View.ViewModel
             Product = _dao.Products.GetById(productId);
             OldImage = Product.Image;
 
-            if (Product is ComboProduct)
-            {
-                _isSingleProduct = false;
-            }
-            else
+            if (!(Product is ComboProduct))
             {
                 // Filter options by product id
                 List<ProductOption> options = _dao.ProductOptions.GetAll();
@@ -112,6 +103,15 @@ namespace LowLand.View.ViewModel
             if (result == -1)
             {
                 return false;
+            }
+
+            // Update in the list
+            var oldOption = ProductOptions.FirstOrDefault(o => o.OptionId == option.OptionId);
+            if (oldOption != null)
+            {
+                oldOption.Name = option.Name;
+                oldOption.CostPrice = option.CostPrice;
+                oldOption.SalePrice = option.SalePrice;
             }
 
             return true;

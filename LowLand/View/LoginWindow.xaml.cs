@@ -23,7 +23,7 @@ namespace LowLand.View
         {
             ViewModel = new LoginViewModel();
             this.InitializeComponent();
-            SystemBackdrop = new DesktopAcrylicBackdrop();
+            SystemBackdrop = new MicaBackdrop();
             //  _dao = new PostgreDAO();
             //test();
 
