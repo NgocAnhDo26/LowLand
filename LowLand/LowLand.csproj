@@ -16,6 +16,7 @@
     <Content Remove="Assets\product_default.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="View\AddProductComboPage.xaml" />
     <None Remove="View\AddSingleProductPage.xaml" />
     <None Remove="View\AddOrderPage.xaml" />
     <None Remove="View\CategoriesPage.xaml" />
@@ -26,6 +27,7 @@
     <None Remove="View\LoginWindow.xaml" />
     <None Remove="View\OrderDetailPage.xaml" />
     <None Remove="View\OrderPage.xaml" />
+    <None Remove="View\ProductComboInfopage.xaml" />
     <None Remove="View\ProductInfoPage.xaml" />
     <None Remove="View\ProductOptionDialog.xaml" />
     <None Remove="View\ProductsPage.xaml" />
@@ -78,6 +80,12 @@
     <None Update="Assets\product_default.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="View\ProductComboInfopage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\AddProductComboPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="View\AddSingleProductPage.xaml" />
     <Page Update="View\CustomerRankDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -142,7 +150,6 @@
     <PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
     <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">False</PublishTrimmed>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <PackageCertificateKeyFile>LowLand_TemporaryKey.pfx</PackageCertificateKeyFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
@@ -153,7 +160,7 @@
     <AppInstallerUri>D:\Uni\Year 3\2nd semester\Windows Programming\Final Project\LowLand\LowLand\build</AppInstallerUri>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 	<AppxPackageSigningEnabled>true</AppxPackageSigningEnabled>
-	<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+	<GenerateAppInstallerFile>True</GenerateAppInstallerFile>
 	<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
 	<GenerateTestArtifacts>False</GenerateTestArtifacts>
 	<AppxBundle>Never</AppxBundle>

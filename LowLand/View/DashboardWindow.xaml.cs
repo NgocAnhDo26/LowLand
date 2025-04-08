@@ -18,7 +18,7 @@ namespace LowLand.View
         public DashboardWindow()
         {
             this.InitializeComponent();
-            SystemBackdrop = new DesktopAcrylicBackdrop();
+            SystemBackdrop = new MicaBackdrop();
             MainFrame.Navigate(typeof(DashboardPage));
         }
     }

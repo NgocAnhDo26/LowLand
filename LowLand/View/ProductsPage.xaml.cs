@@ -10,9 +10,6 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace LowLand.View
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class ProductsPage : Page
     {
         ProductsViewModel ViewModel { get; set; }
@@ -29,7 +26,7 @@ namespace LowLand.View
             // Handle search button click
         }
 
-        private void AddNewSingleProduct(object sender, RoutedEventArgs e)
+        private async void AddNewSingleProduct(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -46,8 +43,13 @@ namespace LowLand.View
                     XamlRoot = this.Content.XamlRoot
                 };
 
-                errorDialog.ShowAsync();
+                await errorDialog.ShowAsync();
             }
+        }
+
+        private void AddNewComboProduct(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(AddProductComboPage));
         }
 
         private void ViewDetails_Click(object sender, RoutedEventArgs e)
@@ -56,7 +58,14 @@ namespace LowLand.View
             var product = menuFlyoutItem?.DataContext as Product;
             if (product != null)
             {
-                Frame.Navigate(typeof(ProductInfoPage), product.Id);
+                if (product is SingleProduct)
+                {
+                    Frame.Navigate(typeof(ProductInfoPage), product.Id);
+                }
+                else
+                {
+                    Frame.Navigate(typeof(ProductComboInfopage), product.Id);
+                }
             }
         }
 
@@ -85,7 +94,8 @@ namespace LowLand.View
                     // Show appropriate messages based on response code
                     string message = responseCode switch
                     {
-                        ResponseCode.Success => "Xóa sản phẩm thành công!",
+                        ResponseCode.Success => $"Xóa {product.Name} thành công!",
+                        ResponseCode.ItemHaveDependency => $"Không thể xóa sản phẩm! {product.Name} đang là sản phẩm con của ít nhất một combo!",
                         ResponseCode.Error => "Đã xảy ra lỗi khi xóa sản phẩm!",
                         _ => "Lỗi không xác định!"
                     };

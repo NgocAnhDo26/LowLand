@@ -36,7 +36,7 @@
                     <GridView x:Name="ProductGridView" ItemsSource="{x:Bind ViewModel.Products, Mode=OneWay}" SelectionMode="Single" IsItemClickEnabled="True" DoubleTapped="ProductGridView_DoubleTapped">
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="Pmodel:Product">
-                                <Grid Padding="16" CornerRadius="4" Background="{StaticResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+                                <Grid Padding="16" CornerRadius="4" Background="{StaticResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" MinHeight="250" MinWidth="200">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*"/>
                                         <RowDefinition Height="Auto"/>

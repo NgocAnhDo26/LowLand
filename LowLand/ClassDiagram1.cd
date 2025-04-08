@@ -1,100 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="LowLand.Model.Customer.Customer" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="24" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAADAAAAAAAAgAAAAAAAAAQAgQAAAAAAAAAAIAAAAAA=</HashCode>
-      <FileName>Model\Customer\Customer.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="LowLand.Model.Customer.CustomerRank" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="27.5" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAgAAACAAAAAAAAAACAAA=</HashCode>
-      <FileName>Model\Customer\CustomerRank.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="LowLand.Model.Order.Order" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="25.75" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAKAAAGAgABAAAAAAAAAAAAwAAQQJABAAAAAAAAAAA=</HashCode>
-      <FileName>Model\Order\Order.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="LowLand.Model.Order.OrderDetail" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="27.5" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>EEACAAAAAQAAAAAAAQAAgAAAgAAAAACAAAACAAAIAAA=</HashCode>
-      <FileName>Model\Order\OrderDetail.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="LowLand.Model.Product.Category" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="20.5" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAgAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Model\Product\Category.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="LowLand.Model.Product.Product" Collapsed="true">
-    <Position X="1.75" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAACAAAACAAAAQAAAAAAAAQAgAAAABAAAAAAAAAAAAA=</HashCode>
-      <FileName>Model\Product\Product.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="LowLand.Model.Product.SingleProduct" Collapsed="true">
-    <Position X="0.5" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
-      <FileName>Model\Product\Product.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LowLand.Model.Product.ComboProduct" Collapsed="true">
-    <Position X="2.75" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Model\Product\Product.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LowLand.Model.Product.ProductOption" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="17" Y="5.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>EAAAAAAACAAAAQAAAQAAAAQAgAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Model\Product\ProductOption.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="LowLand.Services.MockDAO" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="24" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AEEAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAQAAQ=</HashCode>
-      <FileName>Services\MockDAO.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="LowLand.Services.PostgreDao" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="24" Y="4.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AEEAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAQAAQ=</HashCode>
-      <FileName>Services\PostgreDAO.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
   <Class Name="LowLand.Services.BaseRepository&lt;T&gt;" Collapsed="true">
-    <Position X="7.75" Y="0.5" Width="1.5" />
+    <Position X="7.75" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAgAAAAAAEgAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Services\PostgreDAO.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="LowLand.Services.CustomerRepository" Collapsed="true">
-    <Position X="12.25" Y="1.75" Width="1.5" />
+    <Position X="12.25" Y="6.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAACAAAAAAAgAAAACAAIA=</HashCode>
       <FileName>Services\PostgreDAO.cs</FileName>
@@ -102,7 +16,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="LowLand.Services.CustomerRankRepository" Collapsed="true">
-    <Position X="14.5" Y="1.75" Width="1.5" />
+    <Position X="14.5" Y="6.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAACAAAAAAAgAAAACAAIA=</HashCode>
       <FileName>Services\PostgreDAO.cs</FileName>
@@ -110,7 +24,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="LowLand.Services.OrderRepository" Collapsed="true">
-    <Position X="1" Y="1.75" Width="1.5" />
+    <Position X="1" Y="6.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAACAAIAAAAgAAAACAAIA=</HashCode>
       <FileName>Services\PostgreDAO.cs</FileName>
@@ -118,7 +32,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="LowLand.Services.OrderDetailRepository" Collapsed="true">
-    <Position X="3.25" Y="1.75" Width="1.5" />
+    <Position X="3.25" Y="6.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAACAAAAAAAgAAAACAAJA=</HashCode>
       <FileName>Services\PostgreDAO.cs</FileName>
@@ -126,7 +40,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="LowLand.Services.CategoryRepository" Collapsed="true">
-    <Position X="5.5" Y="1.75" Width="1.5" />
+    <Position X="5.5" Y="6.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAACAAAAAAAgAAAACAAIA=</HashCode>
       <FileName>Services\PostgreDAO.cs</FileName>
@@ -134,7 +48,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="LowLand.Services.ProductRepository" Collapsed="true">
-    <Position X="7.75" Y="1.75" Width="1.5" />
+    <Position X="7.75" Y="6.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAAAAAAgAAAAAAAAAAASAAAAAAAgAAAACAAIA=</HashCode>
       <FileName>Services\PostgreDAO.cs</FileName>
@@ -142,152 +56,122 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="LowLand.Services.ProductOptionRepository" Collapsed="true">
-    <Position X="10" Y="1.75" Width="1.5" />
+    <Position X="10" Y="6.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAACAAAAAAAgAAAACAAIA=</HashCode>
       <FileName>Services\PostgreDAO.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
+  <Class Name="LowLand.Services.MockDAO" Collapsed="true">
+    <Position X="12" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEEAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAQAAQ=</HashCode>
+      <FileName>Services\MockDAO.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="LowLand.Services.PostgreDao" Collapsed="true">
+    <Position X="12" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEEAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAQAAQ=</HashCode>
+      <FileName>Services\PostgreDAO.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
   <Class Name="LowLand.Services.Services" Collapsed="true">
-    <Position X="25.75" Y="5.5" Width="1.5" />
+    <Position X="10" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAABIAAAAA=</HashCode>
       <FileName>Services\Services.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="LowLand.Utils.FileUtils" Collapsed="true">
-    <Position X="27.5" Y="2.5" Width="1.5" />
+  <Class Name="LowLand.View.ViewModel.AddOrderViewModel">
+    <Position X="5.25" Y="11.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAQAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABA=</HashCode>
-      <FileName>Utils\FileUtils.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LowLand.Utils.FullObservableCollection&lt;T&gt;" Collapsed="true">
-    <Position X="17" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAE=</HashCode>
-      <FileName>Utils\FullObservableCollection.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LowLand.View.Converter.AbsolutePathConverter" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="17" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>View\Converter\AbsolutePathConverter.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="LowLand.View.Converter.CurrencyFormatter" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="22.25" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>View\Converter\CurrencyFormatter.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="LowLand.View.Converter.LocalImageConverter" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="18.75" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>View\Converter\LocalImageConverter.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="ReviewWeek5.View.Converter.TelephoneFormatter" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="27.5" Y="5.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAABAAAAAAAAAAAAA=</HashCode>
-      <FileName>View\Converter\TelephoneFormatter.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="LowLand.View.ViewModel.AddOrderViewModel" Collapsed="true">
-    <Position X="22.25" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AEMQAAAAAAAAAQAAAAACBAACAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <HashCode>AEMQAAAAAAAAAQAAAAACBAACAAAAAAAAAAAAAAAQAAQ=</HashCode>
       <FileName>View\ViewModel\AddOrderViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="LowLand.View.ViewModel.AddSingleProductViewModel" Collapsed="true">
-    <Position X="25.75" Y="0.5" Width="1.5" />
+    <Position X="7" Y="11.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAARAAAAQAAEAAAAAAAAQAAAAA=</HashCode>
       <FileName>View\ViewModel\AddSingleProductViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="LowLand.View.ViewModel.CategoriesViewModel" Collapsed="true">
-    <Position X="18.75" Y="1.5" Width="1.5" />
+  <Class Name="LowLand.View.ViewModel.CategoriesViewModel">
+    <Position X="7" Y="15" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAYAAAAAAAAABAAAAAAAEQAAAAAAAAAAAAA=</HashCode>
       <FileName>View\ViewModel\CategoriesViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="LowLand.View.ViewModel.CustomerRankViewModel" Collapsed="true">
-    <Position X="20.5" Y="2.5" Width="1.5" />
+  <Class Name="LowLand.View.ViewModel.CustomerRankViewModel">
+    <Position X="10.5" Y="11.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAYAAAAAAAAAAAAABAAABAAAAAAAAEAAAgAAAAAQAAA=</HashCode>
       <FileName>View\ViewModel\CustomerRankViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="LowLand.View.ViewModel.CustomerViewModel" Collapsed="true">
-    <Position X="22.25" Y="2.5" Width="1.5" />
+  <Class Name="LowLand.View.ViewModel.CustomerViewModel">
+    <Position X="5.25" Y="15.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAcAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAQAAA=</HashCode>
+      <HashCode>AAcAAAAAAAAAAAAAAAAABAAAAAAAAAIAAAAAAAAQAAA=</HashCode>
       <FileName>View\ViewModel\CustomerViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="LowLand.View.ViewModel.OrderDetailViewModel" Collapsed="true">
-    <Position X="18.75" Y="4.5" Width="1.5" />
+  <Class Name="LowLand.View.ViewModel.OrderDetailViewModel">
+    <Position X="8.75" Y="11.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAEAAAAAAAAAAAAAAAACBAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>View\ViewModel\OrderDetailViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="LowLand.View.ViewModel.OrderViewModel" Collapsed="true">
-    <Position X="22.25" Y="4.5" Width="1.5" />
+  <Class Name="LowLand.View.ViewModel.OrderViewModel">
+    <Position X="10.5" Y="15" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAcAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>View\ViewModel\OrderViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="LowLand.View.ViewModel.ProductInfoViewModel" Collapsed="true">
-    <Position X="27.5" Y="4.5" Width="1.5" />
+    <Position X="8.75" Y="14.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEACAAASAAAAAAAAAAgIBACAgAAAEAAABAAAAYACAAA=</HashCode>
       <FileName>View\ViewModel\ProductInfoViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="LowLand.View.ViewModel.ProductOptionViewModel" Collapsed="true">
-    <Position X="20.5" Y="5.5" Width="1.5" />
+  <Class Name="LowLand.View.ViewModel.ProductOptionViewModel">
+    <Position X="8.75" Y="15.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>View\ViewModel\ProductOptionViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="LowLand.View.ViewModel.ProductsViewModel" Collapsed="true">
-    <Position X="24" Y="5.5" Width="1.5" />
+  <Class Name="LowLand.View.ViewModel.ProductsViewModel">
+    <Position X="7" Y="12.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAIBAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
       <FileName>View\ViewModel\ProductsViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="LowLand.View.ViewModel.UpdateOrderViewModel" Collapsed="true">
-    <Position X="20.5" Y="6.5" Width="1.5" />
+    <Position X="8.75" Y="17.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEcQAAAAAAAAAQAAAAACRAACAAAAAAAAAAAAAAAAAAQ=</HashCode>
       <FileName>View\ViewModel\UpdateOrderViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DemoListBinding.View.ViewModel.LoginViewModel" Collapsed="true">
-    <Position X="20.5" Y="3.5" Width="1.5" />
+    <Position X="7" Y="17.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAABAAAAACAAAQAAAgAAA=</HashCode>
       <FileName>View\ViewModel\LoginViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="LowLand.View.AddCustomerPage" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="18.75" Y="0.5" Width="1.5" />
+    <Position X="12.5" Y="11.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ABAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAg=</HashCode>
       <FileName>View\AddCustomerPage.xaml.cs</FileName>
@@ -295,15 +179,15 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.AddOrderPage" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="20.5" Y="0.5" Width="1.5" />
+    <Position X="14.25" Y="11.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ABAAAAgAAAAAAEAAAAAIARAAEBAAAAAAAAAAAAAAABA=</HashCode>
+      <HashCode>gBAAAAgAAAAAAEAAAAAIARAAEBAAAAAAAAAAAAAAABA=</HashCode>
       <FileName>View\AddOrderPage.xaml.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.AddSingleProductPage" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="24" Y="0.5" Width="1.5" />
+    <Position X="16" Y="11.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IBAAAAAAAAAAAAAAAAAAAAAgEAAAAAAAAAAAAgAAAAA=</HashCode>
       <FileName>View\AddSingleProductPage.xaml.cs</FileName>
@@ -311,7 +195,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.CategoriesPage" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="17" Y="1.5" Width="1.5" />
+    <Position X="17.75" Y="11.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAABEAAAAAAARAAAAAAAAAA=</HashCode>
       <FileName>View\CategoriesPage.xaml.cs</FileName>
@@ -319,7 +203,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.CustomerPage" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="25.75" Y="1.5" Width="1.5" />
+    <Position X="19.5" Y="11.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAIAAAAAAEAAAAEAAAAAEAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>View\CustomerPage.xaml.cs</FileName>
@@ -327,7 +211,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.CustomerRankDialog" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="17" Y="2.5" Width="1.5" />
+    <Position X="12.5" Y="12.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAADAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAEAAA=</HashCode>
       <FileName>View\CustomerRankDialog.xaml.cs</FileName>
@@ -335,7 +219,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.CustomerRankPage" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="18.75" Y="2.5" Width="1.5" />
+    <Position X="14.25" Y="12.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAIAAAAAAEAAAAEAAAAAEAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>View\CustomerRankPage.xaml.cs</FileName>
@@ -343,7 +227,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.DashboardPage" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="24" Y="2.5" Width="1.5" />
+    <Position X="16" Y="12.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
       <FileName>View\DashboardPage.xaml.cs</FileName>
@@ -351,7 +235,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.DashboardWindow" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="25.75" Y="2.5" Width="1.5" />
+    <Position X="17.75" Y="12.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>View\DashboardWindow.xaml.cs</FileName>
@@ -359,15 +243,15 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.LoginWindow" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="22.25" Y="3.5" Width="1.5" />
+    <Position X="19.5" Y="12.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAEAAAAAAIAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>View\LoginWindow.xaml.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.OrderDetailPage" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="17" Y="4.5" Width="1.5" />
+    <Position X="12.5" Y="13.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAIAAAAAAAAAAAAAAAQAEAAAAAAAAAAAACAAAAA=</HashCode>
       <FileName>View\OrderDetailPage.xaml.cs</FileName>
@@ -375,15 +259,15 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.OrderPage" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="20.5" Y="4.5" Width="1.5" />
+    <Position X="14.25" Y="13.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAIAAAAAQEAAAAEAAAAAEAAAAAAAIAAgIAAAAAA=</HashCode>
+      <HashCode>AAAAAAIAAAAAQEAAAAEAAAAAEAAAAAAAIEAgIAAAAAA=</HashCode>
       <FileName>View\OrderPage.xaml.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.ProductInfoPage" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="25.75" Y="4.5" Width="1.5" />
+    <Position X="16" Y="13.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ABACAAAAAAEAAAAIAAAAAAQgEAAAAAAAAAAIAgAAAAA=</HashCode>
       <FileName>View\ProductInfoPage.xaml.cs</FileName>
@@ -391,7 +275,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.ProductOptionDialog" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="18.75" Y="5.5" Width="1.5" />
+    <Position X="17.75" Y="13.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAIAAQACAAAAQ=</HashCode>
       <FileName>View\ProductOptionDialog.xaml.cs</FileName>
@@ -399,7 +283,7 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.ProductsPage" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="22.25" Y="5.5" Width="1.5" />
+    <Position X="19.5" Y="13.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAIAAAAAAAAAAAAAABAgEAAAAAAAEAAAAAAAAAA=</HashCode>
       <FileName>View\ProductsPage.xaml.cs</FileName>
@@ -407,49 +291,136 @@
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.UpdateCustomerPage" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="17" Y="6.5" Width="1.5" />
+    <Position X="12.5" Y="14.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BBAAAAgAAAAAAAAAAAAAAAQAEAAAAAIAAAAAAAAAAAA=</HashCode>
+      <HashCode>BBAAAAgAAAAAAAAAAAAAAAQAEAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>View\UpdateCustomerPage.xaml.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="LowLand.View.UpdateOrderPage" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="18.75" Y="6.5" Width="1.5" />
+    <Position X="14.25" Y="14.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ABAAAAgAAAAAAEAAAAAIARQAEBAAAAAAAAAAAAAAABA=</HashCode>
+      <HashCode>gBAAAAgAAAAAAEAAAAAIARQAEBAAAAAAAAAAAAAAABA=</HashCode>
       <FileName>View\UpdateOrderPage.xaml.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="LowLand.App" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="27.5" Y="0.5" Width="1.5" />
+  <Class Name="LowLand.View.Converter.AbsolutePathConverter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="12.5" Y="16" Width="2" />
     <TypeIdentifier>
-      <HashCode>CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
-      <FileName>App.xaml.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\Converter\AbsolutePathConverter.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Interface Name="LowLand.Services.IDao" Collapsed="true">
-    <Position X="17" Y="7.75" Width="1.5" />
+  <Class Name="LowLand.View.Converter.CurrencyFormatter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14.75" Y="16" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\Converter\CurrencyFormatter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="LowLand.View.Converter.OrderStatusToVisibilityConverter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17" Y="16" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\Converter\OrderStatusToVisibilityConverter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ReviewWeek5.View.Converter.TelephoneFormatter" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="12.5" Y="16.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>View\Converter\TelephoneFormatter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="LowLand.Model.Customer.Customer" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAADAAAAAAAAgAAAAAAAAAQAgQAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Model\Customer\Customer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="LowLand.Model.Customer.CustomerRank" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="19.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAgAAACAAAAAAAAAACAAA=</HashCode>
+      <FileName>Model\Customer\CustomerRank.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="LowLand.Model.Order.Order" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15.75" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAKAAAGAgABAAAAAAAAAAAAwAAQQJABAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Order\Order.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="LowLand.Model.Order.OrderDetail" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17.5" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EEACAAAAAQAAAAAAAQAAgAAAgAAAAACAAAACAAAIAAA=</HashCode>
+      <FileName>Model\Order\OrderDetail.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="LowLand.Model.Product.Category" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15.75" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Product\Category.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="LowLand.Model.Product.Product" Collapsed="true">
+    <Position X="12.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAACAAAAQAAAAAAAAQAgAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Product\Product.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="LowLand.Model.Product.SingleProduct" Collapsed="true">
+    <Position X="11" Y="20" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Model\Product\Product.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LowLand.Model.Product.ComboProduct" Collapsed="true">
+    <Position X="13.25" Y="20" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Product\Product.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LowLand.Model.Product.ProductOption" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="19.25" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAACAAAAQAAAQAAAAQAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\Product\ProductOption.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Interface Name="LowLand.Services.IDao">
+    <Position X="10" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEEAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAQAAQ=</HashCode>
       <FileName>Services\IDao.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="LowLand.Services.IRepository&lt;T&gt;">
-    <Position X="18.75" Y="7.75" Width="1.5" />
+    <Position X="7.75" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAACAAAAAAAgAAAACAAIA=</HashCode>
       <FileName>Services\IRepository.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Enum Name="LowLand.Utils.ResponseCode" Collapsed="true">
-    <Position X="17" Y="8.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>BAEAAAACAAAAAQCAAEAAAIAAAgAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Utils\ResponseCode.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

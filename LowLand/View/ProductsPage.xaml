@@ -50,7 +50,7 @@
                                 <FontIcon Glyph="&#xF133;"/>
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="Combo sản phẩm">
+                        <MenuFlyoutItem Text="Combo sản phẩm" Click="AddNewComboProduct">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE8FD;"/>
                             </MenuFlyoutItem.Icon>

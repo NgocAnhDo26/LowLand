@@ -29,10 +29,10 @@
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Text="{x:Bind OptionId}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Column="1" Text="{x:Bind Name}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Column="2" Text="{x:Bind CostPrice, Converter={StaticResource CurrencyFormatter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Column="3" Text="{x:Bind SalePrice, Converter={StaticResource CurrencyFormatter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="0" Text="{x:Bind OptionId, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="{x:Bind CostPrice, Converter={StaticResource CurrencyFormatter}, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="{x:Bind SalePrice, Converter={StaticResource CurrencyFormatter}, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <DropDownButton Grid.Column="4">
                     <DropDownButton.Content>
                         <FontIcon Glyph="&#xE712;"/>
@@ -101,7 +101,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <Grid CornerRadius="4" MaxWidth="200">
+                    <Grid CornerRadius="4" MaxWidth="300" MaxHeight="300">
                         <Image Stretch="UniformToFill" VerticalAlignment="Center" Source="{x:Bind ViewModel.Product.Image, Converter={StaticResource AbsolutePathConverter}, Mode=OneWay}"/>
                     </Grid>
 
