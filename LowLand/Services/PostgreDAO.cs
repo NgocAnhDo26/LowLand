@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using LowLand.Model.Customer;
+using LowLand.Model.Discount;
 using LowLand.Model.Order;
 using LowLand.Model.Product;
 using Npgsql;
@@ -19,6 +20,7 @@ namespace LowLand.Services
         public IRepository<Product> Products { get; set; } = new ProductRepository();
         public IRepository<ComboItem> ComboItems { get; set; } = new ComboItemRepository();
         public IRepository<ProductOption> ProductOptions { get; set; } = new ProductOptionRepository();
+        public IRepository<Promotion> Promotions { get; set; } = new PromotionRepository();
     }
 
     public abstract class BaseRepository<T>
@@ -30,14 +32,21 @@ namespace LowLand.Services
             var results = new List<T>();
             using (var conn = new NpgsqlConnection(connectionString))
             {
-                conn.Open();
-                using (var cmd = new NpgsqlCommand(query, conn))
-                using (var reader = cmd.ExecuteReader())
+                try
                 {
-                    while (reader.Read())
+                    conn.Open();
+                    using (var cmd = new NpgsqlCommand(query, conn))
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        results.Add(mapFunction(reader));
+                        while (reader.Read())
+                        {
+                            results.Add(mapFunction(reader));
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Không thể kết nối với Database!");
                 }
             }
             return results;
@@ -862,6 +871,77 @@ namespace LowLand.Services
                     option_id = {(info.Option != null ? info.Option.OptionId.ToString() : "NULL")},
                     quantity = {info.Quantity}
                 WHERE item_id = '{id}'
+                """);
+        }
+    }
+
+    internal class PromotionRepository : BaseRepository<Promotion>, IRepository<Promotion>
+    {
+        public List<Promotion> GetAll()
+        {
+            return ExecuteQuery("""
+                SELECT promotion_id, promotion_name, description, start_date, end_date, promotion_type, amount, minimum_order_value, is_active
+                FROM promotion
+            """, reader => new Promotion
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("promotion_id")),
+                Name = reader.GetString(reader.GetOrdinal("promotion_name")),
+                Description = reader.GetString(reader.GetOrdinal("description")),
+                StartDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("start_date"))),
+                EndDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("end_date"))),
+                Type = (PromotionType)reader.GetInt32(reader.GetOrdinal("promotion_type")),
+                Amount = reader.GetDouble(reader.GetOrdinal("amount")),
+                MinimumOrderValue = reader.GetInt32(reader.GetOrdinal("minimum_order_value")),
+                IsActive = reader.GetBoolean(reader.GetOrdinal("is_active"))
+            });
+        }
+
+        public Promotion GetById(string id)
+        {
+            return ExecuteSingleQuery($"""
+                SELECT promotion_id, promotion_name, description, start_date, end_date, promotion_type, amount, minimum_order_value, is_active
+                FROM promotion WHERE promotion_id = '{id}'
+            """, reader => new Promotion
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("promotion_id")),
+                Name = reader.GetString(reader.GetOrdinal("name")),
+                Description = reader.GetString(reader.GetOrdinal("description")),
+                StartDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("start_date"))),
+                EndDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("end_date"))),
+                Type = (PromotionType)reader.GetInt32(reader.GetOrdinal("promotion_type")),
+                Amount = reader.GetDouble(reader.GetOrdinal("amount")),
+                MinimumOrderValue = reader.GetInt32(reader.GetOrdinal("minimum_order_value")),
+                IsActive = reader.GetBoolean(reader.GetOrdinal("is_active"))
+            })!;
+        }
+
+        public int Insert(Promotion info)
+        {
+            return ExecuteNonQuery($"""
+                INSERT INTO promotion (promotion_name, description, start_date, end_date, promotion_type, amount, minimum_order_value, is_active)
+                VALUES ('{info.Name}', '{info.Description}', '{info.StartDate.ToString("yyyy-MM-dd")}', '{info.EndDate.ToString("yyyy-MM-dd")}', {(int)info.Type}, {info.Amount}, {(info.MinimumOrderValue == null ? "NULL" : info.MinimumOrderValue)}, {info.IsActive})
+            """);
+        }
+
+        public int UpdateById(string id, Promotion info)
+        {
+            return ExecuteNonQuery($"""
+                UPDATE promotion SET 
+                    promotion_name = '{info.Name}',
+                    description = '{info.Description}',
+                    start_date = '{info.StartDate.ToString("yyyy-MM-dd")}',
+                    end_date = '{info.EndDate.ToString("yyyy-MM-dd")}',
+                    promotion_type = {(int)info.Type},
+                    amount = {info.Amount},
+                    minimum_order_value = {info.MinimumOrderValue},
+                    is_active = {info.IsActive}
+                WHERE promotion_id = '{id}'
+            """);
+        }
+        public int DeleteById(string id)
+        {
+            return ExecuteNonQuery($"""
+                DELETE FROM promotion WHERE promotion_id = '{id}'
                 """);
         }
     }

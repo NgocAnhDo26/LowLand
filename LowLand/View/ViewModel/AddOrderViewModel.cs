@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using LowLand.Model.Customer;
+using LowLand.Model.Discount;
 using LowLand.Model.Order;
 using LowLand.Model.Product;
 using LowLand.Services;
+using LowLand.Utils;
 
 namespace LowLand.View.ViewModel
 {
@@ -16,8 +19,10 @@ namespace LowLand.View.ViewModel
         public Order EditorAddOrder { get; set; }
         public ObservableCollection<Customer> Customers { get; set; }
         public ObservableCollection<Product> Products { get; set; }
-        public ObservableCollection<ProductOption> ProductOptions { get; set; }
+        public List<ProductOption> ProductOptions { get; set; }
         public ObservableCollection<CustomerRank> CustomerRanks { get; set; } // Added this property
+        public FullObservableCollection<Promotion> AvailablePromotions { get; set; }
+        public Promotion SelectedPromotion { get; set; }
 
         public AddOrderViewModel()
         {
@@ -28,11 +33,28 @@ namespace LowLand.View.ViewModel
                 Details = new ObservableCollection<OrderDetail>()
             };
 
-            ProductOptions = new ObservableCollection<ProductOption>(_dao.ProductOptions.GetAll());
+            ProductOptions = _dao.ProductOptions.GetAll();
             Customers = new ObservableCollection<Customer>(_dao.Customers.GetAll());
             Products = new ObservableCollection<Product>(_dao.Products.GetAll());
-            CustomerRanks = new ObservableCollection<CustomerRank>(_dao.CustomerRanks.GetAll()); // Initialize it here
+            CustomerRanks = new ObservableCollection<CustomerRank>(_dao.CustomerRanks.GetAll());
+
+            LoadAvailablePromotions();
         }
+
+        private void LoadAvailablePromotions()
+        {
+            var allPromotions = _dao.Promotions.GetAll();
+            // Lọc các khuyến mãi hợp lệ (có thể thêm điều kiện ngày bắt đầu/kết thúc)
+            var activePromotions = allPromotions
+                .Where(p => p.IsActive
+                //&& p.StartDate <= DateOnly.FromDateTime(DateTime.Now)
+                //&& p.EndDate >= DateOnly.FromDateTime(DateTime.Now)
+                //&& p.MinimumOrderValue <= EditorAddOrder.TotalPrice
+                )
+                .ToList();
+            AvailablePromotions = new FullObservableCollection<Promotion>(activePromotions);
+        }
+
         public OrderDetail CreateOrderDetail(Product selectedProduct)
         {
             if (selectedProduct == null) return null;
@@ -50,15 +72,18 @@ namespace LowLand.View.ViewModel
             };
             return orderDetail;
         }
+
         public void Add(Order item)
         {
             item.Date = DateTime.Now;
             item.Status = "Đang xử lý";
             Debug.WriteLine("item.Total: " + item.TotalPrice, item.TotalAfterDiscount);
+
+            // Update customer points and rank
             var customer = Customers.FirstOrDefault(c => c.Id == item.CustomerId);
             if (customer != null)
             {
-                customer.Point += (int)Math.Round((double)item.TotalPrice / 1000);
+                customer.Point += (int)Math.Round((double)item.TotalAfterDiscount / 1000);
 
                 int newRankId = CustomerRanks
                     .Where(r => r.PromotionPoint <= customer.Point)
@@ -70,9 +95,8 @@ namespace LowLand.View.ViewModel
                 {
                     customer.Rank = CustomerRanks.FirstOrDefault(r => r.Id == newRankId);
                 }
+
                 _dao.Customers.UpdateById(customer.Id.ToString(), customer);
-
-
             }
 
             item.TotalAfterDiscount = item.TotalPrice;
@@ -89,20 +113,6 @@ namespace LowLand.View.ViewModel
             }
         }
 
-        public OrderDetail CreatOrderDetail(Product selectedProduct)
-        {
-            if (selectedProduct == null) return null;
-
-            var orderDetail = new OrderDetail
-            {
-                ProductId = selectedProduct.Id,
-                ProductName = selectedProduct.Name,
-                ProductPrice = selectedProduct.SalePrice,
-                Price = selectedProduct.SalePrice * 1,
-                quantity = 1
-            };
-            return orderDetail;
-        }
         public Customer GetCustomerByPhone(string phone)
         {
             var customer = Customers.FirstOrDefault(c => c.Phone == phone);

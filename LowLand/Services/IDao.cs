@@ -1,4 +1,5 @@
 ﻿using LowLand.Model.Customer;
+using LowLand.Model.Discount;
 using LowLand.Model.Order;
 using LowLand.Model.Product;
 
@@ -20,6 +21,7 @@ namespace LowLand.Services
         IRepository<Customer> Customers { get; set; }
         IRepository<CustomerRank> CustomerRanks { get; set; }
 
-
+        // Promotion repositories
+        IRepository<Promotion> Promotions { get; set; }
     }
 }

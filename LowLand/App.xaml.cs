@@ -25,6 +25,7 @@ namespace LowLand
             this.InitializeComponent();
             Services.Services.AddKeyedSingleton<IDao, PostgreDao>();
             UnhandledException += App_UnhandledException;
+            Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "vi-VN";
         }
 
         private async void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
