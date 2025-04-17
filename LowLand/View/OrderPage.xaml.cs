@@ -5,14 +5,8 @@ using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace LowLand.View
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class OrderPage : Page
     {
         public OrderViewModel ViewModel { get; set; } = new OrderViewModel();
@@ -20,11 +14,15 @@ namespace LowLand.View
         public OrderPage()
         {
             this.InitializeComponent();
-        }
 
+
+        }
         private void searchButton_Click(object sender, RoutedEventArgs e)
         {
-            // Tìm kiếm đơn hàng theo từ khóa
+            var keyword = searchBar?.Text ?? string.Empty;
+            Debug.WriteLine($"Search button clicked, keyword: {keyword}");
+            ViewModel.Paging.SearchKeyword = keyword;
+            ViewModel.Paging.Refresh();
         }
 
         private void addButton_Click(object sender, RoutedEventArgs e)
@@ -63,6 +61,8 @@ namespace LowLand.View
 
         private void updateButton_Click(object sender, RoutedEventArgs e)
         {
+
+
             if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is Order selectedOrder)
             {
                 Frame.Navigate(typeof(UpdateOrderPage), selectedOrder);
@@ -84,6 +84,7 @@ namespace LowLand.View
                 Debug.WriteLine(ex.Message);
             }
         }
+
         private string FormatCustomerName(string customerId, string customerName, string customerPhone)
         {
             if (string.IsNullOrEmpty(customerId) && string.IsNullOrEmpty(customerName) && string.IsNullOrEmpty(customerPhone))
@@ -108,10 +109,25 @@ namespace LowLand.View
             {
                 selectedOrder.Status = "Hoàn thành";
                 ViewModel.Update(selectedOrder);
-
             }
         }
 
+        private void PreviousPage_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Paging.GoToPreviousPage();
+        }
 
+        private void NextPage_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Paging.GoToNextPage();
+        }
+
+        private void PageSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox.SelectedIndex >= 0)
+            {
+                ViewModel.Paging.CurrentPage = comboBox.SelectedIndex + 1;
+            }
+        }
     }
 }

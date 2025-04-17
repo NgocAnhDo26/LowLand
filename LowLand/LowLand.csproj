@@ -16,10 +16,10 @@
     <Content Remove="Assets\product_default.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="View\AddOrderPage.xaml" />
     <None Remove="View\AddProductComboPage.xaml" />
     <None Remove="View\AddPromotionPage.xaml" />
     <None Remove="View\AddSingleProductPage.xaml" />
-    <None Remove="View\AddOrderPage.xaml" />
     <None Remove="View\CategoriesPage.xaml" />
     <None Remove="View\CustomerRankDialog.xaml" />
     <None Remove="View\CustomerRankPage.xaml" />
@@ -82,6 +82,9 @@
     <None Update="Assets\product_default.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="View\AddOrderPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="View\AddPromotionPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -105,9 +108,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="View\UpdateOrderPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="View\AddOrderPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="View\OrderPage.xaml">

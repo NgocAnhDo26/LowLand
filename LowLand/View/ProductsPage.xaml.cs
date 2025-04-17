@@ -112,5 +112,22 @@ namespace LowLand.View
                 }
             }
         }
+        private void PreviousPage_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Paging.GoToPreviousPage();
+        }
+
+        private void NextPage_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Paging.GoToNextPage();
+        }
+
+        private void PageSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox.SelectedIndex >= 0)
+            {
+                ViewModel.Paging.CurrentPage = comboBox.SelectedIndex + 1;
+            }
+        }
     }
 }

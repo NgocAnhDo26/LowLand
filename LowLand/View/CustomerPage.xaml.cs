@@ -1,30 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using System.Diagnostics;
+using LowLand.Model.Customer;
+using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using LowLand.View.ViewModel;
-using LowLand.Model.Product;
-using LowLand.Model.Customer;
-using System.Threading.Tasks;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace LowLand.View
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class CustomerPage : Page
     {
         public CustomerViewModel ViewModel { get; set; } = new CustomerViewModel();
@@ -34,23 +16,24 @@ namespace LowLand.View
             this.InitializeComponent();
         }
 
-        
-
         private void searchButton_Click(object sender, RoutedEventArgs e)
         {
-
+            var keyword = searchBar?.Text?.Trim() ?? string.Empty;
+            Debug.WriteLine($"Search button clicked, keyword: '{keyword}'");
+            ViewModel.Paging.SearchKeyword = keyword;
+            ViewModel.Paging.Refresh();
         }
 
         private void addButton_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(AddCustomerPage));
         }
+
         private async void deleteButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is Customer selectedCustomer)
-
                 {
                     ContentDialog deleteDialog = new ContentDialog
                     {
@@ -58,7 +41,8 @@ namespace LowLand.View
                         Content = $"Bạn có chắc muốn xóa khách hàng {selectedCustomer.Name}?",
                         PrimaryButtonText = "Xóa",
                         CloseButtonText = "Hủy",
-                          XamlRoot = this.XamlRoot
+                        DefaultButton = ContentDialogButton.Primary,
+                        XamlRoot = this.XamlRoot
                     };
 
                     ContentDialogResult result = await deleteDialog.ShowAsync();
@@ -70,9 +54,8 @@ namespace LowLand.View
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Debug.WriteLine(ex.Message);
             }
-
         }
 
         private void updateButton_Click(object sender, RoutedEventArgs e)
@@ -83,6 +66,23 @@ namespace LowLand.View
             }
         }
 
+        private void PreviousPage_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Paging.GoToPreviousPage();
+        }
+
+        private void NextPage_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Paging.GoToNextPage();
+        }
+
+        private void PageSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox.SelectedIndex >= 0)
+            {
+                Debug.WriteLine($"PageSelector changed, SelectedIndex: {comboBox.SelectedIndex}, Setting CurrentPage: {comboBox.SelectedIndex + 1}");
+                ViewModel.Paging.CurrentPage = comboBox.SelectedIndex + 1;
+            }
+        }
     }
 }
-

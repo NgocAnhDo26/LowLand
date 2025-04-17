@@ -15,5 +15,7 @@
         InvalidDate,
         InvalidStatus,
         EmptyDate,
+        ExistsCustomer,
+
     }
 }

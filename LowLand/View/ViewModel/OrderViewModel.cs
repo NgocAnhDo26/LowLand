@@ -1,22 +1,29 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using LowLand.Model.Order;
 using LowLand.Services;
 
-
 namespace LowLand.View.ViewModel
 {
-    public class OrderViewModel
+    public class OrderViewModel : INotifyPropertyChanged
     {
-        private IDao _dao;
-        public ObservableCollection<Order> Orders { get; set; }
+        private readonly IDao _dao;
+        private readonly PagingViewModel<Order> _paging;
+
+        public PagingViewModel<Order> Paging => _paging;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public OrderViewModel()
         {
             _dao = Services.Services.GetKeyedSingleton<IDao>();
-            Orders = new ObservableCollection<Order>(_dao.Orders.GetAll());
+            _paging = new PagingViewModel<Order>(
+                (page, size, keyword) => _dao.Orders.GetAll(page, size, keyword),
+                pageSize: 10
+            );
         }
+
         public void Add(Order item)
         {
             item.Date = DateTime.Now;
@@ -25,7 +32,7 @@ namespace LowLand.View.ViewModel
             if (result == 1)
             {
                 item.Id = _dao.Orders.GetAll().Max(o => o.Id);
-                Orders.Add(item);
+                _paging.Refresh();
             }
             else
             {
@@ -38,7 +45,7 @@ namespace LowLand.View.ViewModel
             int result = _dao.Orders.DeleteById(item.Id.ToString());
             if (result == 1)
             {
-                Orders.Remove(item);
+                _paging.Refresh();
             }
             else
             {
@@ -48,26 +55,20 @@ namespace LowLand.View.ViewModel
 
         public void Update(Order item)
         {
-            var orderToUpdate = Orders.FirstOrDefault(o => o.Id == item.Id);
-            if (orderToUpdate != null)
+            int result = _dao.Orders.UpdateById(item.Id.ToString(), item);
+            if (result == 1)
             {
-                int result = _dao.Orders.UpdateById(item.Id.ToString(), item);
-                if (result == 1)
-                {
-                    int index = Orders.IndexOf(orderToUpdate);
-                    if (index != -1)
-                    {
-                        Orders[index] = item;
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Update failed: No rows affected.");
-                }
+                _paging.Refresh();
+            }
+            else
+            {
+                Console.WriteLine("Update failed: No rows affected.");
             }
         }
 
-
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
-
 }

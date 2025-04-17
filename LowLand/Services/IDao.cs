@@ -2,6 +2,7 @@
 using LowLand.Model.Discount;
 using LowLand.Model.Order;
 using LowLand.Model.Product;
+using LowLand.Model.Table;
 
 namespace LowLand.Services
 {
@@ -23,5 +24,7 @@ namespace LowLand.Services
 
         // Promotion repositories
         IRepository<Promotion> Promotions { get; set; }
+        // Table repositories
+        IRepository<Table> Tables { get; set; }
     }
 }

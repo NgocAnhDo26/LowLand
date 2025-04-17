@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using LowLand.Model;
 using LowLand.Model.Customer;
 using LowLand.Model.Discount;
 using LowLand.Model.Order;
 using LowLand.Model.Product;
+using LowLand.Model.Table;
 using Npgsql;
 
 namespace LowLand.Services
@@ -21,13 +23,17 @@ namespace LowLand.Services
         public IRepository<ComboItem> ComboItems { get; set; } = new ComboItemRepository();
         public IRepository<ProductOption> ProductOptions { get; set; } = new ProductOptionRepository();
         public IRepository<Promotion> Promotions { get; set; } = new PromotionRepository();
+
+        public IRepository<Table> Tables { get; set; } = new TableRepository();
+
+
     }
 
     public abstract class BaseRepository<T>
     {
         protected readonly string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION");
 
-        protected List<T> ExecuteQuery(string query, Func<NpgsqlDataReader, T> mapFunction)
+        protected List<T> ExecuteQuery(string query, Func<NpgsqlDataReader, T> mapFunction, Action<NpgsqlCommand>? configureCommand = null)
         {
             var results = new List<T>();
             using (var conn = new NpgsqlConnection(connectionString))
@@ -36,23 +42,26 @@ namespace LowLand.Services
                 {
                     conn.Open();
                     using (var cmd = new NpgsqlCommand(query, conn))
-                    using (var reader = cmd.ExecuteReader())
                     {
-                        while (reader.Read())
+                        configureCommand?.Invoke(cmd);
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            results.Add(mapFunction(reader));
+                            while (reader.Read())
+                            {
+                                results.Add(mapFunction(reader));
+                            }
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"Không thể kết nối với Database!");
+                    throw new Exception(ex.Message);
                 }
             }
             return results;
         }
 
-        protected T? ExecuteSingleQuery(string query, Func<NpgsqlDataReader, T> mapFunction)
+        protected T? ExecuteSingleQuery(string query, Func<NpgsqlDataReader, T> mapFunction, Action<NpgsqlCommand>? configureCommand = null)
         {
             try
             {
@@ -60,9 +69,12 @@ namespace LowLand.Services
                 {
                     conn.Open();
                     using (var cmd = new NpgsqlCommand(query, conn))
-                    using (var reader = cmd.ExecuteReader())
                     {
-                        return reader.Read() ? mapFunction(reader) : default;
+                        configureCommand?.Invoke(cmd);
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            return reader.Read() ? mapFunction(reader) : default;
+                        }
                     }
                 }
             }
@@ -84,6 +96,24 @@ namespace LowLand.Services
                 }
             }
         }
+        public T ExecuteScalar<T>(string query, Action<NpgsqlCommand> configureCommand)
+        {
+            using (var connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+                using (var command = new NpgsqlCommand(query, connection))
+                {
+                    configureCommand?.Invoke(command);
+                    var result = command.ExecuteScalar();
+
+                    if (result == null || result == DBNull.Value)
+                        return default(T);
+
+                    return (T)Convert.ChangeType(result, typeof(T));
+                }
+            }
+        }
+
 
     }
 
@@ -166,7 +196,73 @@ namespace LowLand.Services
             return affectedRows;
         }
 
-        // extraclass 
+        public PagedResult<Customer> GetAll(int page, int pageSize, string? keyword = null)
+        {
+            var offset = (page - 1) * pageSize;
+            var whereClause = "";
+
+            keyword = keyword?.Trim();
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                whereClause = @"WHERE (c.name ILIKE @keyword OR c.name IS NULL) 
+                              OR (c.phone ILIKE @keyword OR c.phone IS NULL)";
+            }
+
+            var totalItemsQuery = $"""
+                SELECT COUNT(*) 
+                FROM customer c 
+                {whereClause}
+            """;
+
+            var totalItems = ExecuteScalar<int>(totalItemsQuery, cmd =>
+            {
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    cmd.Parameters.AddWithValue("@keyword", $"%{keyword}%");
+                    Debug.WriteLine($"TotalItemsQuery: {totalItemsQuery}, keyword={keyword}");
+                }
+            });
+
+            var pagedCustomers = ExecuteQuery($"""
+                SELECT 
+                    c.customer_id, c.name, c.phone, c.point, c.registration_date, c.customer_rank_id, 
+                    cr.customer_rank_name, cr.promotion_point, cr.discount_percentage 
+                FROM customer c 
+                LEFT JOIN customer_rank cr ON c.customer_rank_id = cr.customer_rank_id
+                {whereClause}
+                ORDER BY c.registration_date DESC
+                LIMIT @pageSize OFFSET @offset
+            """,
+            reader => new Customer
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("customer_id")),
+                Name = reader.GetString(reader.GetOrdinal("name")),
+                Phone = reader.IsDBNull(reader.GetOrdinal("phone")) ? null : reader.GetString(reader.GetOrdinal("phone")),
+                Point = reader.GetInt32(reader.GetOrdinal("point")),
+                RegistrationDate = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("registration_date"))),
+                Rank = reader.IsDBNull(reader.GetOrdinal("customer_rank_id")) ? null : new CustomerRank
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("customer_rank_id")),
+                    Name = reader.GetString(reader.GetOrdinal("customer_rank_name")),
+                    PromotionPoint = reader.GetInt32(reader.GetOrdinal("promotion_point")),
+                    DiscountPercentage = reader.GetInt32(reader.GetOrdinal("discount_percentage"))
+                }
+            },
+            cmd =>
+            {
+                cmd.Parameters.AddWithValue("@pageSize", pageSize);
+                cmd.Parameters.AddWithValue("@offset", offset);
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    cmd.Parameters.AddWithValue("@keyword", $"%{keyword}%");
+                    Debug.WriteLine($"PagedCustomersQuery: SELECT ... {whereClause}, keyword={keyword}, page={page}, pageSize={pageSize}");
+                }
+            });
+
+            Debug.WriteLine($"GetAll returned {pagedCustomers.Count} customers, totalItems: {totalItems}");
+
+            return new PagedResult<Customer>(pagedCustomers, page, pageSize, totalItems);
+        }
 
     }
 
@@ -190,6 +286,11 @@ namespace LowLand.Services
                 PromotionPoint = reader.GetInt32(reader.GetOrdinal("promotion_point")),
                 DiscountPercentage = reader.GetInt32(reader.GetOrdinal("discount_percentage"))
             });
+        }
+
+        public PagedResult<CustomerRank> GetAll(int pageNumber, int pageSize, string? keyword = null)
+        {
+            throw new NotImplementedException();
         }
 
         public CustomerRank GetById(string id)
@@ -241,7 +342,7 @@ namespace LowLand.Services
         public List<Order> GetAll()
         {
             var orders = ExecuteQuery($"""
-        SELECT order_id, customer_id, customer_phone, total_after_discount, total_price, status, promotion_id, date,customer_name
+        SELECT order_id, customer_id, customer_phone, total_after_discount, total_price, status, promotion_id, date,customer_name,table_id, total_cost_price
         FROM "order"
     """, reader => new Order
             {
@@ -254,7 +355,10 @@ namespace LowLand.Services
                 TotalPrice = reader.GetInt32(reader.GetOrdinal("total_price")),
                 TotalAfterDiscount = reader.GetInt32(reader.GetOrdinal("total_after_discount")),
                 Status = reader.GetString(reader.GetOrdinal("status")),
-                Date = reader.GetDateTime(reader.GetOrdinal("date"))
+                Date = reader.GetDateTime(reader.GetOrdinal("date")),
+                TableId = reader.IsDBNull(reader.GetOrdinal("table_id")) ? null : reader.GetInt32(reader.GetOrdinal("table_id")),
+                TotalCostPrice = reader.IsDBNull(reader.GetOrdinal("total_cost_price")) ? 0 : reader.GetInt32(reader.GetOrdinal("total_cost_price"))
+
             });
 
             foreach (var order in orders)
@@ -264,11 +368,78 @@ namespace LowLand.Services
 
             return orders;
         }
+        public PagedResult<Order> GetAll(int page, int pageSize, string? keyword = null)
+        {
+            var offset = (page - 1) * pageSize;
+            var whereClause = "";
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                whereClause = $"WHERE customer_name ILIKE @keyword OR customer_phone ILIKE @keyword";
+            }
+
+
+            var totalItemsQuery = $"""
+                    SELECT COUNT(*) FROM "order" {whereClause}
+                """;
+
+            var totalItems = ExecuteScalar<int>(totalItemsQuery, cmd =>
+            {
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    cmd.Parameters.AddWithValue("@keyword", $"%{keyword}%");
+                    System.Diagnostics.Debug.WriteLine($"TotalItemsQuery: keyword={keyword}");
+                }
+            });
+
+
+            var pagedOrders = ExecuteQuery($"""
+                    SELECT order_id, customer_id, customer_phone, total_after_discount, total_price, status, promotion_id, date, customer_name,table_id, total_cost_price
+                    FROM "order"
+                    {whereClause}
+                    ORDER BY date DESC
+                    LIMIT @pageSize OFFSET @offset
+                """,
+                reader => new Order
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("order_id")),
+                    CustomerId = reader.IsDBNull(reader.GetOrdinal("customer_id")) ? null : reader.GetInt32(reader.GetOrdinal("customer_id")),
+                    CustomerStatus = reader.IsDBNull(reader.GetOrdinal("customer_id")) ? "Vãng lai" : "Thành viên",
+                    CustomerPhone = reader.IsDBNull(reader.GetOrdinal("customer_phone")) ? null : reader.GetString(reader.GetOrdinal("customer_phone")),
+                    CustomerName = reader.IsDBNull(reader.GetOrdinal("customer_name")) ? null : reader.GetString(reader.GetOrdinal("customer_name")),
+                    PromotionId = reader.IsDBNull(reader.GetOrdinal("promotion_id")) ? null : reader.GetInt32(reader.GetOrdinal("promotion_id")),
+                    TotalPrice = reader.GetInt32(reader.GetOrdinal("total_price")),
+                    TotalAfterDiscount = reader.GetInt32(reader.GetOrdinal("total_after_discount")),
+                    Status = reader.GetString(reader.GetOrdinal("status")),
+                    Date = reader.GetDateTime(reader.GetOrdinal("date")),
+                    TableId = reader.IsDBNull(reader.GetOrdinal("table_id")) ? null : reader.GetInt32(reader.GetOrdinal("table_id")),
+                    TotalCostPrice = reader.IsDBNull(reader.GetOrdinal("total_cost_price")) ? 0 : reader.GetInt32(reader.GetOrdinal("total_cost_price"))
+                },
+                cmd =>
+                {
+                    cmd.Parameters.AddWithValue("@pageSize", pageSize);
+                    cmd.Parameters.AddWithValue("@offset", offset);
+                    if (!string.IsNullOrEmpty(keyword))
+                    {
+                        cmd.Parameters.AddWithValue("@keyword", $"%{keyword}%");
+                        System.Diagnostics.Debug.WriteLine($"PagedOrdersQuery: keyword={keyword}, page={page}, pageSize={pageSize}");
+                    }
+                });
+
+            System.Diagnostics.Debug.WriteLine($"GetAll returned {pagedOrders.Count} orders");
+
+            foreach (var order in pagedOrders)
+            {
+                order.Details = new ObservableCollection<OrderDetail>(_orderDetailRepository.GetByOrderId(order.Id.ToString()));
+            }
+
+            return new PagedResult<Order>(pagedOrders, page, pageSize, totalItems);
+        }
 
         public Order GetById(string id)
         {
             var order = ExecuteSingleQuery($"""
-        SELECT order_id, customer_id, customer_phone, total_after_discount, total_price, status, promotion_id, date,customer_name
+        SELECT order_id, customer_id, customer_phone, total_after_discount, total_price, status, promotion_id, date,customer_name,table_id, total_cost_price
         FROM "order" WHERE order_id = '{id}'
     """, reader => new Order
             {
@@ -281,7 +452,9 @@ namespace LowLand.Services
                 TotalPrice = reader.GetInt32(reader.GetOrdinal("total_price")),
                 TotalAfterDiscount = reader.GetInt32(reader.GetOrdinal("total_after_discount")),
                 Status = reader.GetString(reader.GetOrdinal("status")),
-                Date = reader.GetDateTime(reader.GetOrdinal("date"))
+                Date = reader.GetDateTime(reader.GetOrdinal("date")),
+                TableId = reader.IsDBNull(reader.GetOrdinal("table_id")) ? null : reader.GetInt32(reader.GetOrdinal("table_id")),
+                TotalCostPrice = reader.IsDBNull(reader.GetOrdinal("total_cost_price")) ? 0 : reader.GetInt32(reader.GetOrdinal("total_cost_price"))
             });
 
             if (order != null)
@@ -298,8 +471,8 @@ namespace LowLand.Services
             conn.Open();
 
             using var cmd = new NpgsqlCommand(@"
-                INSERT INTO ""order"" (customer_id, customer_phone, customer_name, promotion_id, total_price, total_after_discount, status, date)
-                VALUES (@CustomerId, @CustomerPhone, @CustomerName, @PromotionId, @TotalPrice, @TotalAfterDiscount, @Status, @Date)
+                INSERT INTO ""order"" (customer_id, customer_phone, customer_name, promotion_id, total_price, total_after_discount, status, date,table_id, total_cost_price)
+                VALUES (@CustomerId, @CustomerPhone, @CustomerName, @PromotionId, @TotalPrice, @TotalAfterDiscount, @Status, @Date,@TableId,@TotalCostPrice)
                 RETURNING order_id", conn);
 
             cmd.Parameters.AddWithValue("@CustomerId", (object?)info.CustomerId ?? DBNull.Value);
@@ -310,6 +483,8 @@ namespace LowLand.Services
             cmd.Parameters.AddWithValue("@TotalAfterDiscount", info.TotalAfterDiscount);
             cmd.Parameters.AddWithValue("@Status", (object?)info.Status ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@Date", info.Date);
+            cmd.Parameters.AddWithValue("@TableId", (object?)info.TableId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@TotalCostPrice", info.TotalCostPrice);
 
             var orderId = (int)cmd.ExecuteScalar();
 
@@ -337,6 +512,8 @@ namespace LowLand.Services
             total_after_discount = @TotalAfterDiscount,
             status = @Status,
             date = @Date
+            , table_id = @TableId
+            , total_cost_price = @TotalCostPrice
         WHERE order_id = @OrderId", conn);
 
             cmd.Parameters.AddWithValue("@CustomerId", (object?)info.CustomerId ?? DBNull.Value);
@@ -347,6 +524,8 @@ namespace LowLand.Services
             cmd.Parameters.AddWithValue("@TotalAfterDiscount", info.TotalAfterDiscount);
             cmd.Parameters.AddWithValue("@Status", (object?)info.Status ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@Date", info.Date);
+            cmd.Parameters.AddWithValue("@TableId", (object?)info.TableId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@TotalCostPrice", info.TotalCostPrice);
 
 
             if (!int.TryParse(id, out int orderId))
@@ -410,11 +589,11 @@ namespace LowLand.Services
             {
                 conn.Open();
                 using (var cmd = new NpgsqlCommand(@"
-            INSERT INTO order_detail (order_id, product_id, product_price, quantity, sale_price, product_name, option_id, option_name)
-            VALUES (@orderId, @productId, @productPrice, @quantity, @salePrice, @productName, @optionId, @optionName)", conn))
+                INSERT INTO order_detail (order_id, product_id, product_price, quantity, sale_price, product_name, option_id, option_name)
+                VALUES (@orderId, @productId, @productPrice, @quantity, @salePrice, @productName, @optionId, @optionName)", conn))
                 {
-                    cmd.Parameters.AddWithValue("@orderId", info.OrderId);
-                    cmd.Parameters.AddWithValue("@productId", info.ProductId);
+                    cmd.Parameters.AddWithValue("@orderId", info.OrderId ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@productId", info.ProductId ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@productPrice", info.ProductPrice);
                     cmd.Parameters.AddWithValue("@quantity", info.quantity);
                     cmd.Parameters.AddWithValue("@salePrice", info.Price);
@@ -426,23 +605,25 @@ namespace LowLand.Services
                 }
             }
         }
+
         public int Insert(OrderDetail info, int OrderId)
         {
             using (var conn = new NpgsqlConnection(connectionString))
             {
                 conn.Open();
                 using (var cmd = new NpgsqlCommand(@"
-            INSERT INTO order_detail (order_id, product_id, product_price, quantity, sale_price, product_name, option_id, option_name)
-            VALUES (@orderId, @productId, @productPrice, @quantity, @salePrice, @productName, @optionId, @optionName)", conn))
+                INSERT INTO order_detail (order_id, product_id, product_price, quantity, sale_price, product_name, option_id, option_name,cost_price)
+                VALUES (@orderId, @productId, @productPrice, @quantity, @salePrice, @productName, @optionId, @optionName,@CostPrice)", conn))
                 {
                     cmd.Parameters.AddWithValue("@orderId", OrderId);
-                    cmd.Parameters.AddWithValue("@productId", info.ProductId);
+                    cmd.Parameters.AddWithValue("@productId", info.ProductId ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@productPrice", info.ProductPrice);
                     cmd.Parameters.AddWithValue("@quantity", info.quantity);
                     cmd.Parameters.AddWithValue("@salePrice", info.Price);
                     cmd.Parameters.AddWithValue("@productName", info.ProductName ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@optionId", info.OptionId.HasValue ? (object)info.OptionId.Value : DBNull.Value);
                     cmd.Parameters.AddWithValue("@optionName", string.IsNullOrEmpty(info.OptionName) ? (object)DBNull.Value : info.OptionName);
+                    cmd.Parameters.AddWithValue("@costPrice", info.CostPrice);
 
                     return cmd.ExecuteNonQuery();
                 }
@@ -468,21 +649,28 @@ namespace LowLand.Services
         public List<OrderDetail> GetByOrderId(string id)
         {
             return ExecuteQuery($"""
-            SELECT order_detail_id, order_id, product_id,product_price, quantity, sale_price, product_name, option_id, option_name
+            SELECT order_detail_id, order_id, product_id,product_price, quantity, sale_price, product_name, option_id, option_name,cost_price
             FROM order_detail WHERE order_id = '{id}'
             """, reader => new OrderDetail
             {
                 Id = reader.GetInt32(reader.GetOrdinal("order_detail_id")),
                 OrderId = reader.GetInt32(reader.GetOrdinal("order_id")),
-                ProductId = reader.GetInt32(reader.GetOrdinal("product_id")),
+                ProductId = reader.IsDBNull(reader.GetOrdinal("product_id")) ? null : reader.GetInt32(reader.GetOrdinal("product_id")),
                 ProductPrice = reader.GetInt32(reader.GetOrdinal("product_price")),
                 quantity = reader.GetInt32(reader.GetOrdinal("quantity")),
                 Price = reader.GetInt32(reader.GetOrdinal("sale_price")),
                 ProductName = reader.GetString(reader.GetOrdinal("product_name")),
                 OptionId = reader.IsDBNull(reader.GetOrdinal("option_id")) ? null : reader.GetInt32(reader.GetOrdinal("option_id")),
-                OptionName = reader.IsDBNull(reader.GetOrdinal("option_name")) ? null : reader.GetString(reader.GetOrdinal("option_name"))
+                OptionName = reader.IsDBNull(reader.GetOrdinal("option_name")) ? null : reader.GetString(reader.GetOrdinal("option_name")),
+                CostPrice = reader.IsDBNull(reader.GetOrdinal("cost_price")) ? 0 : reader.GetInt32(reader.GetOrdinal("cost_price"))
+
             });
 
+        }
+
+        public PagedResult<OrderDetail> GetAll(int pageNumber, int pageSize, string? keyword = null)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -504,6 +692,11 @@ namespace LowLand.Services
                 Id = reader.GetInt32(reader.GetOrdinal("category_id")),
                 Name = reader.GetString(reader.GetOrdinal("name"))
             });
+        }
+
+        public PagedResult<Category> GetAll(int pageNumber, int pageSize, string? keyword = null)
+        {
+            throw new NotImplementedException();
         }
 
         public Category? GetById(string id)
@@ -579,6 +772,83 @@ namespace LowLand.Services
                         },
                     };
             });
+        }
+
+        public PagedResult<Product> GetAll(int page, int pageSize, string? keyword = null)
+        {
+            var offset = (page - 1) * pageSize;
+            var whereClause = "";
+
+            keyword = keyword?.Trim();
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                whereClause = "WHERE p.name ILIKE @keyword";
+            }
+
+            var totalItemsQuery = $"""
+                SELECT COUNT(*) 
+                FROM product p
+                {whereClause}
+            """;
+
+            var totalItems = ExecuteScalar<int>(totalItemsQuery, cmd =>
+            {
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    cmd.Parameters.AddWithValue("@keyword", $"%{keyword}%");
+                    Debug.WriteLine($"TotalItemsQuery: {totalItemsQuery}, keyword={keyword}");
+                }
+            });
+
+            var pagedProducts = ExecuteQuery($"""
+                SELECT p.product_id, p.name, p.sale_price, p.cost_price, p.image, p.is_combo, 
+                       c.category_id, c.name AS category_name
+                FROM product p
+                LEFT JOIN category c ON p.category_id = c.category_id
+                {whereClause}
+                ORDER BY p.name ASC
+                LIMIT @pageSize OFFSET @offset
+            """,
+            reader =>
+            {
+                bool isCombo = reader.GetBoolean(reader.GetOrdinal("is_combo"));
+                return isCombo
+                    ? new ComboProduct
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("product_id")),
+                        Name = reader.GetString(reader.GetOrdinal("name")),
+                        SalePrice = reader.GetInt32(reader.GetOrdinal("sale_price")),
+                        CostPrice = reader.GetInt32(reader.GetOrdinal("cost_price")),
+                        Image = reader.IsDBNull(reader.GetOrdinal("image")) ? null : reader.GetString(reader.GetOrdinal("image"))
+                    }
+                    : new SingleProduct
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("product_id")),
+                        Name = reader.GetString(reader.GetOrdinal("name")),
+                        SalePrice = reader.GetInt32(reader.GetOrdinal("sale_price")),
+                        CostPrice = reader.GetInt32(reader.GetOrdinal("cost_price")),
+                        Image = reader.IsDBNull(reader.GetOrdinal("image")) ? null : reader.GetString(reader.GetOrdinal("image")),
+                        Category = reader.IsDBNull(reader.GetOrdinal("category_id")) ? null : new Category
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("category_id")),
+                            Name = reader.GetString(reader.GetOrdinal("category_name"))
+                        }
+                    };
+            },
+            cmd =>
+            {
+                cmd.Parameters.AddWithValue("@pageSize", pageSize);
+                cmd.Parameters.AddWithValue("@offset", offset);
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    cmd.Parameters.AddWithValue("@keyword", $"%{keyword}%");
+                    Debug.WriteLine($"PagedProductsQuery: SELECT ... {whereClause}, keyword={keyword}, page={page}, pageSize={pageSize}");
+                }
+            });
+
+            Debug.WriteLine($"GetAll returned {pagedProducts.Count} products, totalItems: {totalItems}");
+
+            return new PagedResult<Product>(pagedProducts, page, pageSize, totalItems);
         }
 
         public Product? GetById(string id)
@@ -763,6 +1033,11 @@ namespace LowLand.Services
             });
         }
 
+        public PagedResult<ProductOption> GetAll(int pageNumber, int pageSize, string? keyword = null)
+        {
+            throw new NotImplementedException();
+        }
+
         public ProductOption GetById(string id)
         {
             return ExecuteSingleQuery($"""
@@ -847,6 +1122,11 @@ namespace LowLand.Services
                 },
                 Quantity = reader.GetInt32(reader.GetOrdinal("quantity"))
             });
+        }
+
+        public PagedResult<ComboItem> GetAll(int pageNumber, int pageSize, string? keyword = null)
+        {
+            throw new NotImplementedException();
         }
 
         public ComboItem GetById(string id)
@@ -943,6 +1223,87 @@ namespace LowLand.Services
             return ExecuteNonQuery($"""
                 DELETE FROM promotion WHERE promotion_id = '{id}'
                 """);
+        }
+
+        public PagedResult<Promotion> GetAll(int pageNumber, int pageSize, string? keyword = null)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class TableRepository : BaseRepository<Table>, IRepository<Table>
+    {
+        public List<Table> GetAll()
+        {
+            string query = "SELECT table_id, name, status, capacity, created_at FROM tables";
+            return ExecuteQuery(query, reader => new Table
+            {
+                Id = reader.GetInt32(0),
+                Name = reader.GetString(1),
+                Status = reader.GetString(2),
+                Capacity = reader.GetInt32(3),
+                //  CreatedAt = reader.GetDateTime(4)
+            });
+        }
+
+        public PagedResult<Table> GetAll(int pageNumber, int pageSize, string? keyword = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Table GetById(string id)
+        {
+            string query = "SELECT table_id, name, status, capacity, created_at FROM tables WHERE id = @id";
+            return ExecuteSingleQuery(query, reader => new Table
+            {
+                Id = reader.GetInt32(0),
+                Name = reader.GetString(1),
+                Status = reader.GetString(2),
+                Capacity = reader.GetInt32(3),
+                // CreatedAt = reader.GetDateTime(4)  
+            }, cmd => cmd.Parameters.AddWithValue("id", int.Parse(id)));
+        }
+
+        public int Insert(Table table)
+        {
+            string query = "INSERT INTO tables (name, status, capacity) VALUES (@name, @status, @capacity) RETURNING table_id";
+            return ExecuteScalar<int>(query, cmd =>
+            {
+                cmd.Parameters.AddWithValue("name", table.Name);
+                cmd.Parameters.AddWithValue("status", table.Status);
+                cmd.Parameters.AddWithValue("capacity", table.Capacity);
+            });
+        }
+
+        public int DeleteById(string id)
+        {
+            string query = "DELETE FROM tables WHERE table_id = @id AND status = 'Trống'";
+            return ExecuteNonQuery(query, cmd => cmd.Parameters.AddWithValue("id", int.Parse(id)));
+        }
+
+        public int UpdateById(string id, Table table)
+        {
+            string query = "UPDATE tables SET name = @name, status = @status, capacity = @capacity WHERE table_id = @id";
+            return ExecuteNonQuery(query, cmd =>
+            {
+                cmd.Parameters.AddWithValue("id", int.Parse(id));
+                cmd.Parameters.AddWithValue("name", table.Name);
+                cmd.Parameters.AddWithValue("status", table.Status);
+                cmd.Parameters.AddWithValue("capacity", table.Capacity);
+            });
+        }
+
+        private int ExecuteNonQuery(string query, Action<NpgsqlCommand> configureCommand)
+        {
+            using (var conn = new NpgsqlConnection(connectionString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    configureCommand?.Invoke(cmd);
+                    return cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 

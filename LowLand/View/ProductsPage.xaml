@@ -13,6 +13,7 @@
     <Page.Resources>
         <converter:AbsolutePathConverter x:Key="AbsolutePathConverter"/>
         <converter:CurrencyFormatter x:Key="CurrencyFormatter"/>
+        <converter:PageIndexConverter x:Key="PageIndexConverter"/>
     </Page.Resources>
 
     <Grid>
@@ -21,6 +22,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Text="Quản lý sản phẩm" Style="{StaticResource TitleTextBlockStyle}" Margin="36, 40, 0, 36"/>
@@ -78,7 +80,7 @@
             <TextBlock Grid.Column="5" TextAlignment="Center"/>
         </Grid>
 
-        <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.Products}" CornerRadius="{StaticResource OverlayCornerRadius}" Margin="36, 0, 36, 36"
+        <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.Paging.Items, Mode=OneWay}" CornerRadius="{StaticResource OverlayCornerRadius}" Margin="36, 0, 36, 36"
           Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="model:Product">
@@ -132,5 +134,17 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <Grid Grid.Row="4">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,36">
+                <Button x:Name="PreviousPage" Content="← Trước" Margin="8,0" Click="PreviousPage_Click"
+                 IsEnabled="{x:Bind ViewModel.Paging.CanGoToPreviousPage, Mode=OneWay}"/>
+                <ComboBox x:Name="PageSelector" Width="80" Margin="8,0"
+                   ItemsSource="{x:Bind ViewModel.Paging.PageIndicators, Mode=OneWay}"
+                   SelectedIndex="{x:Bind ViewModel.Paging.CurrentPage, Converter={StaticResource PageIndexConverter}, Mode=TwoWay}"
+                   SelectionChanged="PageSelector_SelectionChanged"/>
+                <Button x:Name="NextPage" Content="Tiếp →" Margin="8,0" Click="NextPage_Click"
+                 IsEnabled="{x:Bind ViewModel.Paging.CanGoToNextPage, Mode=OneWay}"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>

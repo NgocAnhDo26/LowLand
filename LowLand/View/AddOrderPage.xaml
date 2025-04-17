@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="LowLand.View.AddOrderPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -14,11 +15,12 @@
     <Page.Resources>
         <converter:AbsolutePathConverter x:Key="AbsolutePathConverter"/>
         <converter:CurrencyFormatter x:Key="CurrencyFormatter"/>
+        <converter:DiscountConverter x:Key="DiscountConverter"/>
         <DataTemplate x:Name="PromotionTemplate" x:DataType="DModel:Promotion">
             <TextBlock>
                 <Run Text="{x:Bind Name}"/> -
                 <Run Text="{x:Bind Description}"/>
-                </TextBlock>
+            </TextBlock>
         </DataTemplate>
     </Page.Resources>
 
@@ -42,9 +44,8 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    
-                    <TextBlock Text="Chọn sản phẩm" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,8,0,24"/>
 
+                    <TextBlock Text="Chọn sản phẩm" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,8,0,24"/>
                     <GridView Grid.Row="1" x:Name="ProductGridView" ItemsSource="{x:Bind ViewModel.Products, Mode=OneWay}" SelectionMode="Single" IsItemClickEnabled="True" DoubleTapped="ProductGridView_DoubleTapped">
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="Pmodel:Product">
@@ -54,9 +55,8 @@
                                         <RowDefinition Height="*"/>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-
                                     <Grid Grid.Row="0" CornerRadius="4" MaxHeight="140" MaxWidth="140">
-                                        <Image  Source="{x:Bind Image, Converter={StaticResource AbsolutePathConverter}}" Stretch="UniformToFill"/>
+                                        <Image Source="{x:Bind Image, Converter={StaticResource AbsolutePathConverter}}" Stretch="UniformToFill"/>
                                     </Grid>
                                     <TextBlock Grid.Row="1" Text="{x:Bind Name}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0, 8, 0, 4" Style="{StaticResource BodyStrongTextBlockStyle}" TextAlignment="Center"/>
                                     <TextBlock Grid.Row="2" Text="{x:Bind SalePrice, Converter={StaticResource CurrencyFormatter}}" FontSize="14" HorizontalAlignment="Center"/>
@@ -74,12 +74,14 @@
 
                     <StackPanel Grid.Row="0" x:Name="CustomerInfoPanel" Margin="16, 0, 0, 16" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="8">
                         <AutoSuggestBox x:Name="PhoneNumberBox" TextChanged="AutoSuggestBox_TextChanged" SuggestionChosen="AutoSuggestBox_SuggestionChosen" Header="Tìm khách hàng" AutomationProperties.Name="Basic AutoSuggestBox" PlaceholderText="Nhập số điện thoại..."/>
+                        <TextBox x:Name="NameBox" Text="{x:Bind ViewModel.EditorAddOrder.CustomerName, Mode=TwoWay}" Header="Tên khách hàng" PlaceholderText="Nhập tên khách hàng..." Visibility="Collapsed"/>
                     </StackPanel>
 
                     <Grid x:Name="SelectedProductsPanel" Grid.Row="1" Margin="16, 0, 0, 0" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
@@ -98,9 +100,7 @@
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-
                                             <TextBlock x:Name="ProductName" Text="{x:Bind ProductName, Mode=TwoWay}" Grid.Column="0" VerticalAlignment="Center" TextAlignment="Left"/>
-
                                             <ComboBox x:Name="ProductOptionsComboBox" ItemsSource="{x:Bind ProductOptions, Mode=TwoWay}" SelectedIndex="-1" Grid.Column="1" SelectionChanged="ComboBox_SelectionChanged">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
@@ -108,14 +108,11 @@
                                                     </DataTemplate>
                                                 </ComboBox.ItemTemplate>
                                             </ComboBox>
-
-                                            <NumberBox x:Name="ProductQuantityTextBox" Value="{x:Bind quantity, Mode=TwoWay}" Grid.Column="2" ValueChanged="ProductQuantityTextBox_ValueChanged"  HorizontalAlignment="Center"  Minimum="1" SpinButtonPlacementMode="Compact"/>
-
+                                            <NumberBox x:Name="ProductQuantityTextBox" Value="{x:Bind quantity, Mode=TwoWay}" Grid.Column="2" ValueChanged="ProductQuantityTextBox_ValueChanged" HorizontalAlignment="Center" Minimum="1" SpinButtonPlacementMode="Compact"/>
                                             <TextBlock x:Name="ProductTotalText" Text="{x:Bind Price, Mode=OneWay, Converter={StaticResource CurrencyFormatter}}" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-
                                             <Button Grid.Column="4" Click="deleteButton_Click">
                                                 <Button.Content>
-                                                    <FontIcon Glyph="&#xE74D;" Foreground="Red"/>
+                                                    <FontIcon Glyph="" Foreground="Red"/>
                                                 </Button.Content>
                                             </Button>
                                         </Grid>
@@ -124,8 +121,20 @@
                             </ListView>
                         </ScrollViewer>
 
-                        <Grid Grid.Row="2" Margin="0, 8, 0, 0" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="4" RowSpacing="8">
+                        <Grid Grid.Row="2" Margin="0, 8, 0, 8" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Tổng sản phẩm:" Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                            <Rectangle Grid.Column="1"/>
+                            <TextBlock Grid.Column="2" Text="{x:Bind ViewModel.EditorAddOrder.TotalPrice, Mode=OneWay, Converter={StaticResource CurrencyFormatter}, FallbackValue='0 VNĐ'}" Style="{StaticResource BodyTextBlockStyle}"/>
+                        </Grid>
+
+                        <Grid Grid.Row="3" Margin="0, 8, 0, 0" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="4" RowSpacing="8">
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
@@ -135,7 +144,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="Thông tin khuyến mãi" Style="{StaticResource BodyStrongTextBlockStyle}"  VerticalAlignment="Center"/>
+                            <TextBlock Text="Thông tin khuyến mãi" Style="{StaticResource BodyStrongTextBlockStyle}" VerticalAlignment="Center"/>
                             <ComboBox x:Name="ChoosePromotion" Grid.Column="1" PlaceholderText="Chọn mã khuyến mãi" Width="200" HorizontalAlignment="Left" Margin="8, 0, 0, 0" ItemsSource="{x:Bind ViewModel.AvailablePromotions, Mode=TwoWay}" SelectionChanged="ChoosePromotion_SelectionChanged">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
@@ -145,21 +154,25 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Mã khuyến mãi:" Style="{StaticResource CaptionTextBlockStyle}"  VerticalAlignment="Center"/>
-                            <TextBlock Grid.Row="1" Grid.Column="2" Text="{x:Bind ViewModel.SelectedPromotion.Name, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"  VerticalAlignment="Center"/>
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Hạng thành viên: " Style="{StaticResource CaptionTextBlockStyle}"  VerticalAlignment="Center"/>
-                            <TextBlock Grid.Row="2" Grid.Column="2" Text="{x:Bind ViewModel.EditorAddOrder.CustomerStatus, Mode=OneWay}" Style="{StaticResource CaptionTextBlockStyle}"  VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Mã khuyến mãi:" Style="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.SelectedPromotion.Name, Mode=OneWay, FallbackValue=''}" Style="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Center"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="{x:Bind ViewModel.PromotionDiscountAmount, Mode=OneWay, Converter={StaticResource DiscountConverter}, FallbackValue=''}" Style="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Hạng thành viên:" Style="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Text="{x:Bind ViewModel.EditorAddOrder.CustomerStatus, Mode=OneWay, FallbackValue='Vãng lai'}" Style="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Center"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="2" Text="{x:Bind ViewModel.RankDiscountAmount, Mode=OneWay, Converter={StaticResource DiscountConverter}, FallbackValue=''}" Style="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Center"/>
                         </Grid>
 
-                        <Grid Grid.Row="3" Margin="0, 8, 0, 0" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="4">
+                        <Grid Grid.Row="4" Margin="0, 8, 0, 0" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="4">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>    
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="Tổng tiền:" Style="{StaticResource BodyStrongTextBlockStyle}"/>
                             <Rectangle Grid.Column="1"/>
-                            <TextBlock Grid.Column="2" x:Name="TotalAmountValue" Style="{StaticResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.EditorAddOrder.TotalPrice, Mode=OneWay, Converter={StaticResource CurrencyFormatter}}"/>
+                            <TextBlock Grid.Column="2" x:Name="TotalAmountValue" Style="{StaticResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.TotalAfterDiscount, Mode=OneWay, Converter={StaticResource CurrencyFormatter}, FallbackValue='0 VNĐ'}"/>
                         </Grid>
                     </Grid>
                 </Grid>

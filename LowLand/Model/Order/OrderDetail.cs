@@ -10,6 +10,7 @@ namespace LowLand.Model.Order
         public int? OrderId { get; set; }
         public int quantity { get; set; }
         public int? ProductId { get; set; }
+        public decimal CostPrice { get; set; }
         public int ProductPrice { get; set; }
         public int Price { get; set; }
         public string? ProductName { get; set; }

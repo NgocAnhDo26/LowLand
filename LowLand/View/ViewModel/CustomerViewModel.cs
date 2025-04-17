@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using LowLand.Model.Customer;
 using LowLand.Services;
@@ -6,22 +7,27 @@ using LowLand.Utils;
 
 namespace LowLand.View.ViewModel
 {
-    public class CustomerViewModel
+    public class CustomerViewModel : INotifyPropertyChanged
     {
-        private IDao _dao;
-        public FullObservableCollection<Customer> Customers { get; set; }
+        private readonly IDao _dao;
+        private readonly PagingViewModel<Customer> _paging;
+
+        public PagingViewModel<Customer> Paging => _paging;
         public FullObservableCollection<CustomerRank> CustomerRanks { get; set; }
-        public Customer EditingCustomer;
+        public Customer EditingCustomer { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public CustomerViewModel()
         {
             _dao = Services.Services.GetKeyedSingleton<IDao>();
-            Customers = new FullObservableCollection<Customer>(
-                _dao.Customers.GetAll()
+            _paging = new PagingViewModel<Customer>(
+                (page, size, keyword) => _dao.Customers.GetAll(page, size, keyword),
+                pageSize: 10
             );
             CustomerRanks = new FullObservableCollection<CustomerRank>(
                 _dao.CustomerRanks.GetAll()
             );
-
             EditingCustomer = null;
         }
 
@@ -30,12 +36,12 @@ namespace LowLand.View.ViewModel
             int result = _dao.Customers.Insert(item);
             if (result == 1)
             {
-
-                Customers.Add(item);
+                _paging.Refresh();
+                Debug.WriteLine($"Added customer ID: {item.Id}, refreshed paging");
             }
             else
             {
-                Console.WriteLine("Insert failed: No rows affected.");
+                Debug.WriteLine("Insert failed: No rows affected.");
             }
         }
 
@@ -44,37 +50,32 @@ namespace LowLand.View.ViewModel
             int result = _dao.Customers.DeleteById(item.Id.ToString());
             if (result > 0)
             {
-                Customers.Remove(item);
-
+                _paging.Refresh();
+                Debug.WriteLine($"Removed customer ID: {item.Id}, refreshed paging");
             }
             else
             {
-                Console.WriteLine("Delete failed: No rows affected.");
+                Debug.WriteLine("Delete failed: No rows affected.");
             }
         }
 
         public void Update(Customer item)
         {
-
             int newRankId = CustomerRanks
-               .Where(r => r.PromotionPoint <= item.Point)
-               .OrderByDescending(r => r.PromotionPoint)
-               .Select(r => r.Id)
-               .FirstOrDefault();
-            // update rank
+                .Where(r => r.PromotionPoint <= item.Point)
+                .OrderByDescending(r => r.PromotionPoint)
+                .Select(r => r.Id)
+                .FirstOrDefault();
+            // Update rank
             if (newRankId != 0)
             {
                 item.Rank = CustomerRanks.FirstOrDefault(r => r.Id == newRankId);
             }
-            var customerToUpdate = Customers.FirstOrDefault(c => c.Id == item.Id);
-            if (customerToUpdate != null)
-            {
-                int result = _dao.Customers.UpdateById(item.Id.ToString(), item);
-                if (result <= 0)
-                {
-                    Console.WriteLine("Update failed: No rows affected.");
-                }
 
+            int result = _dao.Customers.UpdateById(item.Id.ToString(), item);
+            if (result > 0)
+            {
+                // Update related orders
                 foreach (var order in _dao.Orders.GetAll())
                 {
                     if (order.CustomerId == item.Id)
@@ -84,8 +85,18 @@ namespace LowLand.View.ViewModel
                         _dao.Orders.UpdateById(order.Id.ToString(), order);
                     }
                 }
+                _paging.Refresh();
+                Debug.WriteLine($"Updated customer ID: {item.Id}, refreshed paging");
+            }
+            else
+            {
+                Debug.WriteLine("Update failed: No rows affected.");
             }
         }
 
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
