@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="LowLand.View.RevenueReportPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LowLand.View"
+    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
+    xmlns:converter="using:LowLand.View.Converter"
+    xmlns:vm="using:LowLand.View.ViewModel"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <converter:CurrencyFormatter x:Key="CurrencyFormatter"/>
+        <converter:DateOnlyToDateTimeOffsetConverter x:Key="DateOnlyToDateTimeOffsetConverter"/>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Báo cáo Doanh thu" Style="{StaticResource TitleTextBlockStyle}" Margin="36, 40, 0, 36"/>
+
+        <Grid Grid.Row="1" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="8" Margin="32, 0, 32, 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" ColumnSpacing="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Tổng Doanh thu và Lợi nhuận" VerticalAlignment="Center" Style="{StaticResource SubtitleTextBlockStyle}" Margin="8, 8, 0, 16"/>
+                <ComboBox x:Name="TotalRevenue"
+                    Grid.Column="1"
+                    ItemsSource="{Binding TimePeriods}"
+                    SelectedItem="{Binding SelectedTotalTimePeriod, Mode=TwoWay}"
+                    HorizontalAlignment="Right"
+                    MinWidth="120"
+                    PlaceholderText="Chọn kỳ"
+                    SelectionChanged="TotalRevenue_SelectionChanged"
+                />
+            </Grid>
+            
+            <lvc:CartesianChart Grid.Row="1"
+                    Series="{Binding TotalRevenueProfitSeries, Mode=OneWay}"
+                    XAxes="{Binding TotalRevenueProfitXAxes, Mode=OneWay}"
+                    YAxes="{Binding TotalRevenueProfitYAxes, Mode=OneWay}"
+                    LegendPosition="Bottom"
+                    TooltipPosition="Top"/>
+        </Grid>
+
+        <Grid Grid.Row="2" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="8" Margin="32, 16, 32, 32">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" ColumnSpacing="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Giá trị trung bình mỗi hóa đơn (ATV)" VerticalAlignment="Center" Style="{StaticResource SubtitleTextBlockStyle}" Margin="8, 8, 0, 16"/>
+                <ComboBox x:Name="AverageTransactionValue"
+            Grid.Column="1"
+            ItemsSource="{Binding TimePeriods}"
+            SelectedItem="{Binding SelectedAverageTimePeriod, Mode=TwoWay}"
+            HorizontalAlignment="Right"
+            MinWidth="120"
+            PlaceholderText="Chọn kỳ"
+            SelectionChanged="AverageTransactionValue_SelectionChanged"
+        />
+            </Grid>
+            <lvc:CartesianChart Grid.Row="1"
+            Series="{Binding AverageTransactionValueSeries, Mode=OneWay}"
+            XAxes="{Binding AverageTransactionValueXAxes, Mode=OneWay}"
+            YAxes="{Binding AverageTransactionValueYAxes, Mode=OneWay}"
+            LegendPosition="Bottom"
+            TooltipPosition="Top"/>
+        </Grid>
+    </Grid>
+</Page>

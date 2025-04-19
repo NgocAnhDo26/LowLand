@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="LowLand.View.ProductReportPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LowLand.View"
+    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
+    xmlns:converter="using:LowLand.View.Converter"
+    xmlns:vm="using:LowLand.View.ViewModel"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <converter:CurrencyFormatter x:Key="CurrencyFormatter"/>
+        <converter:NumberToPercentageConverter x:Key="NumberToPercentageConverter"/>
+        <converter:PercentageToColorConverter x:Key="PercentageToColorConverter"/>
+        <converter:DateOnlyToDateTimeOffsetConverter x:Key="DateOnlyToDateTimeOffsetConverter"/>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Báo cáo thống kê sản phẩm" Style="{StaticResource TitleTextBlockStyle}" Margin="36, 40, 0, 36"/>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="36, 0, 0, 16" Spacing="8">
+            <TextBlock Text="Khoảng thời gian:" VerticalAlignment="Center"/>
+            <CalendarDatePicker x:Name="FromDatePicker" PlaceholderText="Từ ngày" Date="{x:Bind ViewModel.FromDateFilter, Mode=TwoWay, Converter={StaticResource DateOnlyToDateTimeOffsetConverter}}" VerticalAlignment="Center" Width="120"/>
+            <FontIcon Glyph="&#xEBE7;" VerticalAlignment="Center"/>
+            <CalendarDatePicker x:Name="ToDatePicker" PlaceholderText="Đến ngày" Date="{x:Bind ViewModel.ToDateFilter, Mode=TwoWay, Converter={StaticResource DateOnlyToDateTimeOffsetConverter}}" VerticalAlignment="Center" Width="120"/>
+            <Button x:Name="ApplyTimeRangeFilterButton" Content="Áp dụng" Style="{StaticResource AccentButtonStyle}" Click="ApplyTimeRangeFilterButton_Click"/>
+        </StackPanel>
+        
+        <ScrollViewer Grid.Row="2" VerticalScrollMode="Enabled" Margin="36, 0, 36, 36">
+            <Grid RowSpacing="16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="8" Height="430">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Thống kê doanh số sản phẩm" Style="{StaticResource SubtitleTextBlockStyle}" Margin="8, 8, 0, 16"/>
+
+                    <lvc:CartesianChart Grid.Row="1" Grid.Column="0" Series="{x:Bind ViewModel.AllProductSaleColumnSeries, Mode=OneWay}" XAxes="{x:Bind ViewModel.AllProductSaleXAxes, Mode=OneWay}"/>
+                    <lvc:PieChart Grid.Row="1" Grid.Column="1"
+                        Series="{x:Bind ViewModel.AllProductSalePieSeries, Mode=OneWay}">
+                    </lvc:PieChart>
+                </Grid>
+
+                <Grid Grid.Row="1" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="8" Height="430">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Top sản phẩm bán chạy" Style="{StaticResource SubtitleTextBlockStyle}" Margin="8, 8, 0, 16"/>
+
+                    <lvc:CartesianChart Grid.Row="1" Grid.Column="0" Series="{x:Bind ViewModel.ProductSaleColumnSeries, Mode=OneWay}" XAxes="{x:Bind ViewModel.ProductSaleXAxes, Mode=OneWay}"/>
+                    <lvc:PieChart Grid.Row="1" Grid.Column="1"
+                        Series="{x:Bind ViewModel.ProductSalePieSeries, Mode=OneWay}"
+                        LegendPosition="Right">
+                    </lvc:PieChart>
+                </Grid>
+
+                <Grid Grid.Row="2" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="8" Height="430">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Top danh mục bán chạy" Style="{StaticResource SubtitleTextBlockStyle}" Margin="8, 8, 0, 16"/>
+
+                    <lvc:CartesianChart Grid.Row="1" Grid.Column="0" Series="{x:Bind ViewModel.CategorySaleColumnSeries, Mode=OneWay}" XAxes="{x:Bind ViewModel.CategorySaleXAxes, Mode=OneWay}"/>
+                    <lvc:PieChart Grid.Row="1" Grid.Column="1"
+                        Series="{x:Bind ViewModel.CategorySalePieSeries, Mode=OneWay}"
+                        LegendPosition="Right">
+                    </lvc:PieChart>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>

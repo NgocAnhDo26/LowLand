@@ -10,7 +10,20 @@ namespace LowLand.View.Converter
         {
             if (value == null) return "";
 
-            int amount = (int)value;
+            double amount;
+            if (value is int intValue)
+            {
+                amount = intValue;
+            }
+            else if (value is double doubleValue)
+            {
+                amount = doubleValue;
+            }
+            else
+            {
+                throw new ArgumentException("Value must be of type int or double.");
+            }
+
             CultureInfo culture = CultureInfo.GetCultureInfo("vi-VN");  // en-US /en-UK
             string formatted = string.Format(culture, "{0:c}", amount);
             return formatted;

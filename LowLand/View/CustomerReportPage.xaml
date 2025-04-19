@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="LowLand.View.CustomerReportPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LowLand.View"
+    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
+    xmlns:converter="using:LowLand.View.Converter"
+    xmlns:vm="using:LowLand.View.ViewModel"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <converter:CurrencyFormatter x:Key="CurrencyFormatter"/>
+        <converter:DateOnlyToDateTimeOffsetConverter x:Key="DateOnlyToDateTimeOffsetConverter"/>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Báo cáo Khách hàng" Style="{StaticResource TitleTextBlockStyle}" Margin="36, 40, 0, 36"/>
+
+        <Grid Grid.Row="1" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="8" Margin="32, 0, 32, 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Khách hàng thân thiết" VerticalAlignment="Center" Style="{StaticResource SubtitleTextBlockStyle}" Margin="8, 8, 0, 16"/>
+
+            <lvc:CartesianChart Grid.Row="1"
+                Series="{Binding TotalSpentSeries, Mode=OneWay}"
+                XAxes="{Binding TotalSpentXAxes, Mode=OneWay}"
+                YAxes="{Binding TotalSpentYAxes, Mode=OneWay}"
+                LegendPosition="Bottom"
+                TooltipPosition="Top"/>
+        </Grid>
+
+        <Grid Grid.Row="2" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="8" Margin="32, 16, 32, 32">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Lượng khách hàng mới" VerticalAlignment="Center" Style="{StaticResource SubtitleTextBlockStyle}" Margin="8, 8, 0, 16"/>
+            
+            <lvc:CartesianChart Grid.Row="1"
+        Series="{Binding NewCustomerSeries, Mode=OneWay}"
+        XAxes="{Binding NewCustomerXAxes, Mode=OneWay}"
+        YAxes="{Binding NewCustomerYAxes, Mode=OneWay}"
+        LegendPosition="Bottom"
+        TooltipPosition="Top"/>
+        </Grid>
+    </Grid>
+</Page>
