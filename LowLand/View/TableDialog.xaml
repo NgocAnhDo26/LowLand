@@ -1,0 +1,39 @@
+<ContentDialog
+    x:Class="LowLand.View.TableDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LowLand.View"
+    Title="Thông tin bàn"
+    PrimaryButtonText="Lưu"
+    SecondaryButtonText="Hủy"
+    DefaultButton="Primary"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
+
+    <ContentDialog.Resources>
+    <Style TargetType="local:TableDialog" 
+               BasedOn="{StaticResource DefaultContentDialogStyle}"/>
+    </ContentDialog.Resources>
+    <StackPanel  Spacing="12" Width="400" >
+        <InfoBar x:Name="WarningBar"
+       
+         Message="Có lỗi xảy ra trong quá trình thực hiện."
+         IsOpen="True"
+         Severity="Warning"
+         IsClosable="False"
+         Visibility="Collapsed"
+         Margin="0,0,0,10"/>
+
+
+        <TextBox Header="Tên bàn" PlaceholderText="Nhập tên bàn" x:Name="TableNameTextBox"/>
+
+        <TextBox Header="Sức chứa" PlaceholderText="Nhập số người" x:Name="CapacityTextBox"
+                 InputScope="Number"/>
+
+        <ComboBox Header="Trạng thái" x:Name="StatusComboBox">
+            <ComboBoxItem Content="Trống"/>
+            <ComboBoxItem Content="Có khách"/>
+            <ComboBoxItem Content="Đang bảo trì"/>
+        </ComboBox>
+
+    </StackPanel>
+</ContentDialog>

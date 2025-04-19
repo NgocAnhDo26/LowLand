@@ -17,6 +17,7 @@ namespace LowLand.View
     /// </summary>
     public sealed partial class LoginWindow : Window
     {
+
         //  private PostgreDAO _dao;
         public LoginViewModel ViewModel { get; set; }
         public LoginWindow()
@@ -79,13 +80,19 @@ namespace LowLand.View
                     Debug.WriteLine($"Encrypted password in base 64 is: {encryptedInBase64}");
                 }
 
+
                 if (success)
                 {
-                    App.m_window = new DashboardWindow();
-                    App.m_window.Activate();
+                    var dashboard = new DashboardWindow();
+                    App.m_window = dashboard;
+                    App.MainWindow = dashboard;
+                    dashboard.Activate();
+
 
                     this.Close();
                 }
+
+
             }
         }
 

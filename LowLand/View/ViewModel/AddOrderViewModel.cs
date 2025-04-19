@@ -8,6 +8,7 @@ using LowLand.Model.Customer;
 using LowLand.Model.Discount;
 using LowLand.Model.Order;
 using LowLand.Model.Product;
+using LowLand.Model.Table;
 using LowLand.Services;
 using LowLand.Utils;
 
@@ -22,6 +23,9 @@ namespace LowLand.View.ViewModel
         public ObservableCollection<Product> Products { get; set; }
         public List<ProductOption> ProductOptions { get; set; }
         public ObservableCollection<CustomerRank> CustomerRanks { get; set; }
+        public ObservableCollection<Table> AvailableTables { get; set; }
+        public Table SelectedTable { get; set; }
+
         public FullObservableCollection<Promotion> AvailablePromotions { get; set; }
         private Promotion _selectedPromotion;
         private double _rankDiscountPercentage;
@@ -88,17 +92,29 @@ namespace LowLand.View.ViewModel
 
         public AddOrderViewModel()
         {
+            var emptyTable = new Table { Id = -1, Name = "— Không chọn bàn —" };
             _dao = Services.Services.GetKeyedSingleton<IDao>();
+            //order
             Orders = new ObservableCollection<Order>(_dao.Orders.GetAll());
             EditorAddOrder = new Order
             {
                 Details = new ObservableCollection<OrderDetail>()
             };
             EditorAddOrder.PropertyChanged += EditorAddOrder_PropertyChanged;
+            //product
             Products = new ObservableCollection<Product>(_dao.Products.GetAll());
             ProductOptions = _dao.ProductOptions.GetAll();
+            // customer
             Customers = new ObservableCollection<Customer>(_dao.Customers.GetAll());
             CustomerRanks = new ObservableCollection<CustomerRank>(_dao.CustomerRanks.GetAll());
+            // table
+            var tableList = _dao.Tables.GetAll()
+            .Where(t => t.Status == TableStatuses.Empty)
+            .ToList();
+            tableList.Insert(0, emptyTable);
+            AvailableTables = new ObservableCollection<Table>(tableList);
+            SelectedTable = AvailableTables.FirstOrDefault(t => t.Id == -1);
+
             LoadAvailablePromotions();
         }
 
@@ -120,7 +136,7 @@ namespace LowLand.View.ViewModel
             Debug.WriteLine($"Loaded {activePromotions.Count} active promotions");
         }
 
-        public void UpdateCustomerInfo(int customerId, string customerPhone, string customerName)
+        public void UpdateCustomerInfo(int? customerId, string customerPhone, string customerName)
         {
             if (customerId != 0)
             {
@@ -230,6 +246,17 @@ namespace LowLand.View.ViewModel
             EditorAddOrder.Date = DateTime.Now;
             EditorAddOrder.Status = "Đang xử lý";
 
+            if (SelectedTable != null && SelectedTable.Id != -1)
+            {
+                _dao.Tables.UpdateById(SelectedTable.Id.ToString(), SelectedTable);
+                EditorAddOrder.TableId = SelectedTable.Id;
+                SelectedTable.Status = TableStatuses.Occupied;
+            }
+            else
+            {
+                EditorAddOrder.TableId = null;
+            }
+
             var customer = Customers.FirstOrDefault(c => c.Id == EditorAddOrder.CustomerId);
             if (customer != null)
             {
@@ -311,6 +338,64 @@ namespace LowLand.View.ViewModel
         {
             return Customers.FirstOrDefault(c => c.Phone == phone);
         }
+        public void SelectTable(Table table)
+        {
+            if (table == null) return;
+
+            SelectedTable = table;
+            EditorAddOrder.TableId = table.Id;
+
+            Debug.WriteLine($"[SelectTable] Bàn '{table.Name}' (ID: {table.Id}) được chọn, sẽ xử lý khi tạo đơn.");
+        }
+        public void UpdateTotalPriceFromDetails()
+        {
+            if (EditorAddOrder.Details != null)
+            {
+                EditorAddOrder.TotalPrice = EditorAddOrder.Details.Sum(d => d.Price);
+                Debug.WriteLine($"[ViewModel] Updated TotalPrice = {EditorAddOrder.TotalPrice}");
+                UpdateDiscountsAndTotal();
+            }
+        }
+
+        public void UpdateProductOption(OrderDetail detail, ProductOption selectedOption)
+        {
+            if (selectedOption == null || detail == null) return;
+
+            detail.OptionId = selectedOption.OptionId;
+            detail.OptionName = selectedOption.Name;
+            detail.ProductPrice = selectedOption.SalePrice;
+            detail.Price = detail.ProductPrice * detail.quantity;
+
+            UpdateTotalPriceFromDetails();
+        }
+
+        public void UpdateQuantity(OrderDetail detail, int quantity)
+        {
+            if (detail == null) return;
+
+            detail.quantity = quantity;
+            detail.Price = detail.ProductPrice * quantity;
+
+            UpdateTotalPriceFromDetails();
+        }
+
+        public void RemoveOrderDetail(OrderDetail detail)
+        {
+            if (detail == null) return;
+
+            EditorAddOrder.Details.Remove(detail);
+            UpdateTotalPriceFromDetails();
+        }
+
+        public void AddOrderDetail(OrderDetail detail)
+        {
+            if (detail == null) return;
+
+            EditorAddOrder.Details.Add(detail);
+            UpdateTotalPriceFromDetails();
+        }
+
+
 
         protected void OnPropertyChanged(string propertyName)
         {

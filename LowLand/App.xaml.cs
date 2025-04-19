@@ -19,6 +19,7 @@ namespace LowLand
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         ///
+        public static Window MainWindow { get; set; } = null!;
 
         public App()
         {
@@ -51,6 +52,7 @@ namespace LowLand
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             App.m_window = new LoginWindow();
+            MainWindow = m_window;
             m_window.Activate();
         }
 

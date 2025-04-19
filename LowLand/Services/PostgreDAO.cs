@@ -1253,7 +1253,7 @@ namespace LowLand.Services
 
         public Table GetById(string id)
         {
-            string query = "SELECT table_id, name, status, capacity, created_at FROM tables WHERE id = @id";
+            string query = "SELECT table_id, name, status, capacity, created_at FROM tables WHERE table_id = @id";
             return ExecuteSingleQuery(query, reader => new Table
             {
                 Id = reader.GetInt32(0),
@@ -1275,11 +1275,13 @@ namespace LowLand.Services
             });
         }
 
+
         public int DeleteById(string id)
         {
-            string query = "DELETE FROM tables WHERE table_id = @id AND status = 'Trống'";
+            string query = "DELETE FROM tables WHERE table_id = @id AND (status = 'Trống' OR status = 'Đang bảo trì')";
             return ExecuteNonQuery(query, cmd => cmd.Parameters.AddWithValue("id", int.Parse(id)));
         }
+
 
         public int UpdateById(string id, Table table)
         {

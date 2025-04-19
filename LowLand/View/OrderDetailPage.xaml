@@ -67,6 +67,7 @@
 
                 <TextBlock Text="Tổng giá trị đơn hàng:" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10" Style="{StaticResource BodyStrongTextBlockStyle}"/>
                 <TextBlock Text="{x:Bind ViewModel.EditorAddOrder.TotalAfterDiscount, Converter={StaticResource CurrencyFormatter}}" Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,10"/>
+          
             </Grid>
         </StackPanel>
 

@@ -4,6 +4,7 @@ using LowLand.Model.Order;
 using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace LowLand.View
 {
@@ -14,9 +15,19 @@ namespace LowLand.View
         public OrderPage()
         {
             this.InitializeComponent();
-
-
         }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+            ViewModel.Dispose();
+        }
+
         private void searchButton_Click(object sender, RoutedEventArgs e)
         {
             var keyword = searchBar?.Text ?? string.Empty;
@@ -61,8 +72,6 @@ namespace LowLand.View
 
         private void updateButton_Click(object sender, RoutedEventArgs e)
         {
-
-
             if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is Order selectedOrder)
             {
                 Frame.Navigate(typeof(UpdateOrderPage), selectedOrder);
@@ -108,6 +117,7 @@ namespace LowLand.View
             if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is Order selectedOrder)
             {
                 selectedOrder.Status = "Hoàn thành";
+                selectedOrder.TableId = null;
                 ViewModel.Update(selectedOrder);
             }
         }
@@ -127,6 +137,14 @@ namespace LowLand.View
             if (sender is ComboBox comboBox && comboBox.SelectedIndex >= 0)
             {
                 ViewModel.Paging.CurrentPage = comboBox.SelectedIndex + 1;
+            }
+        }
+
+        private async void PrintInvoiceButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is Order selectedOrder)
+            {
+                await ViewModel.PrintInvoice(selectedOrder, this.XamlRoot);
             }
         }
     }

@@ -1,0 +1,93 @@
+<Page
+    x:Class="LowLand.View.InvoicePrintPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:order="using:LowLand.Model.Order"
+    xmlns:converter="using:LowLand.View.Converter"
+    xmlns:local="using:LowLand.View"
+     UseLayoutRounding="True">
+
+    <UserControl.Resources>
+        <converter:StringFormatConverter x:Key="StringFormatConverter"/>
+        <converter:CurrencyFormatter x:Key="CurrencyFormatter"/>
+    </UserControl.Resources>
+
+    <StackPanel Padding="24" Background="White">
+        <!-- Tiêu đề hóa đơn -->
+        <TextBlock Text="HÓA ĐƠN" FontSize="24" FontWeight="Bold" TextAlignment="Center" Foreground="Black"/>
+
+        <!-- Thông tin đơn hàng -->
+        <Grid Margin="0, 16, 0, 16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Mã đơn hàng:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10" FontWeight="Bold" Foreground="Black"/>
+            <TextBlock Text="{Binding Order.Id, Mode=OneWay, Converter={StaticResource StringFormatConverter}}" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,10" Foreground="Black"/>
+
+            <TextBlock Text="Khách hàng:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10" FontWeight="Bold" Foreground="Black"/>
+            <TextBlock Text="{Binding Order.CustomerName, Mode=OneWay, TargetNullValue='Khách lẻ', FallbackValue='Khách lẻ'}" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,10" Foreground="Black"/>
+
+            <TextBlock Text="Số điện thoại:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10" FontWeight="Bold" Foreground="Black"/>
+            <TextBlock Text="{Binding Order.CustomerPhone, Mode=OneWay, TargetNullValue='Không có SĐT', FallbackValue='Không có SĐT'}" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,10" Foreground="Black"/>
+
+            <TextBlock Text="Ngày:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10" FontWeight="Bold" Foreground="Black"/>
+            <TextBlock Text="{Binding Order.Date, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Ngày: {0}', TargetNullValue='Không có ngày', FallbackValue='Không có ngày'}" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,10" Foreground="Black"/>
+
+            <TextBlock Text="Tổng tiền:" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10" FontWeight="Bold" Foreground="Black"/>
+            <TextBlock Text="{Binding Order.TotalAfterDiscount, Mode=OneWay, Converter={StaticResource CurrencyFormatter}, FallbackValue='0 VNĐ'}" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,10" Foreground="Black"/>
+        </Grid>
+
+        <!-- Chi tiết đơn hàng -->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Grid Grid.Row="0" Padding="8" Background="LightGray">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Tên sản phẩm" Grid.Column="0" TextAlignment="Center" FontWeight="Bold" Foreground="Black"/>
+                <TextBlock Text="Số lượng" Grid.Column="1" TextAlignment="Center" FontWeight="Bold" Foreground="Black"/>
+                <TextBlock Text="Thành tiền" Grid.Column="2" TextAlignment="Center" FontWeight="Bold" Foreground="Black"/>
+                <TextBlock Text="Tùy chọn" Grid.Column="3" TextAlignment="Center" FontWeight="Bold" Foreground="Black"/>
+            </Grid>
+
+            <!-- Danh sách chi tiết -->
+            <ItemsControl Grid.Row="1" ItemsSource="{Binding Order.Details, TargetNullValue={x:Null}, FallbackValue={x:Null}}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="order:OrderDetail">
+                        <Grid Padding="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="{Binding ProductName, TargetNullValue='Không có tên sản phẩm', FallbackValue='Không có tên sản phẩm'}" TextAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
+                            <TextBlock Grid.Column="1" Text="{Binding quantity, Converter={StaticResource StringFormatConverter}, FallbackValue='0'}" TextAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
+                            <TextBlock Grid.Column="2" Text="{Binding Price, Converter={StaticResource CurrencyFormatter}, FallbackValue='0 VNĐ'}" TextAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
+                            <TextBlock Grid.Column="3" Text="{Binding OptionName, TargetNullValue='Không có tùy chọn', FallbackValue='Không có tùy chọn'}" TextAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+    </StackPanel>
+</Page>

@@ -25,6 +25,8 @@
     <None Remove="View\CustomerRankPage.xaml" />
     <None Remove="View\DashboardPage.xaml" />
     <None Remove="View\DashboardWindow.xaml" />
+    <None Remove="View\InvoicePrint.xaml" />
+    <None Remove="View\InvoicePrintPage.xaml" />
     <None Remove="View\LoginWindow.xaml" />
     <None Remove="View\OrderDetailPage.xaml" />
     <None Remove="View\OrderPage.xaml" />
@@ -33,6 +35,8 @@
     <None Remove="View\ProductOptionDialog.xaml" />
     <None Remove="View\ProductsPage.xaml" />
     <None Remove="View\PromotionsPage.xaml" />
+    <None Remove="View\TableDialog.xaml" />
+    <None Remove="View\TablePage.xaml" />
     <None Remove="View\UpdateOrderPage.xaml" />
   </ItemGroup>
 
@@ -62,6 +66,7 @@
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.250228001" />
     <PackageReference Include="Npgsql" Version="9.0.3" />
+    <PackageReference Include="PdfSharpCore" Version="1.3.67" />
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.0-preview.2.25163.2" />
   </ItemGroup>
@@ -82,6 +87,18 @@
     <None Update="Assets\product_default.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="View\InvoicePrint.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\InvoicePrintPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\TableDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\TablePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="View\AddOrderPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
