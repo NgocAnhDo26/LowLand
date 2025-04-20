@@ -1,17 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LowLand.Services;
+using Microsoft.UI.Dispatching;
 
 namespace LowLand.View.ViewModel
 {
-    public class CustomerReportViewModel
+    public class CustomerReportViewModel : INotifyPropertyChanged
     {
         private IDao _dao;
+        private readonly DispatcherQueue _dispatcherQueue;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public bool IsLoading { get; set; } = true;
 
         // Customer report properties
         public ObservableCollection<ISeries> TotalSpentSeries { get; set; } = [];
@@ -26,8 +35,9 @@ namespace LowLand.View.ViewModel
         public CustomerReportViewModel()
         {
             _dao = Services.Services.GetKeyedSingleton<IDao>();
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             InitializeCharts();
-            LoadCustomerReportData();
+            LoadCustomerReportDataAsync();
         }
 
         private void InitializeCharts()
@@ -81,67 +91,89 @@ namespace LowLand.View.ViewModel
             };
         }
 
-        private void LoadCustomerReportData()
+        private async void LoadCustomerReportDataAsync()
         {
-            var customers = _dao.Customers.GetAll();
-            var customerNames = customers.Select(c => c.Name).ToArray();
-            var totalSpent = new List<decimal>();
-            var newCustomers = new List<int>();
-            var dateLabels = new List<string>();
-            var customerLabels = new List<string>();
-
-            var topCustomers = customers
-                .Select(c => new
-                {
-                    Customer = c,
-                    TotalSpent = _dao.Orders.GetAll()
-                        .Where(o => o.CustomerId == c.Id && o.Status == "Hoàn thành")
-                        .Sum(o => o.TotalAfterDiscount)
-                })
-                .OrderByDescending(c => c.TotalSpent)
-                .Take(10)
-                .ToList();
-
-            foreach (var entry in topCustomers)
+            await _dispatcherQueue.TryEnqueueAsync(() => IsLoading = true);
+            try
             {
-                totalSpent.Add(entry.TotalSpent);
-                customerLabels.Add(entry.Customer.Name);
+                await Task.Run(async () =>
+                {
+                    var topCustomersQuery = _dao.Orders.GetAll()
+                        .Where(o => o.Status == "Hoàn thành")
+                        .GroupBy(o => o.CustomerId)
+                        .Select(g => new
+                        {
+                            CustomerId = g.Key,
+                            TotalSpent = g.Sum(o => o.TotalAfterDiscount)
+                        })
+                        .OrderByDescending(x => x.TotalSpent)
+                        .Take(10)
+                        .Join(_dao.Customers.GetAll(),
+                            orderGroup => orderGroup.CustomerId,
+                            customer => customer.Id,
+                            (orderGroup, customer) => new
+                            {
+                                CustomerName = customer.Name,
+                                orderGroup.TotalSpent
+                            })
+                        .ToList();
+
+                    var totalSpent = topCustomersQuery.Select(x => x.TotalSpent).ToList();
+                    var customerLabels = topCustomersQuery.Select(x => x.CustomerName).ToList();
+
+                    // Fetch new customers for the last 14 days in a single query
+                    var endDate = DateOnly.FromDateTime(DateTime.Now.Date);
+                    var startDate = endDate.AddDays(-13); // 14 days inclusive
+                    var newCustomersByDate = _dao.Customers.GetAll()
+                        .Where(c => c.RegistrationDate >= startDate && c.RegistrationDate <= endDate)
+                        .GroupBy(c => c.RegistrationDate)
+                        .Select(g => new
+                        {
+                            Date = g.Key,
+                            Count = g.Count()
+                        })
+                        .ToDictionary(x => x.Date, x => x.Count);
+
+                    var newCustomers = new List<int>();
+                    var dateLabels = new List<string>();
+                    for (int i = 0; i < 14; i++)
+                    {
+                        var date = endDate.AddDays(-i);
+                        dateLabels.Insert(0, date.ToString("dd/MM"));
+                        newCustomers.Insert(0, newCustomersByDate.GetValueOrDefault(date, 0));
+                    }
+
+                    await _dispatcherQueue.TryEnqueueAsync(() =>
+                    {
+                        TotalSpentXAxes[0].Labels = customerLabels;
+                        NewCustomerXAxes[0].Labels = dateLabels;
+
+                        TotalSpentSeries.Clear();
+                        TotalSpentSeries.Add(new ColumnSeries<int>
+                        {
+                            Values = totalSpent,
+                            Name = "Tổng chi tiêu",
+                            DataLabelsSize = 13
+                        });
+
+                        NewCustomerSeries.Clear();
+                        NewCustomerSeries.Add(new ColumnSeries<int>
+                        {
+                            Values = newCustomers,
+                            Name = "Khách hàng mới",
+                            DataLabelsSize = 13
+                        });
+                    });
+                });
             }
-
-            TotalSpentXAxes[0].Labels = customerLabels;
-
-            for (int i = 0; i < 14; ++i)
+            catch (Exception ex)
             {
-                var date = DateOnly.FromDateTime(DateTime.Now.Date.AddDays(-i));
-                dateLabels.Insert(0, date.ToString("dd/MM"));
-
-                var newCustomerCount = _dao.Customers.GetAll()
-                    .Count(c => c.RegistrationDate == date);
-
-                newCustomers.Insert(0, newCustomerCount);
+                await _dispatcherQueue.TryEnqueueAsync(() => Debug.WriteLine($"Error loading customer report data: {ex.Message}"));
             }
-
-            NewCustomerXAxes[0].Labels = dateLabels;
-
-            TotalSpentSeries = new ObservableCollection<ISeries>
+            finally
             {
-                new ColumnSeries<decimal>
-                {
-                    Values = totalSpent,
-                    Name = "Tổng chi tiêu",
-                    DataLabelsSize = 13
-                }
-            };
-
-            NewCustomerSeries = new ObservableCollection<ISeries>
-            {
-                new ColumnSeries<int>
-                {
-                    Values = newCustomers,
-                    Name = "Khách hàng mới",
-                    DataLabelsSize = 13
-                }
-            };
+                await _dispatcherQueue.TryEnqueueAsync(() => IsLoading = false);
+            }
         }
     }
 }

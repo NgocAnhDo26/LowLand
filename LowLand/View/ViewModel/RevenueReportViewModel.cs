@@ -5,19 +5,24 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView;
 using LowLand.Model.Order;
 using LowLand.Services;
+using Microsoft.UI.Dispatching;
 
 namespace LowLand.View.ViewModel
 {
     public partial class RevenueReportViewModel : INotifyPropertyChanged
     {
         private IDao _dao;
+        private readonly DispatcherQueue _dispatcherQueue;
         private List<Order> _allOrders = [];
+
+        public bool IsLoading { get; set; } = true;
 
         public List<string> TimePeriods { get; } = ["Ngày", "Tuần", "Tháng", "Quý", "Năm"];
 
@@ -39,8 +44,9 @@ namespace LowLand.View.ViewModel
         public RevenueReportViewModel()
         {
             _dao = Services.Services.GetKeyedSingleton<IDao>();
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             InitializeCharts();
-            LoadAllData();
+            LoadAllDataAsync();
         }
 
         private void InitializeCharts()
@@ -104,25 +110,31 @@ namespace LowLand.View.ViewModel
             };
         }
 
-        private void LoadAllData()
+        private async void LoadAllDataAsync()
         {
+            await _dispatcherQueue.TryEnqueueAsync(() => IsLoading = true);
             try
             {
-                // Lấy tất cả Order một lần
-                _allOrders = _dao.Orders.GetAll();
+                // Fetch all orders once, assuming async support
+                _allOrders = await Task.Run(() => _dao.Orders.GetAll().ToList());
 
-                // Lọc ra các order đã hoàn thành hoặc có trạng thái tương đương để tính doanh thu
-                //_allOrders = _allOrders
-                //    .Where(o => o.Status.Equals("Paid", StringComparison.OrdinalIgnoreCase) ||
-                //                o.Status.Equals("Completed", StringComparison.OrdinalIgnoreCase))
-                //    .ToList();
+                // Filter completed orders
+                _allOrders = _allOrders
+                    .Where(o => o.Status.Equals("Hoàn thành", StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
-                LoadTotalChartData();
-                LoadAverageChartData();
+                await Task.WhenAll(
+                    LoadTotalChartDataAsync(),
+                    LoadAverageChartDataAsync()
+                );
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error loading revenue data: {ex.Message}");
+                await _dispatcherQueue.TryEnqueueAsync(() => Debug.WriteLine($"Error loading revenue data: {ex.Message}"));
+            }
+            finally
+            {
+                await _dispatcherQueue.TryEnqueueAsync(() => IsLoading = false);
             }
         }
 
@@ -130,244 +142,248 @@ namespace LowLand.View.ViewModel
         // --- Data Loading Logic ---
 
         // Tải dữ liệu cho biểu đồ Tổng doanh thu/lợi nhuận
-        public void LoadTotalChartData()
+        public async Task LoadTotalChartDataAsync()
         {
-            var revenueData = new ObservableCollection<ObservablePoint>();
-            var profitData = new ObservableCollection<ObservablePoint>(); // Lợi nhuận vẫn là mock
-            var labels = new List<string>();
-            var random = new Random();
-
-            DateTime startDate, endDate;
-            int numberOfUnits; // Số ngày, tuần, tháng...
-
-            // Xác định khoảng thời gian và số đơn vị
-            (startDate, endDate, numberOfUnits) = GetDateRange(SelectedTotalTimePeriod);
-
-            // Lọc đơn hàng trong khoảng thời gian
-            var ordersInPeriod = _allOrders
-                .Where(o => o.Date >= startDate.Date && o.Date <= endDate.Date)
-                .ToList();
-
-            // --- Tính toán dựa trên kỳ đã chọn ---
-            switch (SelectedTotalTimePeriod)
+            await Task.Run(async () =>
             {
-                case "Ngày":
-                    TotalRevenueProfitXAxes[0].Name = "Ngày";
-                    for (int i = 0; i < numberOfUnits; i++)
-                    {
-                        var currentDate = startDate.AddDays(i).Date;
-                        labels.Add(currentDate.ToString("dd/MM"));
-                        double dailyRevenue = ordersInPeriod
-                            .Where(o => o.Date == currentDate)
-                            .Sum(o => (double)o.TotalAfterDiscount);
-                        revenueData.Add(new ObservablePoint(i, dailyRevenue));
-                        profitData.Add(new ObservablePoint(i, dailyRevenue * random.NextDouble() * 0.4 + dailyRevenue * 0.1));
-                    }
-                    break;
+                var revenueData = new ObservableCollection<ObservablePoint>();
+                var profitData = new ObservableCollection<ObservablePoint>(); // Lợi nhuận vẫn là mock
+                var labels = new List<string>();
+                var random = new Random();
 
-                case "Tuần":
-                    TotalRevenueProfitXAxes[0].Name = "Tuần";
-                    for (int i = 0; i < numberOfUnits; i++)
-                    {
-                        var weekStartDate = startDate.AddDays(i * 7);
-                        var weekEndDate = weekStartDate.AddDays(6);
-                        var week = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(weekStartDate, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-                        labels.Add($"Tuần {week}, {weekStartDate.Year}");
+                DateTime startDate, endDate;
+                int numberOfUnits;
 
-                        double weeklyRevenue = ordersInPeriod
-                            .Where(o => o.Date.Date >= weekStartDate && o.Date.Date <= weekEndDate)
-                            .Sum(o => (double)o.TotalAfterDiscount);
-                        revenueData.Add(new ObservablePoint(i, weeklyRevenue));
-                        profitData.Add(new ObservablePoint(i, weeklyRevenue * random.NextDouble() * 0.4 + weeklyRevenue * 0.1));
-                    }
-                    break;
+                // Xác định khoảng thời gian và số đơn vị
+                (startDate, endDate, numberOfUnits) = GetDateRange(SelectedTotalTimePeriod);
 
-                case "Tháng":
-                    TotalRevenueProfitXAxes[0].Name = "Tháng";
-                    for (int i = 0; i < numberOfUnits; i++)
-                    {
-                        var monthDate = startDate.AddMonths(i);
-                        labels.Add(monthDate.ToString("MM/yyyy"));
-                        double monthlyRevenue = ordersInPeriod
-                            .Where(o => o.Date.Year == monthDate.Year && o.Date.Month == monthDate.Month)
-                            .Sum(o => (double)o.TotalAfterDiscount);
-                        revenueData.Add(new ObservablePoint(i, monthlyRevenue));
-                        profitData.Add(new ObservablePoint(i, monthlyRevenue * random.NextDouble() * 0.4 + monthlyRevenue * 0.1));
-                    }
-                    break;
+                // Lọc đơn hàng trong khoảng thời gian
+                var ordersInPeriod = _allOrders
+                    .Where(o => o.Date >= startDate.Date && o.Date <= endDate.Date)
+                    .ToList();
 
-                case "Quý":
-                    TotalRevenueProfitXAxes[0].Name = "Quý";
-                    for (int i = 0; i < numberOfUnits; i++)
-                    {
-                        var (quarterStartDate, quarterEndDate, quarterLabel) = GetQuarterDetails(startDate, i);
-                        labels.Add(quarterLabel);
-                        double quarterlyRevenue = ordersInPeriod
-                           .Where(o => o.Date.Date >= quarterStartDate && o.Date.Date <= quarterEndDate)
-                           .Sum(o => (double)o.TotalAfterDiscount);
-                        revenueData.Add(new ObservablePoint(i, quarterlyRevenue));
-                        profitData.Add(new ObservablePoint(i, quarterlyRevenue * random.NextDouble() * 0.4 + quarterlyRevenue * 0.1));
-                    }
-                    break;
-
-                case "Năm":
-                    TotalRevenueProfitXAxes[0].Name = "Năm";
-                    for (int i = 0; i < numberOfUnits; i++)
-                    {
-                        var year = startDate.AddYears(i).Year;
-                        labels.Add(year.ToString());
-                        double yearlyRevenue = ordersInPeriod
-                            .Where(o => o.Date.Year == year)
-                            .Sum(o => (double)o.TotalAfterDiscount);
-                        revenueData.Add(new ObservablePoint(i, yearlyRevenue));
-                        profitData.Add(new ObservablePoint(i, yearlyRevenue * random.NextDouble() * 0.4 + yearlyRevenue * 0.1));
-                    }
-                    break;
-            }
-
-            TotalRevenueProfitXAxes[0].Labels = labels;
-
-            TotalRevenueProfitSeries =
-            [
-                new ColumnSeries<ObservablePoint>
+                // Tính toán dựa trên kỳ đã chọn
+                switch (SelectedTotalTimePeriod)
                 {
-                    Name = "Doanh thu",
-                    Values = revenueData,
-                    Stroke = null,
-                    DataLabelsPosition = DataLabelsPosition.Top,
-                    DataLabelsFormatter = (point) => $"{point.Coordinate.PrimaryValue:N0} VNĐ"
-                },
-                new LineSeries<ObservablePoint>
-                {
-                    Name = "Lợi nhuận (giả)",
-                    Values = profitData,
-                    Fill = null,
-                    DataLabelsPosition = DataLabelsPosition.Bottom,
-                    DataLabelsFormatter = (point) => $"{point.Coordinate.PrimaryValue:N0} VNĐ"
+                    case "Ngày":
+                        labels = new List<string>();
+                        for (int i = 0; i < numberOfUnits; i++)
+                        {
+                            var currentDate = startDate.AddDays(i).Date;
+                            labels.Add(currentDate.ToString("dd/MM"));
+                            double dailyRevenue = ordersInPeriod
+                                .Where(o => o.Date == currentDate)
+                                .Sum(o => (double)o.TotalAfterDiscount);
+                            revenueData.Add(new ObservablePoint(i, dailyRevenue));
+                            profitData.Add(new ObservablePoint(i, dailyRevenue * random.NextDouble() * 0.4 + dailyRevenue * 0.1));
+                        }
+                        break;
+
+                    case "Tuần":
+                        labels = new List<string>();
+                        for (int i = 0; i < numberOfUnits; i++)
+                        {
+                            var weekStartDate = startDate.AddDays(i * 7);
+                            var weekEndDate = weekStartDate.AddDays(6);
+                            var week = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(weekStartDate, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+                            labels.Add($"Tuần {week}, {weekStartDate.Year}");
+
+                            double weeklyRevenue = ordersInPeriod
+                                .Where(o => o.Date.Date >= weekStartDate && o.Date.Date <= weekEndDate)
+                                .Sum(o => (double)o.TotalAfterDiscount);
+                            revenueData.Add(new ObservablePoint(i, weeklyRevenue));
+                            profitData.Add(new ObservablePoint(i, weeklyRevenue * random.NextDouble() * 0.4 + weeklyRevenue * 0.1));
+                        }
+                        break;
+
+                    case "Tháng":
+                        labels = new List<string>();
+                        for (int i = 0; i < numberOfUnits; i++)
+                        {
+                            var monthDate = startDate.AddMonths(i);
+                            labels.Add(monthDate.ToString("MM/yyyy"));
+                            double monthlyRevenue = ordersInPeriod
+                                .Where(o => o.Date.Year == monthDate.Year && o.Date.Month == monthDate.Month)
+                                .Sum(o => (double)o.TotalAfterDiscount);
+                            revenueData.Add(new ObservablePoint(i, monthlyRevenue));
+                            profitData.Add(new ObservablePoint(i, monthlyRevenue * random.NextDouble() * 0.4 + monthlyRevenue * 0.1));
+                        }
+                        break;
+
+                    case "Quý":
+                        labels = new List<string>();
+                        for (int i = 0; i < numberOfUnits; i++)
+                        {
+                            var (quarterStartDate, quarterEndDate, quarterLabel) = GetQuarterDetails(startDate, i);
+                            labels.Add(quarterLabel);
+                            double quarterlyRevenue = ordersInPeriod
+                                .Where(o => o.Date.Date >= quarterStartDate && o.Date.Date <= quarterEndDate)
+                                .Sum(o => (double)o.TotalAfterDiscount);
+                            revenueData.Add(new ObservablePoint(i, quarterlyRevenue));
+                            profitData.Add(new ObservablePoint(i, quarterlyRevenue * random.NextDouble() * 0.4 + quarterlyRevenue * 0.1));
+                        }
+                        break;
+
+                    case "Năm":
+                        labels = new List<string>();
+                        for (int i = 0; i < numberOfUnits; i++)
+                        {
+                            var year = startDate.AddYears(i).Year;
+                            labels.Add(year.ToString());
+                            double yearlyRevenue = ordersInPeriod
+                                .Where(o => o.Date.Year == year)
+                                .Sum(o => (double)o.TotalAfterDiscount);
+                            revenueData.Add(new ObservablePoint(i, yearlyRevenue));
+                            profitData.Add(new ObservablePoint(i, yearlyRevenue * random.NextDouble() * 0.4 + yearlyRevenue * 0.1));
+                        }
+                        break;
                 }
-            ];
+
+                await _dispatcherQueue.TryEnqueueAsync(() =>
+                {
+                    TotalRevenueProfitXAxes[0].Name = SelectedTotalTimePeriod;
+                    TotalRevenueProfitXAxes[0].Labels = labels;
+
+                    TotalRevenueProfitSeries.Clear();
+                    TotalRevenueProfitSeries.Add(new ColumnSeries<ObservablePoint>
+                    {
+                        Name = "Doanh thu",
+                        Values = revenueData,
+                        Stroke = null,
+                        DataLabelsPosition = DataLabelsPosition.Top,
+                        DataLabelsFormatter = (point) => $"{point.Coordinate.PrimaryValue:N0} VNĐ"
+                    });
+                    TotalRevenueProfitSeries.Add(new LineSeries<ObservablePoint>
+                    {
+                        Name = "Lợi nhuận (giả)",
+                        Values = profitData,
+                        Fill = null,
+                        DataLabelsPosition = DataLabelsPosition.Bottom,
+                        DataLabelsFormatter = (point) => $"{point.Coordinate.PrimaryValue:N0} VNĐ"
+                    });
+                });
+            });
         }
 
-        public void LoadAverageChartData()
+
+        public async Task LoadAverageChartDataAsync()
         {
-            var avgTransactionValueData = new ObservableCollection<ObservablePoint>();
-            var labels = new List<string>();
-
-            DateTime startDate, endDate;
-            int numberOfUnits;
-
-            (startDate, endDate, numberOfUnits) = GetDateRange(SelectedAverageTimePeriod);
-
-            var ordersInPeriod = _allOrders
-                 .Where(o => o.Date.Date >= startDate.Date && o.Date.Date <= endDate.Date)
-                .ToList();
-
-            // --- Tính toán trung bình ---
-            switch (SelectedAverageTimePeriod)
+            await Task.Run(async () =>
             {
-                case "Ngày": // Trung bình hàng ngày trong X ngày qua
-                    AverageTransactionValueXAxes[0].Name = "Ngày";
-                    for (int i = 0; i < numberOfUnits; i++)
+                var avgTransactionValueData = new ObservableCollection<ObservablePoint>();
+                var labels = new List<string>();
+
+                DateTime startDate, endDate;
+                int numberOfUnits;
+
+                (startDate, endDate, numberOfUnits) = GetDateRange(SelectedAverageTimePeriod);
+
+                var ordersInPeriod = _allOrders
+                    .Where(o => o.Date.Date >= startDate.Date && o.Date.Date <= endDate.Date)
+                    .ToList();
+
+                // Tính toán trung bình
+                switch (SelectedAverageTimePeriod)
+                {
+                    case "Ngày":
+                        labels = new List<string>();
+                        for (int i = 0; i < numberOfUnits; i++)
+                        {
+                            var currentDate = startDate.AddDays(i).Date;
+                            labels.Add(currentDate.ToString("dd/MM"));
+
+                            int dailyTotalOrders = ordersInPeriod.Where(o => o.Date == currentDate).Count();
+                            double avgTransactionValue = ordersInPeriod
+                                .Where(o => o.Date == currentDate)
+                                .Sum(o => (double)o.TotalAfterDiscount) / Math.Max(dailyTotalOrders, 1);
+                            avgTransactionValueData.Add(new ObservablePoint(i, avgTransactionValue));
+                        }
+                        break;
+
+                    case "Tuần":
+                        labels = new List<string>();
+                        for (int i = 0; i < numberOfUnits; i++)
+                        {
+                            var weekStartDate = startDate.AddDays(i * 7);
+                            var weekEndDate = weekStartDate.AddDays(6);
+                            var week = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(weekStartDate, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+                            labels.Add($"Tuần {week}, {weekStartDate.Year}");
+
+                            double weeklyTotalOrders = ordersInPeriod
+                                .Where(o => o.Date.Date >= weekStartDate && o.Date.Date <= weekEndDate)
+                                .Count();
+                            double weeklyATV = ordersInPeriod
+                                .Where(o => o.Date.Date >= weekStartDate && o.Date.Date <= weekEndDate)
+                                .Sum(o => (double)o.TotalAfterDiscount) / Math.Max(weeklyTotalOrders, 1);
+                            avgTransactionValueData.Add(new ObservablePoint(i, weeklyATV));
+                        }
+                        break;
+
+                    case "Tháng":
+                        labels = new List<string>();
+                        for (int i = 0; i < numberOfUnits; i++)
+                        {
+                            var monthDate = startDate.AddMonths(i);
+                            labels.Add(monthDate.ToString("MM/yyyy"));
+                            int monthlyTotalOrders = ordersInPeriod
+                                .Where(o => o.Date.Year == monthDate.Year && o.Date.Month == monthDate.Month)
+                                .Count();
+                            double monthlyATV = ordersInPeriod
+                                .Where(o => o.Date.Year == monthDate.Year && o.Date.Month == monthDate.Month)
+                                .Sum(o => (double)o.TotalAfterDiscount) / Math.Max(monthlyTotalOrders, 1);
+                            avgTransactionValueData.Add(new ObservablePoint(i, monthlyATV));
+                        }
+                        break;
+
+                    case "Quý":
+                        labels = new List<string>();
+                        for (int i = 0; i < numberOfUnits; i++)
+                        {
+                            var (quarterStartDate, quarterEndDate, quarterLabel) = GetQuarterDetails(startDate, i);
+                            labels.Add(quarterLabel);
+                            double quarterlyTotalOrders = ordersInPeriod
+                                .Where(o => o.Date.Date >= quarterStartDate && o.Date.Date <= quarterEndDate)
+                                .Count();
+                            double quarterlyATV = ordersInPeriod
+                                .Where(o => o.Date.Date >= quarterStartDate && o.Date.Date <= quarterEndDate)
+                                .Sum(o => (double)o.TotalAfterDiscount) / Math.Max(quarterlyTotalOrders, 1);
+                            avgTransactionValueData.Add(new ObservablePoint(i, quarterlyATV));
+                        }
+                        break;
+
+                    case "Năm":
+                        labels = new List<string>();
+                        for (int i = 0; i < numberOfUnits; i++)
+                        {
+                            var year = startDate.AddYears(i).Year;
+                            labels.Add(year.ToString());
+                            int yearlyTotalOrders = ordersInPeriod
+                                .Where(o => o.Date.Year == year)
+                                .Count();
+                            double yearlyATV = ordersInPeriod
+                                .Where(o => o.Date.Year == year)
+                                .Sum(o => (double)o.TotalAfterDiscount) / Math.Max(yearlyTotalOrders, 1);
+                            avgTransactionValueData.Add(new ObservablePoint(i, yearlyATV));
+                        }
+                        break;
+                }
+
+                await _dispatcherQueue.TryEnqueueAsync(() =>
+                {
+                    AverageTransactionValueXAxes[0].Name = SelectedAverageTimePeriod;
+                    AverageTransactionValueXAxes[0].Labels = labels;
+
+                    AverageTransactionValueSeries.Clear();
+                    AverageTransactionValueSeries.Add(new LineSeries<ObservablePoint>
                     {
-                        var currentDate = startDate.AddDays(i).Date;
-                        labels.Add(currentDate.ToString("dd/MM"));
-
-                        int dailyTotalOrders = ordersInPeriod.Where(o => o.Date == currentDate).Count();
-
-                        double avgTransactionValue = ordersInPeriod
-                            .Where(o => o.Date == currentDate)
-                            .Sum(o => (double)o.TotalAfterDiscount) / Math.Max(dailyTotalOrders, 1);
-                        avgTransactionValueData.Add(new ObservablePoint(i, avgTransactionValue));
-                    }
-                    break;
-
-                case "Tuần": // Trung bình hàng tuần trong X tuần qua
-                    AverageTransactionValueXAxes[0].Name = "Tuần";
-                    for (int i = 0; i < numberOfUnits; i++)
-                    {
-                        var weekStartDate = startDate.AddDays(i * 7);
-                        var weekEndDate = weekStartDate.AddDays(6);
-                        var week = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(weekStartDate, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-                        labels.Add($"Tuần {week}, {weekStartDate.Year}");
-
-                        double weeklyTotalOrders = ordersInPeriod
-                            .Where(o => o.Date.Date >= weekStartDate && o.Date.Date <= weekEndDate)
-                            .Count();
-
-                        double weeklyATV = ordersInPeriod
-                            .Where(o => o.Date.Date >= weekStartDate && o.Date.Date <= weekEndDate)
-                            .Sum(o => (double)o.TotalAfterDiscount) / Math.Max(weeklyTotalOrders, 1);
-                        avgTransactionValueData.Add(new ObservablePoint(i, weeklyATV));
-                    }
-                    break;
-
-                case "Tháng": // Trung bình hàng tháng trong X tháng qua
-                    AverageTransactionValueXAxes[0].Name = "Tháng";
-                    for (int i = 0; i < numberOfUnits; i++)
-                    {
-                        var monthDate = startDate.AddMonths(i);
-                        labels.Add(monthDate.ToString("MM/yyyy"));
-                        int monthlyTotalOrders = ordersInPeriod
-                            .Where(o => o.Date.Year == monthDate.Year && o.Date.Month == monthDate.Month)
-                            .Count();
-
-                        double monthlyATV = ordersInPeriod
-                            .Where(o => o.Date.Year == monthDate.Year && o.Date.Month == monthDate.Month)
-                            .Sum(o => (double)o.TotalAfterDiscount) / Math.Max(monthlyTotalOrders, 1);
-                        avgTransactionValueData.Add(new ObservablePoint(i, monthlyATV));
-                    }
-                    break;
-
-                case "Quý": // Trung bình hàng quý trong X quý qua
-                    AverageTransactionValueXAxes[0].Name = "Quý";
-                    for (int i = 0; i < numberOfUnits; i++)
-                    {
-                        var (quarterStartDate, quarterEndDate, quarterLabel) = GetQuarterDetails(startDate, i);
-                        labels.Add(quarterLabel);
-
-                        double quarterlyTotalOrders = ordersInPeriod
-                            .Where(o => o.Date.Date >= quarterStartDate && o.Date.Date <= quarterEndDate)
-                            .Count();
-
-                        double quarterlyATV = ordersInPeriod
-                            .Where(o => o.Date.Date >= quarterStartDate && o.Date.Date <= quarterEndDate)
-                            .Sum(o => (double)o.TotalAfterDiscount) / Math.Max(quarterlyTotalOrders, 1);
-                        avgTransactionValueData.Add(new ObservablePoint(i, quarterlyATV));
-                    }
-                    break;
-
-                case "Năm": // Trung bình hàng năm trong X năm qua
-                    AverageTransactionValueXAxes[0].Name = "Năm";
-                    for (int i = 0; i < numberOfUnits; i++)
-                    {
-                        var year = startDate.AddYears(i).Year;
-                        labels.Add(year.ToString());
-
-                        int yearlyTotalOrders = ordersInPeriod
-                            .Where(o => o.Date.Year == year)
-                            .Count();
-
-                        double yearlyATV = ordersInPeriod
-                            .Where(o => o.Date.Year == year)
-                            .Sum(o => (double)o.TotalAfterDiscount) / Math.Max(yearlyTotalOrders, 1);
-                        avgTransactionValueData.Add(new ObservablePoint(i, yearlyATV));
-                    }
-                    break;
-            }
-
-            AverageTransactionValueXAxes[0].Labels = labels;
-
-            AverageTransactionValueSeries =
-            [
-                 new LineSeries<ObservablePoint>
-                 {
-                     Name = "Giá trị trung bình mỗi hóa đơn",
-                     Values = avgTransactionValueData,
-                     Fill = null,
-                     DataLabelsPosition = DataLabelsPosition.Bottom,
-                     DataLabelsFormatter = (point) => $"{point.Coordinate.PrimaryValue:N0} đ"
-                 }
-            ];
+                        Name = "Giá trị trung bình mỗi hóa đơn",
+                        Values = avgTransactionValueData,
+                        Fill = null,
+                        DataLabelsPosition = DataLabelsPosition.Bottom,
+                        DataLabelsFormatter = (point) => $"{point.Coordinate.PrimaryValue:N0} đ"
+                    });
+                });
+            });
         }
 
         // Lấy khoảng ngày và số đơn vị thời gian dựa trên lựa chọn

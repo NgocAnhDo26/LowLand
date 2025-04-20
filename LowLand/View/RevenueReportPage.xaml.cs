@@ -13,14 +13,14 @@ namespace LowLand.View
             this.DataContext = ViewModel;
         }
 
-        private void AverageTransactionValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void AverageTransactionValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.LoadAverageChartData();
+            await ViewModel.LoadAverageChartDataAsync();
         }
 
-        private void TotalRevenue_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void TotalRevenue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.LoadTotalChartData();
+            await ViewModel.LoadTotalChartDataAsync();
         }
     }
 }

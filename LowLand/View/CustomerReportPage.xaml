@@ -14,6 +14,7 @@
     <Page.Resources>
         <converter:CurrencyFormatter x:Key="CurrencyFormatter"/>
         <converter:DateOnlyToDateTimeOffsetConverter x:Key="DateOnlyToDateTimeOffsetConverter"/>
+        <converter:InvertedBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverterInverted" />
     </Page.Resources>
 
     <Grid>
@@ -33,7 +34,9 @@
 
             <TextBlock Text="Khách hàng thân thiết" VerticalAlignment="Center" Style="{StaticResource SubtitleTextBlockStyle}" Margin="8, 8, 0, 16"/>
 
-            <lvc:CartesianChart Grid.Row="1"
+            <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Width="50" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+            <lvc:CartesianChart Grid.Row="1" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverterInverted}}"
                 Series="{Binding TotalSpentSeries, Mode=OneWay}"
                 XAxes="{Binding TotalSpentXAxes, Mode=OneWay}"
                 YAxes="{Binding TotalSpentYAxes, Mode=OneWay}"
@@ -48,8 +51,10 @@
             </Grid.RowDefinitions>
 
             <TextBlock Text="Lượng khách hàng mới" VerticalAlignment="Center" Style="{StaticResource SubtitleTextBlockStyle}" Margin="8, 8, 0, 16"/>
+
+            <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Width="50" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" />
             
-            <lvc:CartesianChart Grid.Row="1"
+            <lvc:CartesianChart Grid.Row="1" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverterInverted}}"
         Series="{Binding NewCustomerSeries, Mode=OneWay}"
         XAxes="{Binding NewCustomerXAxes, Mode=OneWay}"
         YAxes="{Binding NewCustomerYAxes, Mode=OneWay}"

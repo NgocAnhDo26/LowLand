@@ -14,6 +14,7 @@
     <Page.Resources>
         <converter:CurrencyFormatter x:Key="CurrencyFormatter"/>
         <converter:DateOnlyToDateTimeOffsetConverter x:Key="DateOnlyToDateTimeOffsetConverter"/>
+        <converter:InvertedBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverterInverted" />
     </Page.Resources>
 
     <Grid>
@@ -38,6 +39,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Text="Tổng Doanh thu và Lợi nhuận" VerticalAlignment="Center" Style="{StaticResource SubtitleTextBlockStyle}" Margin="8, 8, 0, 16"/>
+                
                 <ComboBox x:Name="TotalRevenue"
                     Grid.Column="1"
                     ItemsSource="{Binding TimePeriods}"
@@ -48,8 +50,10 @@
                     SelectionChanged="TotalRevenue_SelectionChanged"
                 />
             </Grid>
-            
-            <lvc:CartesianChart Grid.Row="1"
+
+            <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Width="60" Height="60" />
+
+            <lvc:CartesianChart Grid.Row="1" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverterInverted}, ConverterParameter=Inverted}"
                     Series="{Binding TotalRevenueProfitSeries, Mode=OneWay}"
                     XAxes="{Binding TotalRevenueProfitXAxes, Mode=OneWay}"
                     YAxes="{Binding TotalRevenueProfitYAxes, Mode=OneWay}"
@@ -80,7 +84,10 @@
             SelectionChanged="AverageTransactionValue_SelectionChanged"
         />
             </Grid>
-            <lvc:CartesianChart Grid.Row="1"
+
+            <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Width="60" Height="60" />
+            
+            <lvc:CartesianChart Grid.Row="1" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverterInverted}, ConverterParameter=Inverted}"
             Series="{Binding AverageTransactionValueSeries, Mode=OneWay}"
             XAxes="{Binding AverageTransactionValueXAxes, Mode=OneWay}"
             YAxes="{Binding AverageTransactionValueYAxes, Mode=OneWay}"

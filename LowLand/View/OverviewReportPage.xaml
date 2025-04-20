@@ -14,7 +14,8 @@
     <Page.Resources>
         <converter:CurrencyFormatter x:Key="CurrencyFormatter"/>
         <converter:NumberToPercentageConverter x:Key="NumberToPercentageConverter"/>
-        <converter:PercentageToColorConverter x:Key="PercentageToColorConverter"/> 
+        <converter:PercentageToColorConverter x:Key="PercentageToColorConverter"/>
+        <converter:InvertedBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverterInverted" />
     </Page.Resources>
 
     <Grid>
@@ -55,10 +56,12 @@
 
                 <TextBlock Grid.Column="0" Text="Tổng doanh thu hôm nay" Style="{StaticResource BodyTextBlockStyle}"/>
 
-                <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="4">
-                    <TextBlock Text="{x:Bind ViewModel.TodayRevenue, Converter={StaticResource CurrencyFormatter}}" Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center"/>
+                <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Width="40" Height="40" />
+
+                <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="4" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverterInverted}, ConverterParameter=Inverted}">
+                    <TextBlock Text="{Binding TodayRevenue, Converter={StaticResource CurrencyFormatter}}" Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center"/>
                     <TextBlock Text="•" VerticalAlignment="Center" Margin="4, 0, 4, 0"/>
-                    <TextBlock Text="{x:Bind ViewModel.RevenueComparisonPercentage, Converter={StaticResource NumberToPercentageConverter}}" VerticalAlignment="Center" Foreground="{x:Bind ViewModel.RevenueComparisonPercentage, Converter={StaticResource PercentageToColorConverter}}"/>
+                    <TextBlock Text="{Binding RevenueComparisonPercentage, Converter={StaticResource NumberToPercentageConverter}}" VerticalAlignment="Center" Foreground="{x:Bind ViewModel.RevenueComparisonPercentage, Converter={StaticResource PercentageToColorConverter}}"/>
                 </StackPanel>
             </Grid>
 
@@ -84,7 +87,9 @@
 
                 <TextBlock Grid.Column="0" Text="Tổng đơn hàng hôm nay" Style="{StaticResource BodyTextBlockStyle}"/>
 
-                <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="4">
+                <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Width="40" Height="40" />
+
+                <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="4" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverterInverted}, ConverterParameter=Inverted}">
                     <TextBlock Text="{x:Bind ViewModel.TodayTotalOrder}" Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center"/>
                     <TextBlock Text="•" VerticalAlignment="Center" Margin="4, 0, 4, 0"/>
                     <TextBlock Text="{x:Bind ViewModel.TotalOrderComparisonPercentage, Converter={StaticResource NumberToPercentageConverter}}" VerticalAlignment="Center" Foreground="{x:Bind ViewModel.RevenueComparisonPercentage, Converter={StaticResource PercentageToColorConverter}}"/>
@@ -113,10 +118,12 @@
 
                 <TextBlock Grid.Column="0" Text="Giá trị trung bình đơn hàng" Style="{StaticResource BodyTextBlockStyle}"/>
 
-                <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="4">
-                    <TextBlock Text="{x:Bind ViewModel.TodayAverageOrderValue, Converter={StaticResource CurrencyFormatter}}" Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center"/>
+                <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Width="40" Height="40" />
+
+                <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="4" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverterInverted}, ConverterParameter=Inverted}">
+                    <TextBlock Text="{Binding TodayAverageOrderValue, Converter={StaticResource CurrencyFormatter}}" Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center"/>
                     <TextBlock Text="•" VerticalAlignment="Center" Margin="4, 0, 4, 0"/>
-                    <TextBlock Text="{x:Bind ViewModel.AverageOrderValueComparisonPercentage, Converter={StaticResource NumberToPercentageConverter}}" VerticalAlignment="Center" Foreground="{x:Bind ViewModel.RevenueComparisonPercentage, Converter={StaticResource PercentageToColorConverter}}"/>
+                    <TextBlock Text="{Binding AverageOrderValueComparisonPercentage, Converter={StaticResource NumberToPercentageConverter}}" VerticalAlignment="Center" Foreground="{x:Bind ViewModel.RevenueComparisonPercentage, Converter={StaticResource PercentageToColorConverter}}"/>
                 </StackPanel>
             </Grid>
 
@@ -135,11 +142,14 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Text="Doanh thu trong 7 ngày gần nhất" Style="{StaticResource SubtitleTextBlockStyle}" Margin="24, 16, 0, 0"/>
+
+                <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Width="60" Height="60" />
+
                 <Grid Grid.Row="1" Margin="16, 0, 16, 16">
-                    <lvc:CartesianChart
-                        Series="{x:Bind ViewModel.RevenueSeries, Mode=OneWay}"
-                        XAxes="{x:Bind ViewModel.RevenueXAxes, Mode=OneWay}"
-                        YAxes="{x:Bind ViewModel.RevenueYAxes, Mode=OneWay}">
+                    <lvc:CartesianChart Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverterInverted}, ConverterParameter=Inverted}"
+                        Series="{Binding RevenueSeries, Mode=OneWay}"
+                        XAxes="{Binding RevenueXAxes, Mode=OneWay}"
+                        YAxes="{Binding RevenueYAxes, Mode=OneWay}">
                     </lvc:CartesianChart>
                 </Grid>
             </Grid>
@@ -151,11 +161,14 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Text="Tổng đơn hàng trong 7 ngày gần nhất" Style="{StaticResource SubtitleTextBlockStyle}" Margin="24, 16, 0, 0"/>
+
+                <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Width="60" Height="60" />
+
                 <Grid Grid.Row="1" Margin="16, 0, 16, 16">
-                    <lvc:CartesianChart
-                        Series="{x:Bind ViewModel.TotalOrderSeries}"
-                        XAxes="{x:Bind ViewModel.TotalOrderXAxes}"
-                        YAxes="{x:Bind ViewModel.TotalOrderYAxes}">
+                    <lvc:CartesianChart Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverterInverted}, ConverterParameter=Inverted}"
+                        Series="{Binding TotalOrderSeries}"
+                        XAxes="{Binding TotalOrderXAxes}"
+                        YAxes="{Binding TotalOrderYAxes}">
                     </lvc:CartesianChart>
                 </Grid>
             </Grid>
