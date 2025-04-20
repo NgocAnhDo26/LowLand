@@ -39,6 +39,38 @@
                         </NavigationViewItem>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Chương trình khuyến mãi" Tag="PromotionsPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE94C;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Báo cáo thống kê" IsExpanded="True">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE9D2;"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Tổng quan" Tag="OverviewReportPage">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xEB05;"/>
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                        <NavigationViewItem Content="Doanh thu" Tag="RevenueReportPage">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xEB05;"/>
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                        <NavigationViewItem Content="Sản phẩm" Tag="ProductReportPage">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xEB05;"/>
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                        <NavigationViewItem Content="Khách hàng" Tag="CustomerReportPage">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xEB05;"/>
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
             <Frame x:Name="container"/>
         </NavigationView>

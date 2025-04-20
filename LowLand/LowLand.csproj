@@ -17,20 +17,26 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="View\AddProductComboPage.xaml" />
+    <None Remove="View\AddPromotionPage.xaml" />
     <None Remove="View\AddSingleProductPage.xaml" />
     <None Remove="View\AddOrderPage.xaml" />
     <None Remove="View\CategoriesPage.xaml" />
     <None Remove="View\CustomerRankDialog.xaml" />
     <None Remove="View\CustomerRankPage.xaml" />
+    <None Remove="View\CustomerReportPage.xaml" />
     <None Remove="View\DashboardPage.xaml" />
     <None Remove="View\DashboardWindow.xaml" />
     <None Remove="View\LoginWindow.xaml" />
     <None Remove="View\OrderDetailPage.xaml" />
     <None Remove="View\OrderPage.xaml" />
+    <None Remove="View\OverviewReportPage.xaml" />
     <None Remove="View\ProductComboInfopage.xaml" />
     <None Remove="View\ProductInfoPage.xaml" />
     <None Remove="View\ProductOptionDialog.xaml" />
+    <None Remove="View\ProductReportPage.xaml" />
     <None Remove="View\ProductsPage.xaml" />
+    <None Remove="View\PromotionsPage.xaml" />
+    <None Remove="View\RevenueReportPage.xaml" />
     <None Remove="View\UpdateOrderPage.xaml" />
   </ItemGroup>
 
@@ -57,6 +63,9 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.0-rc5.3" />
+    <PackageReference Include="Microsoft.ML" Version="4.0.2" />
+    <PackageReference Include="Microsoft.ML.LightGbm" Version="4.0.2" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.250228001" />
     <PackageReference Include="Npgsql" Version="9.0.3" />
@@ -80,6 +89,24 @@
     <None Update="Assets\product_default.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="View\CustomerReportPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\RevenueReportPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\ProductReportPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\OverviewReportPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\AddPromotionPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="View\PromotionsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="View\ProductComboInfopage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

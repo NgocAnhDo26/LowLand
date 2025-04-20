@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LowLand.Model.Discount;
 using LowLand.Model.Order;
 using LowLand.Model.Product;
 using LowLand.View.ViewModel;
@@ -121,9 +122,6 @@ namespace LowLand.View
                 {
                     ViewModel.EditorAddOrder.Details.Add(newOrderDetail);
                     ViewModel.EditorAddOrder.TotalPrice = ViewModel.EditorAddOrder.Details.Sum(d => d.Price);
-
-
-
                 }
             }
         }
@@ -186,6 +184,18 @@ namespace LowLand.View
                         ViewModel.EditorAddOrder.TotalPrice = ViewModel.EditorAddOrder.Details.Sum(d => d.Price);
                     }
                 }
+            }
+        }
+
+        private void ChoosePromotion_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedPromotion = (sender as ComboBox)?.SelectedItem as Promotion;
+
+            if (selectedPromotion != null)
+            {
+                ViewModel.SelectedPromotion = selectedPromotion;
+                ViewModel.EditorAddOrder.PromotionId = selectedPromotion.Id;
+                // Tinh toan lai gia o day
             }
         }
     }

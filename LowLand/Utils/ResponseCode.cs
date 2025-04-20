@@ -12,5 +12,8 @@
         ItemHaveDependency,
         CategoryEmpty,
         NoChildProduct,
+        InvalidDate,
+        InvalidStatus,
+        EmptyDate,
     }
 }

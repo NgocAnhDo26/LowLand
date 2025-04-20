@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="LowLand.View.OverviewReportPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LowLand.View"
+    xmlns:converter="using:LowLand.View.Converter"
+    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:lvc1="using:LiveChartsCore.SkiaSharpView"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <converter:CurrencyFormatter x:Key="CurrencyFormatter"/>
+        <converter:NumberToPercentageConverter x:Key="NumberToPercentageConverter"/>
+        <converter:PercentageToColorConverter x:Key="PercentageToColorConverter"/>
+        <converter:InvertedBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverterInverted" />
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Tổng quan - LowLand" Style="{StaticResource TitleTextBlockStyle}" Margin="36, 40, 0, 36"/>
+
+        <Grid Grid.Row="1" ColumnSpacing="16" Margin="32, 0, 32, 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="8" ColumnSpacing="16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Viewbox Width="50" Height="50" Grid.RowSpan="2" Grid.Column="1" VerticalAlignment="Top">
+                    <Canvas Width="50" Height="50">
+                        <!-- Circular Background -->
+                        <Ellipse Width="50" Height="50" Fill="#1B88D9" />
+
+                        <!-- Cube Outline -->
+                        <FontIcon Glyph="&#xF4A5;" Width="50" Height="50" FontSize="28"/>
+                    </Canvas>
+                </Viewbox>
+
+                <TextBlock Grid.Column="0" Text="Tổng doanh thu hôm nay" Style="{StaticResource BodyTextBlockStyle}"/>
+
+                <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Width="40" Height="40" />
+
+                <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="4" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverterInverted}, ConverterParameter=Inverted}">
+                    <TextBlock Text="{Binding TodayRevenue, Converter={StaticResource CurrencyFormatter}}" Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text="•" VerticalAlignment="Center" Margin="4, 0, 4, 0"/>
+                    <TextBlock Text="{Binding RevenueComparisonPercentage, Converter={StaticResource NumberToPercentageConverter}}" VerticalAlignment="Center" Foreground="{x:Bind ViewModel.RevenueComparisonPercentage, Converter={StaticResource PercentageToColorConverter}}"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Column="1" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="8" ColumnSpacing="16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Viewbox Width="50" Height="50" Grid.RowSpan="2" Grid.Column="1" VerticalAlignment="Top">
+                    <Canvas Width="50" Height="50">
+                        <!-- Circular Background -->
+                        <Ellipse Width="50" Height="50" Fill="#FF981C" />
+
+                        <!-- Cube Outline -->
+                        <FontIcon Glyph="&#xE7B8;" Width="50" Height="50" FontSize="24"/>
+                    </Canvas>
+                </Viewbox>
+
+                <TextBlock Grid.Column="0" Text="Tổng đơn hàng hôm nay" Style="{StaticResource BodyTextBlockStyle}"/>
+
+                <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Width="40" Height="40" />
+
+                <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="4" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverterInverted}, ConverterParameter=Inverted}">
+                    <TextBlock Text="{x:Bind ViewModel.TodayTotalOrder}" Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text="•" VerticalAlignment="Center" Margin="4, 0, 4, 0"/>
+                    <TextBlock Text="{x:Bind ViewModel.TotalOrderComparisonPercentage, Converter={StaticResource NumberToPercentageConverter}}" VerticalAlignment="Center" Foreground="{x:Bind ViewModel.RevenueComparisonPercentage, Converter={StaticResource PercentageToColorConverter}}"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Column="2" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="16" CornerRadius="8" ColumnSpacing="16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Viewbox Width="50" Height="50" Grid.RowSpan="2" Grid.Column="1" VerticalAlignment="Top">
+                    <Canvas Width="50" Height="50">
+                        <!-- Circular Background -->
+                        <Ellipse Width="50" Height="50" Fill="#EC5666" />
+
+                        <!-- Cube Outline -->
+                        <FontIcon Glyph="&#xE8F1;" Width="50" Height="50" FontSize="24"/>
+                    </Canvas>
+                </Viewbox>
+
+                <TextBlock Grid.Column="0" Text="Giá trị trung bình đơn hàng" Style="{StaticResource BodyTextBlockStyle}"/>
+
+                <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Width="40" Height="40" />
+
+                <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="4" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverterInverted}, ConverterParameter=Inverted}">
+                    <TextBlock Text="{Binding TodayAverageOrderValue, Converter={StaticResource CurrencyFormatter}}" Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text="•" VerticalAlignment="Center" Margin="4, 0, 4, 0"/>
+                    <TextBlock Text="{Binding AverageOrderValueComparisonPercentage, Converter={StaticResource NumberToPercentageConverter}}" VerticalAlignment="Center" Foreground="{x:Bind ViewModel.RevenueComparisonPercentage, Converter={StaticResource PercentageToColorConverter}}"/>
+                </StackPanel>
+            </Grid>
+
+        </Grid>
+
+        <Grid Grid.Row="2" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Margin="32, 16, 16, 32">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Doanh thu trong 7 ngày gần nhất" Style="{StaticResource SubtitleTextBlockStyle}" Margin="24, 16, 0, 0"/>
+
+                <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Width="60" Height="60" />
+
+                <Grid Grid.Row="1" Margin="16, 0, 16, 16">
+                    <lvc:CartesianChart Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverterInverted}, ConverterParameter=Inverted}"
+                        Series="{Binding RevenueSeries, Mode=OneWay}"
+                        XAxes="{Binding RevenueXAxes, Mode=OneWay}"
+                        YAxes="{Binding RevenueYAxes, Mode=OneWay}">
+                    </lvc:CartesianChart>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Column="1" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Margin="0, 16, 32, 32">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Tổng đơn hàng trong 7 ngày gần nhất" Style="{StaticResource SubtitleTextBlockStyle}" Margin="24, 16, 0, 0"/>
+
+                <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Width="60" Height="60" />
+
+                <Grid Grid.Row="1" Margin="16, 0, 16, 16">
+                    <lvc:CartesianChart Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverterInverted}, ConverterParameter=Inverted}"
+                        Series="{Binding TotalOrderSeries}"
+                        XAxes="{Binding TotalOrderXAxes}"
+                        YAxes="{Binding TotalOrderYAxes}">
+                    </lvc:CartesianChart>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>
