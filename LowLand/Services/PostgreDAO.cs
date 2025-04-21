@@ -556,7 +556,21 @@ namespace LowLand.Services
 
         public List<OrderDetail> GetAll()
         {
-            throw new NotImplementedException();
+            return ExecuteQuery($"""
+            SELECT order_detail_id, order_id, product_id, quantity, sale_price, product_name, option_id, option_name
+            FROM order_detail
+            """, reader => new OrderDetail
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("order_detail_id")),
+                OrderId = reader.GetInt32(reader.GetOrdinal("order_id")),
+                ProductId = reader.IsDBNull(reader.GetOrdinal("product_id")) ? null : reader.GetInt32(reader.GetOrdinal("product_id")),
+                ProductPrice = reader.GetInt32(reader.GetOrdinal("sale_price")),
+                quantity = reader.GetInt32(reader.GetOrdinal("quantity")),
+                Price = reader.GetInt32(reader.GetOrdinal("sale_price")),
+                ProductName = reader.GetString(reader.GetOrdinal("product_name")),
+                OptionId = reader.IsDBNull(reader.GetOrdinal("option_id")) ? null : reader.GetInt32(reader.GetOrdinal("option_id")),
+                OptionName = reader.IsDBNull(reader.GetOrdinal("option_name")) ? null : reader.GetString(reader.GetOrdinal("option_name"))
+            });
         }
 
         public OrderDetail GetById(string id)
