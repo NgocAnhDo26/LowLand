@@ -18,6 +18,7 @@ namespace LowLand.View.ViewModel
     {
         private readonly IDao _dao;
         public ObservableCollection<Order> Orders { get; set; }
+
         public Order EditorAddOrder { get; set; }
         public ObservableCollection<Customer> Customers { get; set; }
         public ObservableCollection<Product> Products { get; set; }
@@ -26,6 +27,7 @@ namespace LowLand.View.ViewModel
         public FullObservableCollection<Promotion> AvailablePromotions { get; set; }
         public ObservableCollection<Table> AvailableTables { get; set; }
         public Table SelectedTable { get; set; }
+        private List<Table> _allTables;
 
         private Promotion _selectedPromotion;
         private double _rankDiscountPercentage;
@@ -110,21 +112,37 @@ namespace LowLand.View.ViewModel
         public void Init(Order order)
         {
             EditorAddOrder = order;
-
-            SelectedTable = AvailableTables.FirstOrDefault(t => t.Id == order.TableId) ?? new Table { Id = -1, Name = "— Không chọn bàn —" };
             EditorAddOrder.PropertyChanged += EditorAddOrder_PropertyChanged;
+
+
+
+
+            _allTables = _dao.Tables.GetAll(); // <- Chỉ lấy 1 lần
+            var currentTable = _allTables.FirstOrDefault(t => t.OrderId is int id && id == order.Id);
+
+            var tableList = _allTables
+                .Where(t => t.Status == TableStatuses.Empty || (currentTable != null && t.Id == currentTable.Id))
+                .ToList();
+
+            var emptyTable = new Table { Id = -1, Name = "— Không chọn bàn —" };
+            tableList.Insert(0, emptyTable);
+
+            AvailableTables = new ObservableCollection<Table>(tableList);
+            SelectedTable = currentTable ?? emptyTable;
+
+
 
 
             AddOptionToOrderDetail(EditorAddOrder);
 
+            UpdateCustomerInfo(order.CustomerId, order.CustomerPhone, order.CustomerName);
 
-            UpdateCustomerInfo(order.CustomerId ?? 0, order.CustomerPhone, order.CustomerName);
 
             SelectedPromotion = AvailablePromotions.FirstOrDefault(p => p.Id == order.PromotionId);
 
-
             UpdateDiscountsAndTotal();
         }
+
 
         private void EditorAddOrder_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -136,7 +154,7 @@ namespace LowLand.View.ViewModel
             if (table == null) return;
 
             SelectedTable = table;
-            EditorAddOrder.TableId = table.Id;
+
 
             Debug.WriteLine($"[SelectTable] Bàn '{table.Name}' (ID: {table.Id}) được chọn, sẽ xử lý khi tạo đơn.");
         }
@@ -319,16 +337,23 @@ namespace LowLand.View.ViewModel
             item.Date = DateTime.Now;
             item.Status = "Đang xử lý";
 
+            var oldTable = _allTables?.FirstOrDefault(t => t.OrderId is int id && id == item.Id);
+
+            if (oldTable != null && (SelectedTable == null || oldTable.Id != SelectedTable.Id))
+            {
+                oldTable.Status = TableStatuses.Empty;
+                oldTable.OrderId = null;
+                _dao.Tables.UpdateById(oldTable.Id.ToString(), oldTable);
+                Debug.WriteLine($"[Update] Giải phóng bàn cũ: {oldTable.Name}");
+            }
+
+
             if (SelectedTable != null && SelectedTable.Id != -1)
             {
-                _dao.Tables.UpdateById(SelectedTable.Id.ToString(), SelectedTable);
-                EditorAddOrder.TableId = SelectedTable.Id;
                 SelectedTable.Status = TableStatuses.Occupied;
+                SelectedTable.OrderId = item.Id;
             }
-            else
-            {
-                EditorAddOrder.TableId = null;
-            }
+
             var orderToUpdate = Orders.FirstOrDefault(o => o.Id == item.Id);
             if (orderToUpdate != null)
             {
@@ -341,6 +366,11 @@ namespace LowLand.View.ViewModel
                     int index = Orders.IndexOf(orderToUpdate);
                     if (index != -1)
                         Orders[index] = item;
+
+                    if (SelectedTable != null && SelectedTable.Id != -1)
+                    {
+                        _dao.Tables.UpdateById(SelectedTable.Id.ToString(), SelectedTable);
+                    }
                 }
                 else
                 {
@@ -348,6 +378,7 @@ namespace LowLand.View.ViewModel
                 }
             }
         }
+
         public void UpdateTotalPriceFromDetails()
         {
             if (EditorAddOrder.Details != null)

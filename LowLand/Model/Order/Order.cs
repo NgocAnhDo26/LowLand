@@ -17,7 +17,7 @@ namespace LowLand.Model.Order
         public int TotalAfterDiscount { get; set; }
         public string? Status { get; set; }
         public DateTime Date { get; set; }
-        public int? TableId { get; set; }
+
         public decimal TotalCostPrice { get; set; }
         public ObservableCollection<OrderDetail>? Details { get; set; } = new ObservableCollection<OrderDetail>();
         public event PropertyChangedEventHandler? PropertyChanged;

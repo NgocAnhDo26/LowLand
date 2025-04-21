@@ -6,7 +6,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using LowLand.Model.Order;
+using LowLand.Model.Table;
 using LowLand.Services;
+using LowLand.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Printing;
@@ -24,6 +26,8 @@ namespace LowLand.View.ViewModel
         private IPrintDocumentSource printDocumentSource;
         private Order currentOrderToPrint;
         private List<UIElement> printPreviewPages = new();
+        public ObservableCollection<Table> Tables { get; set; }
+
 
         public PagingViewModel<Order> Paging => _paging;
 
@@ -32,6 +36,8 @@ namespace LowLand.View.ViewModel
         public OrderViewModel()
         {
             _dao = Services.Services.GetKeyedSingleton<IDao>();
+            Tables = new ObservableCollection<Table>(_dao.Tables.GetAll());
+
             _paging = new PagingViewModel<Order>(
                 (page, size, keyword) => _dao.Orders.GetAll(page, size, keyword),
                 pageSize: 10
@@ -79,12 +85,37 @@ namespace LowLand.View.ViewModel
             if (result == 1)
             {
                 _paging.Refresh();
+
+                // 👉 Nếu đơn đã hoàn thành, reset bàn
+                if (item.Status == "Hoàn thành")
+                {
+                    var table = Tables.FirstOrDefault(t => t.OrderId != null && (int)t.OrderId == item.Id);
+                    if (table != null)
+                    {
+                        table.OrderId = null;
+                        table.Status = TableStatuses.Empty;
+                        UpdateTable(table);
+                    }
+                }
             }
             else
             {
                 Console.WriteLine("Update failed: No rows affected.");
             }
         }
+
+        public void UpdateTable(Table table)
+        {
+            _dao.Tables.UpdateById(table.Id.ToString(), table);
+
+            var existing = Tables.FirstOrDefault(t => t.Id == table.Id);
+            if (existing != null)
+            {
+                int index = Tables.IndexOf(existing);
+                Tables[index] = table;
+            }
+        }
+
 
         public async Task PrintInvoice(Order order, XamlRoot xamlRoot)
         {

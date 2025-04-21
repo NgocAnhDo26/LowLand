@@ -21,6 +21,8 @@ namespace LowLand.View
         public UpdateOrderPage()
         {
             this.InitializeComponent();
+            this.DataContext = ViewModel;
+
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

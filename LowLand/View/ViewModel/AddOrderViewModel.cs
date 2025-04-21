@@ -248,14 +248,10 @@ namespace LowLand.View.ViewModel
 
             if (SelectedTable != null && SelectedTable.Id != -1)
             {
-                _dao.Tables.UpdateById(SelectedTable.Id.ToString(), SelectedTable);
-                EditorAddOrder.TableId = SelectedTable.Id;
+
                 SelectedTable.Status = TableStatuses.Occupied;
             }
-            else
-            {
-                EditorAddOrder.TableId = null;
-            }
+
 
             var customer = Customers.FirstOrDefault(c => c.Id == EditorAddOrder.CustomerId);
             if (customer != null)
@@ -279,10 +275,17 @@ namespace LowLand.View.ViewModel
             CalculateCostPrice(EditorAddOrder);
             // TotalAfterDiscount đã được tính trong UpdateDiscountsAndTotal
             int result = _dao.Orders.Insert(EditorAddOrder);
-            if (result == 1)
+            if (result != -1)
             {
                 EditorAddOrder.Id = _dao.Orders.GetAll().Max(o => o.Id);
                 Orders.Add(EditorAddOrder);
+                if (SelectedTable != null && SelectedTable.Id != -1)
+                {
+                    Debug.WriteLine($"SelectedTable: {SelectedTable.Name} - {SelectedTable.Id} - {SelectedTable.Status} - {EditorAddOrder.Id}");
+                    SelectedTable.OrderId = EditorAddOrder.Id;
+                    SelectedTable.Status = TableStatuses.Occupied;
+                    _dao.Tables.UpdateById(SelectedTable.Id.ToString(), SelectedTable);
+                }
             }
             else
             {
@@ -343,7 +346,7 @@ namespace LowLand.View.ViewModel
             if (table == null) return;
 
             SelectedTable = table;
-            EditorAddOrder.TableId = table.Id;
+
 
             Debug.WriteLine($"[SelectTable] Bàn '{table.Name}' (ID: {table.Id}) được chọn, sẽ xử lý khi tạo đơn.");
         }

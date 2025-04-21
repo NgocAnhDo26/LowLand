@@ -342,7 +342,7 @@ namespace LowLand.Services
         public List<Order> GetAll()
         {
             var orders = ExecuteQuery($"""
-        SELECT order_id, customer_id, customer_phone, total_after_discount, total_price, status, promotion_id, date,customer_name,table_id, total_cost_price
+        SELECT order_id, customer_id, customer_phone, total_after_discount, total_price, status, promotion_id, date,customer_name, total_cost_price
         FROM "order"
     """, reader => new Order
             {
@@ -356,7 +356,7 @@ namespace LowLand.Services
                 TotalAfterDiscount = reader.GetInt32(reader.GetOrdinal("total_after_discount")),
                 Status = reader.GetString(reader.GetOrdinal("status")),
                 Date = reader.GetDateTime(reader.GetOrdinal("date")),
-                TableId = reader.IsDBNull(reader.GetOrdinal("table_id")) ? null : reader.GetInt32(reader.GetOrdinal("table_id")),
+
                 TotalCostPrice = reader.IsDBNull(reader.GetOrdinal("total_cost_price")) ? 0 : reader.GetInt32(reader.GetOrdinal("total_cost_price"))
 
             });
@@ -394,7 +394,7 @@ namespace LowLand.Services
 
 
             var pagedOrders = ExecuteQuery($"""
-                    SELECT order_id, customer_id, customer_phone, total_after_discount, total_price, status, promotion_id, date, customer_name,table_id, total_cost_price
+                    SELECT order_id, customer_id, customer_phone, total_after_discount, total_price, status, promotion_id, date, customer_name, total_cost_price
                     FROM "order"
                     {whereClause}
                     ORDER BY date DESC
@@ -412,7 +412,6 @@ namespace LowLand.Services
                     TotalAfterDiscount = reader.GetInt32(reader.GetOrdinal("total_after_discount")),
                     Status = reader.GetString(reader.GetOrdinal("status")),
                     Date = reader.GetDateTime(reader.GetOrdinal("date")),
-                    TableId = reader.IsDBNull(reader.GetOrdinal("table_id")) ? null : reader.GetInt32(reader.GetOrdinal("table_id")),
                     TotalCostPrice = reader.IsDBNull(reader.GetOrdinal("total_cost_price")) ? 0 : reader.GetInt32(reader.GetOrdinal("total_cost_price"))
                 },
                 cmd =>
@@ -439,7 +438,7 @@ namespace LowLand.Services
         public Order GetById(string id)
         {
             var order = ExecuteSingleQuery($"""
-        SELECT order_id, customer_id, customer_phone, total_after_discount, total_price, status, promotion_id, date,customer_name,table_id, total_cost_price
+        SELECT order_id, customer_id, customer_phone, total_after_discount, total_price, status, promotion_id, date,customer_name, total_cost_price
         FROM "order" WHERE order_id = '{id}'
     """, reader => new Order
             {
@@ -453,7 +452,6 @@ namespace LowLand.Services
                 TotalAfterDiscount = reader.GetInt32(reader.GetOrdinal("total_after_discount")),
                 Status = reader.GetString(reader.GetOrdinal("status")),
                 Date = reader.GetDateTime(reader.GetOrdinal("date")),
-                TableId = reader.IsDBNull(reader.GetOrdinal("table_id")) ? null : reader.GetInt32(reader.GetOrdinal("table_id")),
                 TotalCostPrice = reader.IsDBNull(reader.GetOrdinal("total_cost_price")) ? 0 : reader.GetInt32(reader.GetOrdinal("total_cost_price"))
             });
 
@@ -471,8 +469,8 @@ namespace LowLand.Services
             conn.Open();
 
             using var cmd = new NpgsqlCommand(@"
-                INSERT INTO ""order"" (customer_id, customer_phone, customer_name, promotion_id, total_price, total_after_discount, status, date,table_id, total_cost_price)
-                VALUES (@CustomerId, @CustomerPhone, @CustomerName, @PromotionId, @TotalPrice, @TotalAfterDiscount, @Status, @Date,@TableId,@TotalCostPrice)
+                INSERT INTO ""order"" (customer_id, customer_phone, customer_name, promotion_id, total_price, total_after_discount, status, date, total_cost_price)
+                VALUES (@CustomerId, @CustomerPhone, @CustomerName, @PromotionId, @TotalPrice, @TotalAfterDiscount, @Status, @Date,@TotalCostPrice)
                 RETURNING order_id", conn);
 
             cmd.Parameters.AddWithValue("@CustomerId", (object?)info.CustomerId ?? DBNull.Value);
@@ -483,7 +481,6 @@ namespace LowLand.Services
             cmd.Parameters.AddWithValue("@TotalAfterDiscount", info.TotalAfterDiscount);
             cmd.Parameters.AddWithValue("@Status", (object?)info.Status ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@Date", info.Date);
-            cmd.Parameters.AddWithValue("@TableId", (object?)info.TableId ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@TotalCostPrice", info.TotalCostPrice);
 
             var orderId = (int)cmd.ExecuteScalar();
@@ -512,7 +509,6 @@ namespace LowLand.Services
             total_after_discount = @TotalAfterDiscount,
             status = @Status,
             date = @Date
-            , table_id = @TableId
             , total_cost_price = @TotalCostPrice
         WHERE order_id = @OrderId", conn);
 
@@ -524,7 +520,6 @@ namespace LowLand.Services
             cmd.Parameters.AddWithValue("@TotalAfterDiscount", info.TotalAfterDiscount);
             cmd.Parameters.AddWithValue("@Status", (object?)info.Status ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@Date", info.Date);
-            cmd.Parameters.AddWithValue("@TableId", (object?)info.TableId ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@TotalCostPrice", info.TotalCostPrice);
 
 
@@ -1235,14 +1230,15 @@ namespace LowLand.Services
     {
         public List<Table> GetAll()
         {
-            string query = "SELECT table_id, name, status, capacity, created_at FROM tables";
+            string query = "SELECT table_id, name, status, capacity, created_at, order_id FROM tables";
             return ExecuteQuery(query, reader => new Table
             {
                 Id = reader.GetInt32(0),
                 Name = reader.GetString(1),
                 Status = reader.GetString(2),
                 Capacity = reader.GetInt32(3),
-                //  CreatedAt = reader.GetDateTime(4)
+                // CreatedAt = reader.GetDateTime(4),
+                OrderId = reader.IsDBNull(5) ? null : reader.GetInt32(5)
             });
         }
 
@@ -1253,28 +1249,29 @@ namespace LowLand.Services
 
         public Table GetById(string id)
         {
-            string query = "SELECT table_id, name, status, capacity, created_at FROM tables WHERE table_id = @id";
+            string query = "SELECT table_id, name, status, capacity, created_at, order_id FROM tables WHERE table_id = @id";
             return ExecuteSingleQuery(query, reader => new Table
             {
                 Id = reader.GetInt32(0),
                 Name = reader.GetString(1),
                 Status = reader.GetString(2),
                 Capacity = reader.GetInt32(3),
-                // CreatedAt = reader.GetDateTime(4)  
+                // CreatedAt = reader.GetDateTime(4),
+                OrderId = reader.IsDBNull(5) ? null : reader.GetInt32(5)
             }, cmd => cmd.Parameters.AddWithValue("id", int.Parse(id)));
         }
 
         public int Insert(Table table)
         {
-            string query = "INSERT INTO tables (name, status, capacity) VALUES (@name, @status, @capacity) RETURNING table_id";
+            string query = "INSERT INTO tables (name, status, capacity, order_id) VALUES (@name, @status, @capacity, @order_id) RETURNING table_id";
             return ExecuteScalar<int>(query, cmd =>
             {
                 cmd.Parameters.AddWithValue("name", table.Name);
                 cmd.Parameters.AddWithValue("status", table.Status);
                 cmd.Parameters.AddWithValue("capacity", table.Capacity);
+                cmd.Parameters.AddWithValue("order_id", (object?)table.OrderId ?? DBNull.Value);
             });
         }
-
 
         public int DeleteById(string id)
         {
@@ -1282,16 +1279,16 @@ namespace LowLand.Services
             return ExecuteNonQuery(query, cmd => cmd.Parameters.AddWithValue("id", int.Parse(id)));
         }
 
-
         public int UpdateById(string id, Table table)
         {
-            string query = "UPDATE tables SET name = @name, status = @status, capacity = @capacity WHERE table_id = @id";
+            string query = "UPDATE tables SET name = @name, status = @status, capacity = @capacity, order_id = @order_id WHERE table_id = @id";
             return ExecuteNonQuery(query, cmd =>
             {
                 cmd.Parameters.AddWithValue("id", int.Parse(id));
                 cmd.Parameters.AddWithValue("name", table.Name);
                 cmd.Parameters.AddWithValue("status", table.Status);
                 cmd.Parameters.AddWithValue("capacity", table.Capacity);
+                cmd.Parameters.AddWithValue("order_id", (object?)table.OrderId ?? DBNull.Value);
             });
         }
 
@@ -1308,5 +1305,6 @@ namespace LowLand.Services
             }
         }
     }
+
 
 }

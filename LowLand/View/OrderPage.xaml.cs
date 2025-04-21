@@ -117,7 +117,7 @@ namespace LowLand.View
             if (sender is MenuFlyoutItem menuItem && menuItem.DataContext is Order selectedOrder)
             {
                 selectedOrder.Status = "Hoàn thành";
-                selectedOrder.TableId = null;
+
                 ViewModel.Update(selectedOrder);
             }
         }
