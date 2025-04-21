@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Microsoft.UI.Dispatching;
 
 namespace LowLand.Services
 {
@@ -20,6 +19,27 @@ namespace LowLand.Services
         {
             Type parent = typeof(IParent);
             return (IParent)_singletons[parent.Name];
+        }
+    }
+
+    public static class DispatcherQueueExtensions
+    {
+        public static Task TryEnqueueAsync(this DispatcherQueue dispatcher, Action action)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            dispatcher.TryEnqueue(() =>
+            {
+                try
+                {
+                    action();
+                    tcs.SetResult(true);
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+            return tcs.Task;
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
 using LowLand.Services;
 using LowLand.View;
 using Microsoft.UI.Xaml;
@@ -27,6 +29,12 @@ namespace LowLand
             Services.Services.AddKeyedSingleton<IDao, PostgreDao>();
             UnhandledException += App_UnhandledException;
             Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = "vi-VN";
+
+            LiveCharts.Configure(config =>
+                config
+                // you can override the theme 
+                .AddDarkTheme()
+            );
         }
 
         private async void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
