@@ -211,5 +211,39 @@ namespace LowLand.View
             }
 
         }
+        private void CategoryListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ListBox listBox)
+            {
+                ViewModel.SelectedCategories = listBox.SelectedItems.Cast<Category>().ToList();
+                ViewModel.ApplyProductFilter();
+            }
+        }
+
+
+
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox textBox)
+            {
+                ViewModel.SearchKeyword = textBox.Text?.Trim() ?? string.Empty;
+                ViewModel.ApplyProductFilter();
+            }
+        }
+
+
+        private void ClearFilterButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Xóa từ khóa tìm kiếm
+            ViewModel.SearchKeyword = string.Empty;
+            SearchBox.Text = string.Empty;
+
+            // Xóa danh mục đã chọn
+            CategoryListBox.SelectedItems.Clear();
+            ViewModel.SelectedCategories.Clear();
+
+            // Cập nhật lại danh sách
+            ViewModel.ApplyProductFilter();
+        }
     }
 }

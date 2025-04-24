@@ -25,13 +25,18 @@ namespace LowLand.View.ViewModel
         public ObservableCollection<CustomerRank> CustomerRanks { get; set; }
         public ObservableCollection<Table> AvailableTables { get; set; }
         public Table SelectedTable { get; set; }
+        public List<Category> SelectedCategories { get; set; } = new List<Category>();
+
 
         public FullObservableCollection<Promotion> AvailablePromotions { get; set; }
         private Promotion _selectedPromotion;
         private double _rankDiscountPercentage;
         private int _promotionDiscountAmount;
         private int _rankDiscountAmount;
-
+        public ObservableCollection<Category> Categories { get; set; }
+        public ObservableCollection<Product> FilteredProducts { get; set; } = new ObservableCollection<Product>();
+        public string SearchKeyword { get; set; } = string.Empty;
+        public Category SelectedCategory { get; set; }
         public Promotion SelectedPromotion
         {
             get => _selectedPromotion;
@@ -114,9 +119,29 @@ namespace LowLand.View.ViewModel
             tableList.Insert(0, emptyTable);
             AvailableTables = new ObservableCollection<Table>(tableList);
             SelectedTable = AvailableTables.FirstOrDefault(t => t.Id == -1);
+            Categories = new ObservableCollection<Category>(_dao.Categories.GetAll());
+            Categories.Add(new Category { Id = -1, Name = "Combo" }); // Danh mục cho Combo
+
+            SelectedCategory = null;
+            ApplyProductFilter();
 
             LoadAvailablePromotions();
         }
+        public void ApplyProductFilter()
+        {
+            var filtered = Products.Where(p =>
+                (string.IsNullOrEmpty(SearchKeyword) || p.Name.Contains(SearchKeyword, StringComparison.OrdinalIgnoreCase)) &&
+                (
+                    SelectedCategories == null || SelectedCategories.Count == 0 ||
+                    (p is SingleProduct sp && SelectedCategories.Any(c => sp.Category?.Id == c.Id)) ||
+                    (p is ComboProduct && SelectedCategories.Any(c => c.Name == "Combo"))
+                )).ToList();
+
+            FilteredProducts.Clear();
+            foreach (var product in filtered)
+                FilteredProducts.Add(product);
+        }
+
 
         private void EditorAddOrder_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
