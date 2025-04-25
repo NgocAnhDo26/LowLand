@@ -28,7 +28,6 @@ namespace LowLand.View.ViewModel
         private List<UIElement> printPreviewPages = new();
         public ObservableCollection<Table> Tables { get; set; }
 
-
         public PagingViewModel<Order> Paging => _paging;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -36,13 +35,26 @@ namespace LowLand.View.ViewModel
         public OrderViewModel()
         {
             _dao = Services.Services.GetKeyedSingleton<IDao>();
-            Tables = new ObservableCollection<Table>(_dao.Tables.GetAll());
-
             _paging = new PagingViewModel<Order>(
-                (page, size, keyword) => _dao.Orders.GetAll(page, size, keyword),
+                async (page, size, keyword) => await Task.Run(() => _dao.Orders.GetAll(page, size, keyword)),
                 pageSize: 10
             );
+
+            Tables = new ObservableCollection<Table>();
+
             InitializePrinting();
+            LoadTablesAsync();
+        }
+
+        private async void LoadTablesAsync()
+        {
+            var tables = await Task.Run(() => _dao.Tables.GetAll());
+            DispatcherQueue.GetForCurrentThread().TryEnqueue(() =>
+            {
+                Tables.Clear();
+                foreach (var table in tables)
+                    Tables.Add(table);
+            });
         }
 
         private void InitializePrinting()
@@ -50,43 +62,42 @@ namespace LowLand.View.ViewModel
             RegisterForPrinting();
         }
 
-        public void Add(Order item)
+        public async Task AddAsync(Order item)
         {
             item.Date = DateTime.Now;
             item.Status = "Đang xử lý";
-            int result = _dao.Orders.Insert(item);
+            int result = await Task.Run(() => _dao.Orders.Insert(item));
             if (result == 1)
             {
-                item.Id = _dao.Orders.GetAll().Max(o => o.Id);
-                _paging.Refresh();
+                item.Id = (await Task.Run(() => _dao.Orders.GetAll())).Max(o => o.Id);
+                await _paging.RefreshAsync();
             }
             else
             {
-                Console.WriteLine("Insert failed: No rows affected.");
+                Debug.WriteLine("Insert failed: No rows affected.");
             }
         }
 
-        public void Remove(Order item)
+        public async Task RemoveAsync(Order item)
         {
-            int result = _dao.Orders.DeleteById(item.Id.ToString());
+            int result = await Task.Run(() => _dao.Orders.DeleteById(item.Id.ToString()));
             if (result == 1)
             {
-                _paging.Refresh();
+                await _paging.RefreshAsync();
             }
             else
             {
-                Console.WriteLine("Delete failed: No rows affected.");
+                Debug.WriteLine("Delete failed: No rows affected.");
             }
         }
 
-        public void Update(Order item)
+        public async Task UpdateAsync(Order item)
         {
-            int result = _dao.Orders.UpdateById(item.Id.ToString(), item);
+            int result = await Task.Run(() => _dao.Orders.UpdateById(item.Id.ToString(), item));
             if (result == 1)
             {
-                _paging.Refresh();
+                await _paging.RefreshAsync();
 
-                // 👉 Nếu đơn đã hoàn thành, reset bàn
                 if (item.Status == "Hoàn thành")
                 {
                     var table = Tables.FirstOrDefault(t => t.OrderId != null && (int)t.OrderId == item.Id);
@@ -100,7 +111,7 @@ namespace LowLand.View.ViewModel
             }
             else
             {
-                Console.WriteLine("Update failed: No rows affected.");
+                Debug.WriteLine("Update failed: No rows affected.");
             }
         }
 
@@ -108,14 +119,20 @@ namespace LowLand.View.ViewModel
         {
             _dao.Tables.UpdateById(table.Id.ToString(), table);
 
-            var existing = Tables.FirstOrDefault(t => t.Id == table.Id);
-            if (existing != null)
+            DispatcherQueue.GetForCurrentThread().TryEnqueue(() =>
             {
-                int index = Tables.IndexOf(existing);
-                Tables[index] = table;
-            }
+                var existing = Tables.FirstOrDefault(t => t.Id == table.Id);
+                if (existing != null)
+                {
+                    int index = Tables.IndexOf(existing);
+                    if (index >= 0)
+                    {
+                        Tables.RemoveAt(index);
+                        Tables.Insert(index, table);
+                    }
+                }
+            });
         }
-
 
         public async Task PrintInvoice(Order order, XamlRoot xamlRoot)
         {
@@ -146,15 +163,22 @@ namespace LowLand.View.ViewModel
 
         private void RegisterForPrinting()
         {
-            var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
-            var printManager = PrintManagerInterop.GetForWindow(hWnd);
-            printManager.PrintTaskRequested += PrintTask_Requested;
+            try
+            {
+                var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+                var printManager = PrintManagerInterop.GetForWindow(hWnd);
+                printManager.PrintTaskRequested += PrintTask_Requested;
 
-            printDocument = new PrintDocument();
-            printDocumentSource = printDocument.DocumentSource;
-            printDocument.Paginate += PrintDocument_Paginate;
-            printDocument.GetPreviewPage += PrintDocument_GetPreviewPage;
-            printDocument.AddPages += PrintDocument_AddPages;
+                printDocument = new PrintDocument();
+                printDocumentSource = printDocument.DocumentSource;
+                printDocument.Paginate += PrintDocument_Paginate;
+                printDocument.GetPreviewPage += PrintDocument_GetPreviewPage;
+                printDocument.AddPages += PrintDocument_AddPages;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Lỗi khi đăng ký in: {ex.Message}");
+            }
         }
 
         private void UnregisterForPrinting()
@@ -165,9 +189,16 @@ namespace LowLand.View.ViewModel
             printDocument.GetPreviewPage -= PrintDocument_GetPreviewPage;
             printDocument.AddPages -= PrintDocument_AddPages;
 
-            var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
-            var printManager = PrintManagerInterop.GetForWindow(hWnd);
-            printManager.PrintTaskRequested -= PrintTask_Requested;
+            try
+            {
+                var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+                var printManager = PrintManagerInterop.GetForWindow(hWnd);
+                printManager.PrintTaskRequested -= PrintTask_Requested;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Lỗi khi huỷ đăng ký in: {ex.Message}");
+            }
         }
 
         private void PrintDocument_Paginate(object sender, PaginateEventArgs e)
@@ -222,7 +253,6 @@ namespace LowLand.View.ViewModel
         private void PrintDocument_GetPreviewPage(object sender, GetPreviewPageEventArgs e)
         {
             int pageIndex = e.PageNumber - 1;
-
             if (pageIndex >= 0 && pageIndex < printPreviewPages.Count)
             {
                 printDocument.SetPreviewPage(e.PageNumber, printPreviewPages[pageIndex]);
@@ -246,8 +276,6 @@ namespace LowLand.View.ViewModel
         {
             var printTask = args.Request.CreatePrintTask($"Hóa đơn #{currentOrderToPrint.Id}", PrintTaskSourceRequested);
             printTask.Completed += PrintTask_Completed;
-
-
         }
 
         private void PrintTaskSourceRequested(PrintTaskSourceRequestedArgs args)

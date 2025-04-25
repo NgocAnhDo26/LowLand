@@ -33,7 +33,7 @@ namespace LowLand.View
             var keyword = searchBar?.Text ?? string.Empty;
             Debug.WriteLine($"Search button clicked, keyword: {keyword}");
             ViewModel.Paging.SearchKeyword = keyword;
-            ViewModel.Paging.Refresh();
+            ViewModel.Paging.RefreshAsync(); // Updated to call the correct method
         }
 
         private void addButton_Click(object sender, RoutedEventArgs e)
@@ -60,7 +60,7 @@ namespace LowLand.View
                     ContentDialogResult result = await deleteDialog.ShowAsync();
                     if (result == ContentDialogResult.Primary)
                     {
-                        ViewModel.Remove(selectedOrder);
+                        ViewModel.RemoveAsync(selectedOrder);
                     }
                 }
             }
@@ -118,18 +118,18 @@ namespace LowLand.View
             {
                 selectedOrder.Status = "Hoàn thành";
 
-                ViewModel.Update(selectedOrder);
+                ViewModel.UpdateAsync(selectedOrder);
             }
         }
 
-        private void PreviousPage_Click(object sender, RoutedEventArgs e)
+        private async void PreviousPage_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Paging.GoToPreviousPage();
+            await ViewModel.Paging.GoToPreviousPageAsync();
         }
 
-        private void NextPage_Click(object sender, RoutedEventArgs e)
+        private async void NextPage_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Paging.GoToNextPage();
+            await ViewModel.Paging.GoToNextPageAsync();
         }
 
         private void PageSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)

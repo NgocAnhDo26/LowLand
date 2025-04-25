@@ -53,6 +53,13 @@ namespace LowLand.View
                 ShowMessage("Số điện thoại không hợp lệ!");
                 return;
             }
+            // check phone number is exist 
+            if (customerVM.IsPhoneNumberExists(phone))
+            {
+                ShowMessage("Số điện thoại đã tồn tại!");
+                return;
+            }
+
             var newCustomer = new Customer
             {
 

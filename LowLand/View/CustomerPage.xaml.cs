@@ -16,12 +16,12 @@ namespace LowLand.View
             this.InitializeComponent();
         }
 
-        private void searchButton_Click(object sender, RoutedEventArgs e)
+        private async void searchButton_Click(object sender, RoutedEventArgs e)
         {
             var keyword = searchBar?.Text?.Trim() ?? string.Empty;
             Debug.WriteLine($"Search button clicked, keyword: '{keyword}'");
             ViewModel.Paging.SearchKeyword = keyword;
-            ViewModel.Paging.Refresh();
+            await ViewModel.Paging.RefreshAsync();
         }
 
         private void addButton_Click(object sender, RoutedEventArgs e)
@@ -66,14 +66,14 @@ namespace LowLand.View
             }
         }
 
-        private void PreviousPage_Click(object sender, RoutedEventArgs e)
+        private async void PreviousPage_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Paging.GoToPreviousPage();
+            await ViewModel.Paging.GoToPreviousPageAsync();
         }
 
-        private void NextPage_Click(object sender, RoutedEventArgs e)
+        private async void NextPage_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Paging.GoToNextPage();
+            await ViewModel.Paging.GoToNextPageAsync();
         }
 
         private void PageSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)

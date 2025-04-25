@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using LowLand.Model.Product;
 using LowLand.Services;
 using LowLand.Utils;
@@ -22,10 +23,9 @@ namespace LowLand.View.ViewModel
             try
             {
                 _paging = new PagingViewModel<Product>(
-                    (page, size, keyword) => _dao.Products.GetAll(page, size, keyword),
+                    async (page, size, keyword) => await Task.Run(() => _dao.Products.GetAll(page, size, keyword)),
                     pageSize: 10
                 );
-
             }
             catch (Exception ex)
             {
@@ -71,7 +71,7 @@ namespace LowLand.View.ViewModel
                     {
                         return ResponseCode.Error;
                     }
-                    _paging.Refresh();
+                    _paging.RefreshAsync().Wait();
                 }
 
                 return ResponseCode.Success;

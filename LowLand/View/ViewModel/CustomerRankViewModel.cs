@@ -1,6 +1,8 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using LowLand.Model.Customer;
 using LowLand.Services;
 using LowLand.Utils;
@@ -13,6 +15,17 @@ namespace LowLand.View.ViewModel
         public FullObservableCollection<CustomerRank> CustomerRanks { get; set; }
         public CustomerRank EditorAddCustomerRank { get; set; }
         public bool updateMode;
+
+        private bool _isProcessing;
+        public bool IsProcessing
+        {
+            get => _isProcessing;
+            set
+            {
+                _isProcessing = value;
+                OnPropertyChanged(nameof(IsProcessing));
+            }
+        }
 
         public CustomerRankViewModel()
         {
@@ -37,50 +50,38 @@ namespace LowLand.View.ViewModel
                 .Select(r => r.Id)
                 .FirstOrDefault();
         }
-        public void Add(CustomerRank item)
+
+        public async Task Add(CustomerRank item)
         {
-            int result = _dao.CustomerRanks.Insert(item);
-            Debug.WriteLine("result", result);
+            IsProcessing = true;
+
+            int result = await Task.Run(() => _dao.CustomerRanks.Insert(item));
             if (result == 1)
             {
                 item.Id = _dao.CustomerRanks.GetAll().Max(r => r.Id);
                 CustomerRanks.Add(item);
 
-                foreach (var customer in _dao.Customers.GetAll())
-                {
-                    int newRankId = getNewRankId(customer.Point);
-                    customer.Rank = CustomerRanks.FirstOrDefault(r => r.Id == newRankId);
-                    _dao.Customers.UpdateById(customer.Id.ToString(), customer);
-                }
-
-
+                await UpdateAffectedCustomersAsync();
             }
             else
             {
-                Console.WriteLine("Insert failed: No rows affected.");
+                Debug.WriteLine("Insert failed: No rows affected.");
             }
+
+            IsProcessing = false;
         }
 
-        public void Remove(CustomerRank item)
+        public async Task Remove(CustomerRank item)
         {
+            IsProcessing = true;
+
             try
             {
-                int result = _dao.CustomerRanks.DeleteById(item.Id.ToString());
-                CustomerRanks.Remove(item);
-
-                Debug.WriteLine("Result: " + result);
-
+                int result = await Task.Run(() => _dao.CustomerRanks.DeleteById(item.Id.ToString()));
                 if (result == 1)
                 {
-                    foreach (var customer in _dao.Customers.GetAll())
-                    {
-                        if (customer.Rank == null)
-                        {
-                            int newRankId = getNewRankId(customer.Point);
-                            customer.Rank = CustomerRanks.FirstOrDefault(r => r.Id == newRankId);
-                            _dao.Customers.UpdateById(customer.Id.ToString(), customer);
-                        }
-                    }
+                    CustomerRanks.Remove(item);
+                    await UpdateAffectedCustomersAsync();
                 }
                 else
                 {
@@ -92,14 +93,17 @@ namespace LowLand.View.ViewModel
                 Debug.WriteLine($"Postgres Error: {ex.Message}");
             }
 
+            IsProcessing = false;
         }
 
-        public void Update(CustomerRank item)
+        public async Task Update(CustomerRank item)
         {
+            IsProcessing = true;
+
             var customerToUpdate = CustomerRanks.FirstOrDefault(c => c.Id == item.Id);
             if (customerToUpdate != null)
             {
-                int result = _dao.CustomerRanks.UpdateById(item.Id.ToString(), item);
+                int result = await Task.Run(() => _dao.CustomerRanks.UpdateById(item.Id.ToString(), item));
                 if (result == 1)
                 {
                     var index = CustomerRanks.IndexOf(customerToUpdate);
@@ -108,24 +112,40 @@ namespace LowLand.View.ViewModel
                         CustomerRanks[index] = item;
                     }
 
-                    foreach (var customer in _dao.Customers.GetAll())
-                    {
-                        Debug.WriteLine("Customer: " + customer.Id);
-                        Debug.WriteLine("Customer Rank: " + customer.Rank.Name);
-
-                        int newRankId = getNewRankId(customer.Point);
-                        customer.Rank = CustomerRanks.FirstOrDefault(r => r.Id == newRankId);
-                        _dao.Customers.UpdateById(customer.Id.ToString(), customer);
-                        Debug.WriteLine("Customer: " + customer.Id);
-                        Debug.WriteLine("Customer Rank: " + customer.Rank.Name);
-
-                    }
+                    await UpdateAffectedCustomersAsync();
                 }
                 else
                 {
-                    Console.WriteLine("Update failed: No rows affected.");
+                    Debug.WriteLine("Update failed: No rows affected.");
                 }
             }
+
+            IsProcessing = false;
         }
+
+        /// <summary>
+        /// Chỉ update những khách hàng thực sự bị thay đổi Rank
+        /// </summary>
+        private async Task UpdateAffectedCustomersAsync()
+        {
+            await Task.Run(() =>
+            {
+                var customers = _dao.Customers.GetAll();
+
+                foreach (var customer in customers)
+                {
+                    int newRankId = getNewRankId(customer.Point);
+                    if (customer.Rank == null || customer.Rank.Id != newRankId)
+                    {
+                        customer.Rank = CustomerRanks.FirstOrDefault(r => r.Id == newRankId);
+                        _dao.Customers.UpdateById(customer.Id.ToString(), customer);
+                    }
+                }
+            });
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

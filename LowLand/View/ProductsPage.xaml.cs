@@ -112,14 +112,14 @@ namespace LowLand.View
                 }
             }
         }
-        private void PreviousPage_Click(object sender, RoutedEventArgs e)
+        private async void PreviousPage_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Paging.GoToPreviousPage();
+            await ViewModel.Paging.GoToPreviousPageAsync();
         }
 
-        private void NextPage_Click(object sender, RoutedEventArgs e)
+        private async void NextPage_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.Paging.GoToNextPage();
+            await ViewModel.Paging.GoToNextPageAsync();
         }
 
         private void PageSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)

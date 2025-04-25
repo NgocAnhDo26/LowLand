@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using LowLand.Model.Customer;
 using LowLand.Services;
 using LowLand.Utils;
@@ -22,21 +23,26 @@ namespace LowLand.View.ViewModel
         {
             _dao = Services.Services.GetKeyedSingleton<IDao>();
             _paging = new PagingViewModel<Customer>(
-                (page, size, keyword) => _dao.Customers.GetAll(page, size, keyword),
+                async (page, size, keyword) => await Task.Run(() => _dao.Customers.GetAll(page, size, keyword)), // Updated to use Customers repository
                 pageSize: 10
             );
+
             CustomerRanks = new FullObservableCollection<CustomerRank>(
                 _dao.CustomerRanks.GetAll()
             );
             EditingCustomer = null;
         }
-
+        // ham check xem sdt co bi trung khong
+        public bool IsPhoneNumberExists(string phoneNumber)
+        {
+            return _dao.Customers.GetAll().Any(c => c.Phone == phoneNumber);
+        }
         public void Add(Customer item)
         {
             int result = _dao.Customers.Insert(item);
             if (result == 1)
             {
-                _paging.Refresh();
+                _paging.RefreshAsync().Wait();
                 Debug.WriteLine($"Added customer ID: {item.Id}, refreshed paging");
             }
             else
@@ -50,7 +56,7 @@ namespace LowLand.View.ViewModel
             int result = _dao.Customers.DeleteById(item.Id.ToString());
             if (result > 0)
             {
-                _paging.Refresh();
+                _paging.RefreshAsync().Wait();
                 Debug.WriteLine($"Removed customer ID: {item.Id}, refreshed paging");
             }
             else
@@ -85,7 +91,7 @@ namespace LowLand.View.ViewModel
                         _dao.Orders.UpdateById(order.Id.ToString(), order);
                     }
                 }
-                _paging.Refresh();
+                _paging.RefreshAsync().Wait(); // Updated to use RefreshAsync
                 Debug.WriteLine($"Updated customer ID: {item.Id}, refreshed paging");
             }
             else

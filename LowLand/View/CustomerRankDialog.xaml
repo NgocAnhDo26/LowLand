@@ -16,7 +16,7 @@
                BasedOn="{StaticResource DefaultContentDialogStyle}"/>
     </ContentDialog.Resources>
 
-    <StackPanel Spacing="12" Width="400">
+    <StackPanel Spacing="12" Width="300">
         <InfoBar x:Name="errorTextBlock" IsOpen="True" Severity="Warning" IsClosable="False" Visibility="Collapsed"/>
         <TextBox  x:Name="nameTextBox" Header="Tên hạng" Text="{x:Bind ViewModel.EditorAddCustomerRank.Name, Mode=TwoWay}" />
         <NumberBox x:Name="promotionPointTextBox" Header="Mốc điểm" Value="{x:Bind ViewModel.EditorAddCustomerRank.PromotionPoint, Mode=TwoWay}" />
