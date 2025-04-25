@@ -9,11 +9,12 @@
     mc:Ignorable="d"
     Title="LoginWindow">
 
-    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-        
-        <TextBox Header="Username" Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        <PasswordBox Header="Password" Password="{x:Bind ViewModel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        <CheckBox Content="Remember me" IsChecked="{x:Bind ViewModel.RememberMe, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        <Button Content="Login" Width="80" Height="35" Click="loginButton_Click"/> 
+    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="24" CornerRadius="8" Width="400">
+        <TextBlock Text="LowLand" Style="{StaticResource DisplayTextBlockStyle}" TextAlignment="Center"/>
+        <TextBlock Text="Ứng dụng quản lý quán cafe gần số 1 Việt Nam!" TextAlignment="Center" Margin="0, 0, 0, 36"/>
+        <TextBox Header="Tên đăng nhập" Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 0, 0, 16"/>
+        <PasswordBox Header="Mật khẩu" Password="{x:Bind ViewModel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 0, 0, 8"/>
+        <CheckBox Content="Hãy nhớ tôi" IsChecked="{x:Bind ViewModel.RememberMe, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <Button Content="Đăng nhập" Click="loginButton_Click" Style="{StaticResource AccentButtonStyle}" Margin="0, 24, 0, 8" HorizontalAlignment="Center" Width="200" Height="45"/> 
     </StackPanel>
 </Window>

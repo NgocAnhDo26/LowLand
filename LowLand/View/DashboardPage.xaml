@@ -39,6 +39,11 @@
                         </NavigationViewItem>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Quản lý bàn ghế" Tag="TablePage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE70B;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="Chương trình khuyến mãi" Tag="PromotionsPage">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE94C;"/>
@@ -70,11 +75,6 @@
                             </NavigationViewItem.Icon>
                         </NavigationViewItem>
                     </NavigationViewItem.MenuItems>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Quản lý bàn ghế" Tag="TablePage">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE94C;"/>
-                    </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
             <Frame x:Name="container"/>

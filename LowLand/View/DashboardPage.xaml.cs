@@ -14,6 +14,7 @@ namespace LowLand.View
         public DashboardPage()
         {
             this.InitializeComponent();
+            container.Navigate(typeof(OverviewReportPage));
         }
 
         private void navigation_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)

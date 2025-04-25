@@ -43,39 +43,41 @@
                 <ListView x:Name="CategoriesListView" ItemsSource="{x:Bind ViewModel.Categories}" SelectionMode="Single">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="model:Category">
-                            <Grid Margin="0, 8, 0, 8" VerticalAlignment="Center" Padding="4">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center" Margin="0, 0, 8, 0">
+                            <Border BorderBrush="{StaticResource DividerStrokeColorDefaultBrush}" BorderThickness="0,0,0,1">
+                                <Grid Margin="0, 8, 0, 8" VerticalAlignment="Center" Padding="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource BodyTextBlockStyle}" VerticalAlignment="Center" Margin="0, 0, 8, 0">
                                     <Run Text="{x:Bind Id}"/><Run Text=". "/>
-                                </TextBlock>
+                                    </TextBlock>
 
-                                <TextBlock Grid.Column="1" Text="{x:Bind Name}" Style="{StaticResource BodyTextBlockStyle}"  VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="{x:Bind Name}" Style="{StaticResource BodyTextBlockStyle}"  VerticalAlignment="Center"/>
 
-                                <DropDownButton Grid.Column="2" HorizontalAlignment="Right">
-                                    <DropDownButton.Content>
-                                        <FontIcon Glyph="&#xE712;"/>
-                                    </DropDownButton.Content>
+                                    <DropDownButton Grid.Column="2" HorizontalAlignment="Right">
+                                        <DropDownButton.Content>
+                                            <FontIcon Glyph="&#xE712;"/>
+                                        </DropDownButton.Content>
 
-                                    <DropDownButton.Flyout>
-                                        <MenuFlyout>
-                                            <MenuFlyoutItem Click="EditCategoryButton_Click" Text="Sửa">
-                                                <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xE104;"/>
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>
-                                            <MenuFlyoutItem Click="DeleteCategoryButton_Click" Text="Xóa" Foreground="Red">
-                                                <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xE74D;" Foreground="Red"/>
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>
-                                        </MenuFlyout>
-                                    </DropDownButton.Flyout>
-                                </DropDownButton>
-                            </Grid>
+                                        <DropDownButton.Flyout>
+                                            <MenuFlyout>
+                                                <MenuFlyoutItem Click="EditCategoryButton_Click" Text="Sửa">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon Glyph="&#xE104;"/>
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                                <MenuFlyoutItem Click="DeleteCategoryButton_Click" Text="Xóa" Foreground="Red">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon Glyph="&#xE74D;" Foreground="Red"/>
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                            </MenuFlyout>
+                                        </DropDownButton.Flyout>
+                                    </DropDownButton>
+                                </Grid>
+                            </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

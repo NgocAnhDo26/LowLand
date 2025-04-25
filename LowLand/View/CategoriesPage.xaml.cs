@@ -22,11 +22,6 @@ namespace LowLand.View
             ViewModel = new CategoriesViewModel();
             DataContext = ViewModel;
             this.InitializeComponent();
-
-            if (ViewModel.Categories.Count > 0)
-            {
-                CategoriesListView.SelectedIndex = 0;
-            }
         }
 
         private async void EditCategoryButton_Click(object sender, RoutedEventArgs e)

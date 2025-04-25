@@ -191,9 +191,9 @@ namespace LowLand.View.ViewModel
                         dailyRevenue[i] = orders
                             .Where(o => o.Date == date)
                             .Sum(o => o.TotalAfterDiscount);
-                        dailyProfit[i] = orders
+                        dailyProfit[i] = (double)orders
                             .Where(o => o.Date == date)
-                            .Sum(o => o.TotalAfterDiscount - o.TotalPrice);
+                            .Sum(o => o.TotalAfterDiscount - o.TotalCostPrice);
                     }
 
                     // Reverse the arrays to match the order of the days
