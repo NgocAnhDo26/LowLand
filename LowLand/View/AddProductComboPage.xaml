@@ -139,7 +139,7 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <Border x:Name="ProductImageBorder" CornerRadius="4" Width="60" Height="60" VerticalAlignment="Center">
-                                    <Image Stretch="UniformToFill" Source="{x:Bind Product.Image, Converter={StaticResource AbsolutePathConverter}}"/>
+                                    <Image Stretch="UniformToFill" Source="{x:Bind Product.Image, Converter={StaticResource AbsolutePathConverter}, Mode=OneWay}"/>
                                 </Border>
                                 <TextBlock Grid.Column="1" Text="{x:Bind Product.Name}" Style="{StaticResource BodyStrongTextBlockStyle}" TextWrapping="WrapWholeWords" VerticalAlignment="Center"/>
                             </Grid>

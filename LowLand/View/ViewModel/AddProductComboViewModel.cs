@@ -103,6 +103,7 @@ namespace LowLand.View.ViewModel
                         CostPrice = product.CostPrice,
                         SalePrice = product.SalePrice,
                         Options = options,
+                        Image = product.Image,
                     },
                     Quantity = 1,
                 };

@@ -90,7 +90,7 @@
                 <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Width="40" Height="40" />
 
                 <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="4" Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverterInverted}, ConverterParameter=Inverted}">
-                    <TextBlock Text="{x:Bind ViewModel.TodayTotalOrder}" Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding TodayTotalOrder}" Style="{StaticResource TitleTextBlockStyle}" VerticalAlignment="Center"/>
                     <TextBlock Text="•" VerticalAlignment="Center" Margin="4, 0, 4, 0"/>
                     <TextBlock Text="{x:Bind ViewModel.TotalOrderComparisonPercentage, Converter={StaticResource NumberToPercentageConverter}}" VerticalAlignment="Center" Foreground="{x:Bind ViewModel.RevenueComparisonPercentage, Converter={StaticResource PercentageToColorConverter}, Mode=OneWay}"/>
                 </StackPanel>

@@ -19,11 +19,6 @@ namespace LowLand.View
             this.InitializeComponent();
         }
 
-        private void searchButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private async void addButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new CustomerRankDialog(ViewModel)
@@ -31,8 +26,7 @@ namespace LowLand.View
                 XamlRoot = this.XamlRoot
             };
             var result = await dialog.ShowAsync();
-
-
+            dialog.Hide();
         }
 
         private async void updateButton_Click(object sender, RoutedEventArgs e)
@@ -50,6 +44,7 @@ namespace LowLand.View
                 };
 
                 var result = await dialog.ShowAsync();
+                dialog.Hide();
             }
         }
 
@@ -71,6 +66,7 @@ namespace LowLand.View
                             XamlRoot = this.XamlRoot
                         };
                         ContentDialogResult result = await deleteDialog.ShowAsync();
+                        deleteDialog.Hide();
                     }
                     else
                     {
@@ -85,11 +81,12 @@ namespace LowLand.View
                         ContentDialogResult result = await deleteDialog.ShowAsync();
                         if (result == ContentDialogResult.Primary)
                         {
-                            ViewModel.Remove(selectedCustomerRank);
+                            await ViewModel.Remove(selectedCustomerRank);
                         }
+
+                        // Close the dialog
+                        deleteDialog.Hide();
                     }
-
-
                 }
             }
             catch (Exception ex)
