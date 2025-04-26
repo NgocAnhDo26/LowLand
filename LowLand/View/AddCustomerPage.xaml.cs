@@ -25,17 +25,28 @@ namespace LowLand.View
 
 
 
+        private static bool isDialogOpen = false;
+
         private async void ShowMessage(string message)
         {
-            ContentDialog dialog = new ContentDialog
+            if (isDialogOpen)
+                return;
+
+            isDialogOpen = true;
+
+            var dialog = new ContentDialog
             {
                 Title = "Thông báo",
                 Content = message,
                 CloseButtonText = "OK",
                 XamlRoot = this.XamlRoot
             };
+
             await dialog.ShowAsync();
+
+            isDialogOpen = false;
         }
+
 
         private async void addButton_Click(object sender, RoutedEventArgs e)
 
@@ -82,12 +93,19 @@ namespace LowLand.View
 
 
             ShowMessage("Thêm khách hàng thành công!");
-            Frame.GoBack();
+            if (Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            Frame.GoBack();
+            if (Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
+
         }
     }
 }

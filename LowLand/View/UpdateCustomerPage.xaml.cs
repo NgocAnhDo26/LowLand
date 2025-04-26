@@ -36,17 +36,36 @@ namespace LowLand.View
             }
         }
 
-        private async Task<ContentDialogResult> ShowMessage(string message)
+        private static bool isDialogOpen = false;
+
+        private async Task<ContentDialogResult?> ShowMessage(string message)
         {
-            ContentDialog dialog = new ContentDialog
+            if (isDialogOpen)
             {
-                Title = "Thông báo",
-                Content = message,
-                PrimaryButtonText = "OK",
-                XamlRoot = this.XamlRoot
-            };
-            return await dialog.ShowAsync();
+                // Nếu đang mở dialog khác thì không mở mới, hoặc Chủ nhân có thể return gì đó tuush 
+                return null;
+            }
+
+            isDialogOpen = true;
+
+            try
+            {
+                ContentDialog dialog = new ContentDialog
+                {
+                    Title = "Thông báo",
+                    Content = message,
+                    PrimaryButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                return await dialog.ShowAsync();
+            }
+            finally
+            {
+                isDialogOpen = false;
+            }
         }
+
+
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
