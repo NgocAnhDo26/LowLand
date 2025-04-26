@@ -1,7 +1,6 @@
 using System;
 using LowLand.Model.Product;
 using LowLand.Utils;
-using LowLand.View.Converter;
 using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -23,8 +22,6 @@ namespace LowLand.View
         {
             this.InitializeComponent();
             DataContext = ViewModel;
-            SalePriceBox.NumberFormatter = new NumberFormatter();
-            CostPriceBox.NumberFormatter = new NumberFormatter();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

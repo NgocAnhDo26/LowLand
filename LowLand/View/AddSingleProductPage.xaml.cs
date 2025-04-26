@@ -1,7 +1,6 @@
 ﻿using System;
 using LowLand.Model.Product;
 using LowLand.Utils;
-using LowLand.View.Converter;
 using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Storage.Pickers;
@@ -22,9 +21,6 @@ namespace LowLand.View
             ViewModel = new AddSingleProductViewModel();
             DataContext = ViewModel;
             this.InitializeComponent();
-
-            SalePriceBox.NumberFormatter = new NumberFormatter();
-            CostPriceBox.NumberFormatter = new NumberFormatter();
         }
 
         private void CancelButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

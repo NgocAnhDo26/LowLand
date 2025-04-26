@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using LowLand.Model.Product;
 using LowLand.Utils;
-using LowLand.View.Converter;
 using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Storage.Pickers;
@@ -20,8 +19,6 @@ namespace LowLand.View
             ViewModel = new AddProductComboViewModel();
             DataContext = ViewModel;
             this.InitializeComponent();
-
-            ComboSalePriceBox.NumberFormatter = new NumberFormatter();
         }
 
         /// <summary>
