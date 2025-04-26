@@ -38,7 +38,11 @@ namespace LowLand.View
 
         private void BackButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(OrderPage));
+            if (Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
+
         }
     }
 }
