@@ -119,41 +119,5 @@ Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-
-        <!-- Add VisualStateManager -->
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="WindowSizeStates">
-                <VisualState x:Name="WideState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="800" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="AmountHeader.Visibility" Value="Visible" />
-                        <Setter Target="ConditionHeader.Visibility" Value="Visible" />
-                        <Setter Target="AmountText.Visibility" Value="Visible" />
-                        <Setter Target="ConditionText.Visibility" Value="Visible" />
-                        <Setter Target="AmountColumn.Width" Value="1.5*" />
-                        <Setter Target="ConditionColumn.Width" Value="1.5*" />
-                        <Setter Target="ItemAmountColumn.Width" Value="1.5*" />
-                        <Setter Target="ItemConditionColumn.Width" Value="1.5*" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="NarrowState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="AmountHeader.Visibility" Value="Collapsed" />
-                        <Setter Target="ConditionHeader.Visibility" Value="Collapsed" />
-                        <Setter Target="AmountText.Visibility" Value="Collapsed" />
-                        <Setter Target="ConditionText.Visibility" Value="Collapsed" />
-                        <Setter Target="AmountColumn.Width" Value="0" />
-                        <Setter Target="ConditionColumn.Width" Value="0" />
-                        <Setter Target="ItemAmountColumn.Width" Value="0" />
-                        <Setter Target="ItemConditionColumn.Width" Value="0" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

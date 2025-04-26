@@ -39,7 +39,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Row="0" Text="Tạo đơn hàng" Style="{StaticResource TitleTextBlockStyle}" Margin="0, 4, 0, 24"/>
+            <TextBlock Grid.Row="0" Text="Cập nhật đơn hàng" Style="{StaticResource TitleTextBlockStyle}" Margin="0, 4, 0, 24"/>
             <Rectangle Grid.Column="1"/>
             <Button Grid.Column="2" Margin="0, 0, 0, 0"  Click="CancelButton_Click" >
                 <Button.Content>
@@ -53,8 +53,8 @@
         <Grid Grid.Row="1">
             <Grid CornerRadius="10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="3*"/>
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0" Padding="24" CornerRadius="10" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1">
                     <Grid.RowDefinitions>
@@ -237,7 +237,7 @@
 
                            
                         </Grid>
-                        <Button Grid.Row="5" x:Name="CreateOrderButton" Content="Tạo hóa đơn" Click="CreateOrderButton_Click" Margin="0, 8, 0, 0" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"/>
+                        <Button Grid.Row="5" x:Name="CreateOrderButton" Content="Cập nhật" Click="CreateOrderButton_Click" Margin="0, 8, 0, 0" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"/>
                     </Grid>
                 </Grid>
             </Grid>

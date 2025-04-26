@@ -76,7 +76,7 @@
 
         <!-- Danh sách đơn hàng -->
         <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.Paging.Items, Mode=OneWay}" SelectionMode="Single"
-                  CornerRadius="8" Margin="36, 0, 36, 24"
+                  CornerRadius="8" Margin="36, 0, 36, 16"
                   Background="{StaticResource CardBackgroundFillColorDefaultBrush}"
                   BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1">
             <ListView.ItemTemplate>
@@ -145,14 +145,14 @@
 
         <!-- Phân trang -->
         <Grid Grid.Row="4">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,36">
-                <Button x:Name="PreviousPage" Content="← Trước" Margin="8,0" Click="PreviousPage_Click"
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,36" Spacing="8">
+                <Button x:Name="PreviousPage" Content="← Trước" Click="PreviousPage_Click"
                         IsEnabled="{x:Bind ViewModel.Paging.CanGoToPreviousPage, Mode=OneWay}"/>
-                <ComboBox x:Name="PageSelector" Width="80" Margin="8,0"
+                <ComboBox x:Name="PageSelector"
                           ItemsSource="{x:Bind ViewModel.Paging.PageIndicators, Mode=OneWay}"
                           SelectedIndex="{x:Bind ViewModel.Paging.CurrentPage, Converter={StaticResource PageIndexConverter}, Mode=TwoWay}"
                           SelectionChanged="PageSelector_SelectionChanged"/>
-                <Button x:Name="NextPage" Content="Tiếp →" Margin="8,0" Click="NextPage_Click"
+                <Button x:Name="NextPage" Content="Tiếp →" Click="NextPage_Click"
                         IsEnabled="{x:Bind ViewModel.Paging.CanGoToNextPage, Mode=OneWay}"/>
             </StackPanel>
         </Grid>

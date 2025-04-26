@@ -199,10 +199,12 @@ namespace LowLand.View.ViewModel
                                 ProductName = product.Name,
                                 QuantitySold = details.Sum(od => od.quantity)
                             })
-                        .OrderByDescending(ps => ps.QuantitySold)
                         .ToList();
 
-                    var topProductSales = allProductSales.Take(6).ToList();
+                    var topProductSales = allProductSales
+                        .OrderByDescending(ps => ps.QuantitySold)
+                        .Take(6)
+                        .ToList();
 
                     await _dispatcherQueue.TryEnqueueAsync(() =>
                     {

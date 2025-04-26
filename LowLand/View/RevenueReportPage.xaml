@@ -57,7 +57,7 @@
                     Series="{Binding TotalRevenueProfitSeries, Mode=OneWay}"
                     XAxes="{Binding TotalRevenueProfitXAxes, Mode=OneWay}"
                     YAxes="{Binding TotalRevenueProfitYAxes, Mode=OneWay}"
-                    LegendPosition="Bottom"
+                    LegendPosition="Right"
                     TooltipPosition="Top"/>
         </Grid>
 
@@ -91,7 +91,7 @@
             Series="{Binding AverageTransactionValueSeries, Mode=OneWay}"
             XAxes="{Binding AverageTransactionValueXAxes, Mode=OneWay}"
             YAxes="{Binding AverageTransactionValueYAxes, Mode=OneWay}"
-            LegendPosition="Bottom"
+            LegendPosition="Right"
             TooltipPosition="Top"/>
         </Grid>
     </Grid>
