@@ -45,7 +45,7 @@ namespace LowLand.View.ViewModel
                     _searchKeyword = value;
                     Debug.WriteLine($"SearchKeyword set to: '{_searchKeyword}'");
                     _currentPage = 1;
-                    _ = LoadPageAsync(_currentPage); // Gọi lại trang đầu
+                    _ = LoadPageAsync(_currentPage);
                     OnPropertyChanged(nameof(SearchKeyword));
                 }
             }

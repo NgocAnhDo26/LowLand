@@ -230,7 +230,7 @@ namespace LowLand.Services
                 FROM customer c 
                 LEFT JOIN customer_rank cr ON c.customer_rank_id = cr.customer_rank_id
                 {whereClause}
-                ORDER BY c.registration_date DESC
+                ORDER BY customer_id DESC
                 LIMIT @pageSize OFFSET @offset
             """,
             reader => new Customer
@@ -397,7 +397,7 @@ namespace LowLand.Services
                     SELECT order_id, customer_id, customer_phone, total_after_discount, total_price, status, promotion_id, date, customer_name, total_cost_price
                     FROM "order"
                     {whereClause}
-                    ORDER BY date DESC
+                    ORDER BY date DESC, order_id DESC
                     LIMIT @pageSize OFFSET @offset
                 """,
                 reader => new Order
@@ -815,7 +815,7 @@ namespace LowLand.Services
                 FROM product p
                 LEFT JOIN category c ON p.category_id = c.category_id
                 {whereClause}
-                ORDER BY p.name ASC
+                ORDER BY product_id DESC
                 LIMIT @pageSize OFFSET @offset
             """,
             reader =>
