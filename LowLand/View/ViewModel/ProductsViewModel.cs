@@ -34,7 +34,7 @@ namespace LowLand.View.ViewModel
             }
         }
 
-        public ResponseCode RemoveProduct(int productId)
+        public async Task<ResponseCode> RemoveProduct(int productId)
         {
             bool isChildProduct = _dao.ComboItems.GetAll()
                 .Any(item => item.Product.Id == productId);
@@ -61,7 +61,7 @@ namespace LowLand.View.ViewModel
                     }
                 }
 
-                int result = _dao.Products.DeleteById(productId.ToString());
+                int result = await Task.Run(() => _dao.Products.DeleteById(productId.ToString()));
 
                 if (result != -1)
                 {
@@ -71,7 +71,7 @@ namespace LowLand.View.ViewModel
                     {
                         return ResponseCode.Error;
                     }
-                    _paging.RefreshAsync().Wait();
+                    await _paging.RefreshAsync();
                 }
 
                 return ResponseCode.Success;

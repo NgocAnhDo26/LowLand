@@ -51,12 +51,12 @@ namespace LowLand.View.ViewModel
             }
         }
 
-        public void Remove(Customer item)
+        public async Task Remove(Customer item)
         {
-            int result = _dao.Customers.DeleteById(item.Id.ToString());
+            int result = await Task.Run(() => _dao.Customers.DeleteById(item.Id.ToString()));
             if (result > 0)
             {
-                _paging.RefreshAsync().Wait();
+                await _paging.RefreshAsync();
                 Debug.WriteLine($"Removed customer ID: {item.Id}, refreshed paging");
             }
             else

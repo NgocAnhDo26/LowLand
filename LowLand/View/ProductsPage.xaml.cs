@@ -89,7 +89,8 @@ namespace LowLand.View
                 ContentDialogResult result = await deleteConfirmationDialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
                 {
-                    var responseCode = ViewModel.RemoveProduct(product.Id);
+                    // Await the RemoveProduct method to ensure it returns the ResponseCode
+                    var responseCode = await ViewModel.RemoveProduct(product.Id);
 
                     // Show appropriate messages based on response code
                     string message = responseCode switch
