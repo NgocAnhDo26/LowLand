@@ -33,7 +33,22 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Cập nhật đơn hàng" Style="{StaticResource TitleTextBlockStyle}" Margin="0, 4, 0, 36"/>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Text="Tạo đơn hàng" Style="{StaticResource TitleTextBlockStyle}" Margin="0, 4, 0, 24"/>
+            <Rectangle Grid.Column="1"/>
+            <Button Grid.Column="2" Margin="0, 0, 0, 0"  Click="CancelButton_Click" >
+                <Button.Content>
+
+                    <TextBlock Text="Quay lại"/>
+
+                </Button.Content>
+            </Button>
+        </Grid>
 
         <Grid Grid.Row="1">
             <Grid CornerRadius="10">
@@ -47,18 +62,18 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="16" VerticalAlignment="Top">
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="16" VerticalAlignment="Top">
                         <TextBox x:Name="SearchBox"
-            
-        PlaceholderText="Tìm sản phẩm theo tên..."
-        TextChanged="SearchBox_TextChanged"/>
+                                     Width="300"
+                                     Margin="0,8,0,24"
+                             PlaceholderText="Tìm sản phẩm theo tên..."
+                             TextChanged="SearchBox_TextChanged"/>
 
 
 
                     </StackPanel>
 
-
-                    <TextBlock Grid.Row="1" Text="Chọn sản phẩm" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,8,0,24"/>
+                    <TextBlock Grid.Row="0" Text="Chọn sản phẩm" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,8,0,24"/>
 
                     <Grid Grid.Row="2"  >
                         <Grid.ColumnDefinitions>
@@ -69,13 +84,13 @@
                         <GridView Grid.Column="0" x:Name="ProductGridView" ItemsSource="{x:Bind ViewModel.FilteredProducts, Mode=OneWay}" SelectionMode="Single" IsItemClickEnabled="True" DoubleTapped="ProductGridView_DoubleTapped">
                             <GridView.ItemTemplate>
                                 <DataTemplate x:DataType="Pmodel:Product">
-                                    <Grid Padding="16" CornerRadius="4" Background="{StaticResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" MinHeight="230" MinWidth="200">
+                                    <Grid Padding="16" CornerRadius="4" Background="{StaticResource CardBackgroundFillColorSecondaryBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Height="210" Width="140">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <Grid Grid.Row="0" CornerRadius="4" MaxHeight="140" MaxWidth="140">
+                                        <Grid Grid.Row="0" CornerRadius="4" MaxHeight="100" MaxWidth="100">
                                             <Image Source="{x:Bind Image, Converter={StaticResource AbsolutePathConverter}}" Stretch="UniformToFill"/>
                                         </Grid>
                                         <TextBlock Grid.Row="1" Text="{x:Bind Name}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0, 8, 0, 4" Style="{StaticResource BodyStrongTextBlockStyle}" TextAlignment="Center"/>
@@ -129,11 +144,12 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <TextBlock x:Name="SelectedProductsTitle" Text="Sản phẩm đã chọn" Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,8,0,16"/>
 
-                        <ScrollViewer Grid.Row="1" VerticalScrollMode="Enabled" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="8" CornerRadius="4">
+                        <ScrollViewer Grid.Row="1" VerticalScrollMode="Enabled" Background="{StaticResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{StaticResource CardStrokeColorDefaultBrush}" BorderThickness="1" Padding="8" CornerRadius="4"  >
                             <ListView x:Name="SelectedProductListView" ItemsSource="{x:Bind ViewModel.EditorAddOrder.Details, Mode=TwoWay}" SelectionMode="None" CornerRadius="4">
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="DOmodel:OrderDetail">
@@ -218,15 +234,15 @@
                             <TextBlock Text="Tổng tiền:" Style="{StaticResource BodyStrongTextBlockStyle}"/>
                             <Rectangle Grid.Column="1"/>
                             <TextBlock Grid.Column="2" x:Name="TotalAmountValue" Style="{StaticResource BodyTextBlockStyle}" Text="{x:Bind ViewModel.TotalAfterDiscount, Mode=OneWay, Converter={StaticResource CurrencyFormatter}, FallbackValue='0 VNĐ'}"/>
+
+                           
                         </Grid>
+                        <Button Grid.Row="5" x:Name="CreateOrderButton" Content="Tạo hóa đơn" Click="CreateOrderButton_Click" Margin="0, 8, 0, 0" HorizontalAlignment="Stretch" Style="{StaticResource AccentButtonStyle}"/>
                     </Grid>
                 </Grid>
             </Grid>
         </Grid>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button x:Name="CreateOrderButton" Content="Cập nhật hóa đơn" Background="Green" Foreground="White" CornerRadius="5" Click="CreateOrderButton_Click"/>
-            <Button x:Name="CancelButton" Content="Hủy" Background="Red" Foreground="White" CornerRadius="5" Click="CancelButton_Click"/>
-        </StackPanel>
+      
     </Grid>
 </Page>

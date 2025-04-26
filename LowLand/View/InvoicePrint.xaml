@@ -44,7 +44,7 @@
             <TextBlock Text="{Binding Order.CustomerName, Mode=OneWay, TargetNullValue='Khách lẻ', FallbackValue='Khách lẻ'}" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,10" Foreground="Black"/>
 
             <TextBlock Text="Số điện thoại:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10" FontWeight="Bold" Foreground="Black"/>
-            <TextBlock Text="{Binding Order.CustomerPhone, Mode=OneWay, TargetNullValue='Không có SĐT', FallbackValue='Không có SĐT'}" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,10" Foreground="Black"/>
+            <TextBlock Text="{Binding Order.CustomerPhone, Mode=OneWay, TargetNullValue='', FallbackValue=''}" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,10" Foreground="Black"/>
 
             <TextBlock Text="Ngày:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,10,10" FontWeight="Bold" Foreground="Black"/>
             <TextBlock Text="{Binding Order.Date, Mode=OneWay, Converter={StaticResource StringFormatConverter}, ConverterParameter='Ngày: {0}', TargetNullValue='Không có ngày', FallbackValue='Không có ngày'}" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,10" Foreground="Black"/>
@@ -90,7 +90,7 @@
                             <TextBlock Grid.Column="0" Text="{Binding ProductName, TargetNullValue='Không có tên sản phẩm', FallbackValue='Không có tên sản phẩm'}" TextAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
                             <TextBlock Grid.Column="1" Text="{Binding quantity, Converter={StaticResource StringFormatConverter}, FallbackValue='0'}" TextAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
                             <TextBlock Grid.Column="2" Text="{Binding Price, Converter={StaticResource CurrencyFormatter}, FallbackValue='0 VNĐ'}" TextAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
-                            <TextBlock Grid.Column="3" Text="{Binding OptionName, TargetNullValue='Không có tùy chọn', FallbackValue='Không có tùy chọn'}" TextAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
+                            <TextBlock Grid.Column="3" Text="{Binding OptionName, TargetNullValue='', FallbackValue=''}" TextAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

@@ -11,7 +11,7 @@ namespace LowLand.Model
         private int _pageSize;
         private int _totalItems;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public List<T> Items
         {

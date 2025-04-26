@@ -96,25 +96,24 @@ namespace LowLand.View
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
-                // Xử lý khi người dùng xóa hết nội dung (nhấn nút "X")
+                // Handle when the user clears the content (presses the "X" button)
                 if (string.IsNullOrEmpty(sender.Text))
                 {
                     ViewModel.UpdateCustomerInfo(null, "", "");
                     NameBox.Visibility = Visibility.Collapsed;
 
-                    //ViewModel.SelectedTable = ViewModel.AvailableTables.FirstOrDefault(t => t.Id == -1);
-
                     Debug.WriteLine("AutoSuggestBox cleared: Set to vãng lai");
                     return;
                 }
 
-                // Xử lý gợi ý tìm kiếm
+                // Handle search suggestions
                 var suitableItems = new List<string>();
                 var inputText = sender.Text.ToLower();
 
                 foreach (var customer in ViewModel.Customers)
                 {
-                    if (customer.Phone.ToLower().Contains(inputText))
+                    if (!string.IsNullOrEmpty(customer.Phone) &&
+                        customer.Phone.Contains(inputText, StringComparison.OrdinalIgnoreCase))
                     {
                         suitableItems.Add($"{customer.Phone} - {customer.Name}");
                     }
@@ -131,9 +130,9 @@ namespace LowLand.View
 
         private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            var selectedText = args.SelectedItem.ToString();
+            var selectedText = args.SelectedItem?.ToString();
 
-            if (selectedText.Contains(" - "))
+            if (!string.IsNullOrEmpty(selectedText) && selectedText.Contains(" - "))
             {
                 var parts = selectedText.Split(" - ");
                 var phone = parts[0].Trim();
@@ -141,18 +140,16 @@ namespace LowLand.View
 
                 if (selectedCustomer != null)
                 {
-                    ViewModel.UpdateCustomerInfo(selectedCustomer.Id, selectedCustomer.Phone, selectedCustomer.Name);
+                    ViewModel.UpdateCustomerInfo(selectedCustomer.Id, selectedCustomer.Phone ?? string.Empty, selectedCustomer.Name);
                     NameBox.Visibility = Visibility.Collapsed;
                 }
             }
-            else
+            else if (!string.IsNullOrEmpty(selectedText))
             {
                 var phone = selectedText.Trim();
                 ViewModel.UpdateCustomerInfo(0, phone, "");
                 NameBox.Visibility = Visibility.Visible;
             }
-
-
         }
 
         private void ProductGridView_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
@@ -171,7 +168,15 @@ namespace LowLand.View
             if (sender is ComboBox comboBox && comboBox.DataContext is OrderDetail orderDetail)
             {
                 var selectedOption = comboBox.SelectedItem as ProductOption;
-                ViewModel.UpdateProductOption(orderDetail, selectedOption);
+
+                if (selectedOption != null) // Ensure selectedOption is not null
+                {
+                    ViewModel.UpdateProductOption(orderDetail, selectedOption);
+                }
+                else
+                {
+                    Debug.WriteLine("No valid ProductOption selected.");
+                }
             }
         }
 
@@ -199,8 +204,16 @@ namespace LowLand.View
         private void ChoosePromotion_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selectedPromotion = (sender as ComboBox)?.SelectedItem as Promotion;
-            ViewModel.SelectedPromotion = selectedPromotion;
-            Debug.WriteLine($"ChoosePromotion: {selectedPromotion?.Name}, Type: {selectedPromotion?.Type}, Amount: {selectedPromotion?.Amount}, TotalAfterDiscount = {ViewModel.EditorAddOrder.TotalAfterDiscount}, PromotionDiscount = {ViewModel.PromotionDiscountAmount}");
+
+            if (selectedPromotion != null) // Ensure selectedPromotion is not null
+            {
+                ViewModel.SelectedPromotion = selectedPromotion;
+                Debug.WriteLine($"ChoosePromotion: {selectedPromotion.Name}, Type: {selectedPromotion.Type}, Amount: {selectedPromotion.Amount}, TotalAfterDiscount = {ViewModel.EditorAddOrder.TotalAfterDiscount}, PromotionDiscount = {ViewModel.PromotionDiscountAmount}");
+            }
+            else
+            {
+                Debug.WriteLine("No valid promotion selected.");
+            }
         }
 
         private void TableSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)

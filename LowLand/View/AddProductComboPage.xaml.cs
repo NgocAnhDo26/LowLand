@@ -41,18 +41,21 @@ namespace LowLand.View
 
         private void FindProductBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            // Add the selected item to the list of selected products
-            var selectedItemString = args.SelectedItem.ToString();
 
-            if (selectedItemString == "Không tìm thấy sản phẩm nào...")
+            var selectedItemString = args.SelectedItem?.ToString();
+
+            if (string.IsNullOrEmpty(selectedItemString) || selectedItemString == "Không tìm thấy sản phẩm nào...")
             {
-                // If no product is found, do nothing
+
                 return;
             }
 
             // Extract the product ID from the selected item string
             var productId = selectedItemString.Split('-')[0].Trim();
-            ViewModel.AddProductToCombo(int.Parse(productId));
+            if (int.TryParse(productId, out int parsedProductId))
+            {
+                ViewModel.AddProductToCombo(parsedProductId);
+            }
 
             // Clear the AutoSuggestBox
             sender.Text = string.Empty;
@@ -86,39 +89,42 @@ namespace LowLand.View
         }
         private async void PickProductImage(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            //disable the button to avoid double-clicking
-            var senderButton = sender as Button;
-            senderButton.IsEnabled = false;
-
-            // Create a file picker
-            var openPicker = new Windows.Storage.Pickers.FileOpenPicker();
-
-            // Get the current window
-            var window = App.m_window;
-
-            // Retrieve the window handle (HWND) of the current WinUI 3 window.
-            var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
-
-            // Initialize the file picker with the window handle (HWND).
-            WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
-
-            // Set options for your file picker
-            openPicker.ViewMode = PickerViewMode.Thumbnail;
-            openPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            openPicker.FileTypeFilter.Add(".jpg");
-            openPicker.FileTypeFilter.Add(".jpeg");
-            openPicker.FileTypeFilter.Add(".png");
-
-            // Open the picker for the user to pick a file
-            var file = await openPicker.PickSingleFileAsync();
-            if (file != null)
+            // Safely cast the sender to a Button and check for null
+            if (sender is Button senderButton)
             {
-                // Update the image in the view model
-                ViewModel.UpdateProductImage(file.Path, file.Name);
-            }
+                // Disable the button to avoid double-clicking
+                senderButton.IsEnabled = false;
 
-            //re-enable the button
-            senderButton.IsEnabled = true;
+                // Create a file picker
+                var openPicker = new Windows.Storage.Pickers.FileOpenPicker();
+
+                // Get the current window
+                var window = App.m_window;
+
+                // Retrieve the window handle (HWND) of the current WinUI 3 window.
+                var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+
+                // Initialize the file picker with the window handle (HWND).
+                WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
+
+                // Set options for your file picker
+                openPicker.ViewMode = PickerViewMode.Thumbnail;
+                openPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                openPicker.FileTypeFilter.Add(".jpg");
+                openPicker.FileTypeFilter.Add(".jpeg");
+                openPicker.FileTypeFilter.Add(".png");
+
+                // Open the picker for the user to pick a file
+                var file = await openPicker.PickSingleFileAsync();
+                if (file != null)
+                {
+                    // Update the image in the view model
+                    ViewModel.UpdateProductImage(file.Path, file.Name);
+                }
+
+                // Re-enable the button
+                senderButton.IsEnabled = true;
+            }
         }
 
         private void CancelButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

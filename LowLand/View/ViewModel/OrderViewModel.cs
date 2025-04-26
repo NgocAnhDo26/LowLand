@@ -22,15 +22,15 @@ namespace LowLand.View.ViewModel
     {
         private readonly IDao _dao;
         private readonly PagingViewModel<Order> _paging;
-        private PrintDocument printDocument;
+        private PrintDocument printDocument = new PrintDocument();
         private IPrintDocumentSource printDocumentSource;
-        private Order currentOrderToPrint;
+        private Order? currentOrderToPrint;
         private List<UIElement> printPreviewPages = new();
         public ObservableCollection<Table> Tables { get; set; }
 
         public PagingViewModel<Order> Paging => _paging;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public OrderViewModel()
         {
@@ -41,6 +41,9 @@ namespace LowLand.View.ViewModel
             );
 
             Tables = new ObservableCollection<Table>();
+
+            // Initialize printDocumentSource here to avoid nullability issue
+            printDocumentSource = printDocument.DocumentSource;
 
             InitializePrinting();
             LoadTablesAsync();
@@ -169,8 +172,6 @@ namespace LowLand.View.ViewModel
                 var printManager = PrintManagerInterop.GetForWindow(hWnd);
                 printManager.PrintTaskRequested += PrintTask_Requested;
 
-                printDocument = new PrintDocument();
-                printDocumentSource = printDocument.DocumentSource;
                 printDocument.Paginate += PrintDocument_Paginate;
                 printDocument.GetPreviewPage += PrintDocument_GetPreviewPage;
                 printDocument.AddPages += PrintDocument_AddPages;
@@ -274,7 +275,7 @@ namespace LowLand.View.ViewModel
 
         private void PrintTask_Requested(PrintManager sender, PrintTaskRequestedEventArgs args)
         {
-            var printTask = args.Request.CreatePrintTask($"Hóa đơn #{currentOrderToPrint.Id}", PrintTaskSourceRequested);
+            var printTask = args.Request.CreatePrintTask($"Hóa đơn #{currentOrderToPrint?.Id}", PrintTaskSourceRequested);
             printTask.Completed += PrintTask_Completed;
         }
 

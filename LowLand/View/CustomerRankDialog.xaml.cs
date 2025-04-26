@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using LowLand.Model.Customer;
 using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml;
@@ -48,15 +49,12 @@ namespace LowLand.View
             }
         }
 
-        private void PrimaryButton_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void PrimaryButton_Click(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-
             if (ViewModel.updateMode == false)
             {
                 // check cac box
                 if (string.IsNullOrWhiteSpace(ViewModel.EditorAddCustomerRank.Name))
-
-
                 {
                     errorTextBlock.Content = "Vui lòng điền đầy đủ thông tin ";
                     errorTextBlock.Visibility = Visibility.Visible;
@@ -79,6 +77,14 @@ namespace LowLand.View
                     return;
                 }
 
+                if (ViewModel.EditorAddCustomerRank.DiscountPercentage > 100)
+                {
+                    errorTextBlock.Content = "Mức ưu đãi không được lớn hơn 100%";
+                    errorTextBlock.Visibility = Visibility.Visible;
+                    args.Cancel = true;
+                    return;
+                }
+
                 if (ViewModel.CustomerRanks.ToList().Any(c => c.PromotionPoint == ViewModel.EditorAddCustomerRank.PromotionPoint))
                 {
                     errorTextBlock.Content = "Mốc điểm này đã được thiết lập.";
@@ -86,19 +92,29 @@ namespace LowLand.View
                     args.Cancel = true;
                     return;
                 }
-                ViewModel.Add(ViewModel.EditorAddCustomerRank);
+                await ViewModel.Add(ViewModel.EditorAddCustomerRank);
                 ViewModel.EditorAddCustomerRank = new CustomerRank
                 {
                     Name = string.Empty,
                     PromotionPoint = 0,
                     DiscountPercentage = 0
                 };
+
+                string message = "Thêm hạng khách hàng thành công.";
+
+                var infoDialog = new ContentDialog
+                {
+                    Title = "Thông báo",
+                    Content = message,
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+
+                await infoDialog.ShowAsync();
             }
             else
             {
                 if (string.IsNullOrWhiteSpace(ViewModel.EditorAddCustomerRank.Name))
-
-
                 {
                     errorTextBlock.Content = "Vui lòng điền đầy đủ thông tin ";
                     errorTextBlock.Visibility = Visibility.Visible;
@@ -129,7 +145,14 @@ namespace LowLand.View
                     args.Cancel = true;
                     return;
                 }
-                ViewModel.Update(ViewModel.EditorAddCustomerRank);
+                if (ViewModel.EditorAddCustomerRank.DiscountPercentage > 100)
+                {
+                    errorTextBlock.Content = "Mức ưu đãi không được lớn hơn 100%";
+                    errorTextBlock.Visibility = Visibility.Visible;
+                    args.Cancel = true;
+                    return;
+                }
+                await ViewModel.Update(ViewModel.EditorAddCustomerRank);
                 ViewModel.EditorAddCustomerRank = new CustomerRank
                 {
                     Name = string.Empty,
@@ -137,6 +160,17 @@ namespace LowLand.View
                     DiscountPercentage = 0
                 };
 
+                string message = "Cập nhật hạng khách hàng thành công.";
+
+                var infoDialog = new ContentDialog
+                {
+                    Title = "Thông báo",
+                    Content = message,
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+
+                await infoDialog.ShowAsync();
             }
         }
 

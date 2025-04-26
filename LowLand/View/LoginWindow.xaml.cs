@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Diagnostics;
 using DemoListBinding.View.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
@@ -25,27 +22,6 @@ namespace LowLand.View
             ViewModel = new LoginViewModel();
             this.InitializeComponent();
             SystemBackdrop = new MicaBackdrop();
-            //  _dao = new PostgreDAO();
-            //test();
-
-            var localStorage = Windows.Storage.ApplicationData.Current.LocalSettings;
-            var username = (string)localStorage.Values["Username"];
-            var encryptedInBase64 = (string)localStorage.Values["Password"];
-            var entropyInBase64 = (string)localStorage.Values["Entropy"];
-
-            if (username == null) return;
-
-            var encryptedInBytes = Convert.FromBase64String(encryptedInBase64);
-            var entropyInBytes = Convert.FromBase64String(entropyInBase64);
-
-            var passwordInBytes = ProtectedData.Unprotect(
-                encryptedInBytes,
-                entropyInBytes,
-                DataProtectionScope.CurrentUser
-            );
-            var password = Encoding.UTF8.GetString(passwordInBytes);
-            ViewModel.Password = password;
-            ViewModel.Username = username;
         }
 
         private void loginButton_Click(object sender, RoutedEventArgs e)
@@ -53,46 +29,37 @@ namespace LowLand.View
             Debug.WriteLine(ViewModel.Username + " " + ViewModel.Password);
 
             if (ViewModel.CanLogin())
-            { // CanExecute - Look before you leap
-                bool success = ViewModel.Login(); // Execute
-
-                if (ViewModel.RememberMe == true)
-                {
-                    var passwordInBytes = Encoding.UTF8.GetBytes(ViewModel.Password);
-                    var entropyInBytes = new byte[20];
-                    using (var rng = RandomNumberGenerator.Create())
-                    {
-                        rng.GetBytes(entropyInBytes);
-                    }
-                    var encryptedInBytes = ProtectedData.Protect(
-                        passwordInBytes,
-                        entropyInBytes,
-                        DataProtectionScope.CurrentUser
-                    );
-                    var encryptedInBase64 = Convert.ToBase64String(encryptedInBytes);
-                    var entropyInBase64 = Convert.ToBase64String(entropyInBytes);
-
-                    var localStorage = Windows.Storage.ApplicationData.Current.LocalSettings;
-                    localStorage.Values["Username"] = ViewModel.Username;
-                    localStorage.Values["Password"] = encryptedInBase64;
-                    localStorage.Values["Entropy"] = entropyInBase64;
-
-                    Debug.WriteLine($"Encrypted password in base 64 is: {encryptedInBase64}");
-                }
-
+            {
+                bool success = ViewModel.Login();
 
                 if (success)
                 {
+                    ViewModel.SaveCredentials(); // Lưu Remember Me nếu cần
+
                     var dashboard = new DashboardWindow();
                     App.m_window = dashboard;
                     App.MainWindow = dashboard;
                     dashboard.Activate();
 
+                    var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(dashboard);
+                    var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
+                    var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+
+                    var displayArea = Microsoft.UI.Windowing.DisplayArea.GetFromWindowId(windowId, Microsoft.UI.Windowing.DisplayAreaFallback.Primary);
+                    var workArea = displayArea.WorkArea;
+
+                    int targetWidth = (int)(workArea.Width * 0.9);
+                    int targetHeight = (int)(workArea.Height * 0.9);
+
+                    appWindow.Resize(new Windows.Graphics.SizeInt32 { Width = targetWidth, Height = targetHeight });
+
+                    var centerX = (workArea.Width - targetWidth) / 2;
+                    var centerY = (workArea.Height - targetHeight) / 2;
+
+                    appWindow.Move(new Windows.Graphics.PointInt32 { X = centerX, Y = centerY });
 
                     this.Close();
                 }
-
-
             }
         }
 

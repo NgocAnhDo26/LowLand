@@ -62,6 +62,30 @@ namespace LowLand
             App.m_window = new LoginWindow();
             MainWindow = m_window;
             m_window.Activate();
+
+            // Retrieve the display area of the current window
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(m_window);
+            var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
+            var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+            var displayArea = Microsoft.UI.Windowing.DisplayArea.GetFromWindowId(
+                appWindow.Id, Microsoft.UI.Windowing.DisplayAreaFallback.Primary);
+
+            if (displayArea != null)
+            {
+                // Lấy kích thước làm việc của màn hình
+                var workArea = displayArea.WorkArea;
+
+                // Lấy kích thước cửa sổ
+                var windowSize = appWindow.Size;
+
+                // Tính tọa độ căn giữa
+                int centerX = workArea.X + (workArea.Width - windowSize.Width) / 2;
+                int centerY = workArea.Y + (workArea.Height - windowSize.Height) / 2;
+
+
+
+                appWindow.Move(new Windows.Graphics.PointInt32 { X = centerX, Y = centerY });
+            }
         }
 
         public static Window? m_window;

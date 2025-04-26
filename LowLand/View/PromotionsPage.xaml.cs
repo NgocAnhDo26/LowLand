@@ -48,52 +48,56 @@ namespace LowLand.View
             var menuFlyoutItem = sender as MenuFlyoutItem;
             var selectedPromotion = menuFlyoutItem?.DataContext as Promotion;
 
-            // Show confirmation dialog
-            var dialog = new ContentDialog
+            if (selectedPromotion != null)
             {
-                Title = "Xóa khuyến mãi",
-                Content = $"Bạn có chắc chắn muốn xóa khuyến mãi {selectedPromotion.Name} không?",
-                PrimaryButtonText = "Xóa",
-                CloseButtonText = "Hủy"
-            };
-
-            dialog.XamlRoot = this.XamlRoot;
-            var result = dialog.ShowAsync();
-            result.Completed = (asyncOperation, asyncStatus) =>
-            {
-                if (result.Status == Windows.Foundation.AsyncStatus.Completed)
+                // Show confirmation dialog
+                var dialog = new ContentDialog
                 {
-                    // If the user confirms, delete the promotion
-                    if (result.GetResults() == ContentDialogResult.Primary)
+                    Title = "Xóa khuyến mãi",
+                    Content = $"Bạn có chắc chắn muốn xóa khuyến mãi {selectedPromotion.Name} không?",
+                    PrimaryButtonText = "Xóa",
+                    CloseButtonText = "Hủy"
+                };
+
+                dialog.XamlRoot = this.XamlRoot;
+                var result = dialog.ShowAsync();
+
+                result.Completed = (asyncOperation, asyncStatus) =>
+                {
+                    if (result.Status == Windows.Foundation.AsyncStatus.Completed)
                     {
-                        var response = ViewModel.DeletePromotion(selectedPromotion);
-
-                        // Show appropriate messages based on response code
-                        string message = response switch
+                        // If the user confirms, delete the promotion
+                        if (result.GetResults() == ContentDialogResult.Primary)
                         {
-                            ResponseCode.Success => "Xóa khuyến mãi thành công!",
-                            ResponseCode.Error => "Đã xảy ra lỗi khi xóa khuyến mãi!",
-                            _ => "Có lỗi xảy ra!"
-                        };
+                            var response = ViewModel.DeletePromotion(selectedPromotion);
 
-                        var messageDialog = new ContentDialog
-                        {
-                            Title = "Thông báo",
-                            Content = message,
-                            CloseButtonText = "OK",
-                            XamlRoot = this.XamlRoot
-                        };
-
-                        messageDialog.ShowAsync().Completed = (asyncOperation, asyncStatus) =>
-                        {
-                            if (messageDialog != null)
+                            // Show appropriate messages based on response code
+                            string message = response switch
                             {
-                                messageDialog.Hide();
-                            }
-                        };
+                                ResponseCode.Success => "Xóa khuyến mãi thành công!",
+                                ResponseCode.Error => "Đã xảy ra lỗi khi xóa khuyến mãi!",
+                                _ => "Có lỗi xảy ra!"
+                            };
+
+                            var messageDialog = new ContentDialog
+                            {
+                                Title = "Thông báo",
+                                Content = message,
+                                CloseButtonText = "OK",
+                                XamlRoot = this.XamlRoot
+                            };
+
+                            messageDialog.ShowAsync().Completed = (asyncOperation, asyncStatus) =>
+                            {
+                                if (messageDialog != null)
+                                {
+                                    messageDialog.Hide();
+                                }
+                            };
+                        }
                     }
-                }
-            };
+                };
+            }
         }
     }
 }

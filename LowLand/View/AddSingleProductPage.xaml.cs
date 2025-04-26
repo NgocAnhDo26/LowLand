@@ -63,45 +63,56 @@ namespace LowLand.View
 
         private async void PickProductImage(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            //disable the button to avoid double-clicking
-            var senderButton = sender as Button;
-            senderButton.IsEnabled = false;
-
-            // Create a file picker
-            var openPicker = new Windows.Storage.Pickers.FileOpenPicker();
-
-            // Get the current window
-            var window = App.m_window;
-
-            // Retrieve the window handle (HWND) of the current WinUI 3 window.
-            var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
-
-            // Initialize the file picker with the window handle (HWND).
-            WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
-
-            // Set options for your file picker
-            openPicker.ViewMode = PickerViewMode.Thumbnail;
-            openPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            openPicker.FileTypeFilter.Add(".jpg");
-            openPicker.FileTypeFilter.Add(".jpeg");
-            openPicker.FileTypeFilter.Add(".png");
-
-            // Open the picker for the user to pick a file
-            var file = await openPicker.PickSingleFileAsync();
-            if (file != null)
+            // Safely cast sender to Button and check for null
+            if (sender is Button senderButton)
             {
-                // Update the image in the view model
-                ViewModel.UpdateProductImage(file.Path, file.Name);
-            }
+                // Disable the button to avoid double-clicking
+                senderButton.IsEnabled = false;
 
-            //re-enable the button
-            senderButton.IsEnabled = true;
+                // Create a file picker
+                var openPicker = new Windows.Storage.Pickers.FileOpenPicker();
+
+                // Get the current window
+                var window = App.m_window;
+
+                // Retrieve the window handle (HWND) of the current WinUI 3 window.
+                var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+
+                // Initialize the file picker with the window handle (HWND).
+                WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hWnd);
+
+                // Set options for your file picker
+                openPicker.ViewMode = PickerViewMode.Thumbnail;
+                openPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                openPicker.FileTypeFilter.Add(".jpg");
+                openPicker.FileTypeFilter.Add(".jpeg");
+                openPicker.FileTypeFilter.Add(".png");
+
+                // Open the picker for the user to pick a file
+                var file = await openPicker.PickSingleFileAsync();
+                if (file != null)
+                {
+                    // Update the image in the view model
+                    ViewModel.UpdateProductImage(file.Path, file.Name);
+                }
+
+                // Re-enable the button
+                senderButton.IsEnabled = true;
+            }
         }
 
         private void Category_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Category category = (sender as ComboBox).SelectedItem as Category;
-            ViewModel.ChangeProductCategory(category!);
+            // Safely cast sender to ComboBox and check for null
+            if (sender is ComboBox comboBox && comboBox.SelectedItem is Category category)
+            {
+                ViewModel.ChangeProductCategory(category);
+            }
+            else
+            {
+                // Handle the case where the category is null or invalid
+                // Optionally log or display an error message
+            }
         }
     }
 }

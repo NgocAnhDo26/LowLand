@@ -15,9 +15,9 @@ namespace LowLand.View.ViewModel
 
         public PagingViewModel<Customer> Paging => _paging;
         public FullObservableCollection<CustomerRank> CustomerRanks { get; set; }
-        public Customer EditingCustomer { get; set; }
+        public Customer EditingCustomer { get; set; } = null!;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public CustomerViewModel()
         {
@@ -37,12 +37,12 @@ namespace LowLand.View.ViewModel
         {
             return _dao.Customers.GetAll().Any(c => c.Phone == phoneNumber);
         }
-        public void Add(Customer item)
+        public async Task AddAsync(Customer item)
         {
-            int result = _dao.Customers.Insert(item);
+            int result = await Task.Run(() => _dao.Customers.Insert(item));
             if (result == 1)
             {
-                _paging.RefreshAsync().Wait();
+                await _paging.RefreshAsync();
                 Debug.WriteLine($"Added customer ID: {item.Id}, refreshed paging");
             }
             else
@@ -50,6 +50,7 @@ namespace LowLand.View.ViewModel
                 Debug.WriteLine("Insert failed: No rows affected.");
             }
         }
+
 
         public async Task Remove(Customer item)
         {

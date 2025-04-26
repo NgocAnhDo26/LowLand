@@ -28,13 +28,6 @@ namespace LowLand.View
             ViewModel.Dispose();
         }
 
-        private void searchButton_Click(object sender, RoutedEventArgs e)
-        {
-            var keyword = searchBar?.Text ?? string.Empty;
-            Debug.WriteLine($"Search button clicked, keyword: {keyword}");
-            ViewModel.Paging.SearchKeyword = keyword;
-            ViewModel.Paging.RefreshAsync(); // Updated to call the correct method
-        }
 
         private void addButton_Click(object sender, RoutedEventArgs e)
         {
@@ -146,6 +139,13 @@ namespace LowLand.View
             {
                 await ViewModel.PrintInvoice(selectedOrder, this.XamlRoot);
             }
+        }
+        private async void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            var keyword = sender?.Text?.Trim() ?? string.Empty;
+            Debug.WriteLine($"Search button clicked, keyword: '{keyword}'");
+            ViewModel.Paging.SearchKeyword = keyword;
+            await ViewModel.Paging.RefreshAsync();
         }
     }
 }

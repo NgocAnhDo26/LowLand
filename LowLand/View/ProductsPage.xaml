@@ -35,7 +35,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <AutoSuggestBox Grid.Column="0" PlaceholderText="Tìm kiếm sản phẩm..." QueryIcon="Find" Width="300" />
+            <AutoSuggestBox  Grid.Column="0" PlaceholderText="Tìm kiếm sản phẩm..." QueryIcon="Find" Width="300" QuerySubmitted="AutoSuggestBox_QuerySubmitted"/>
 
             <Rectangle Grid.Column="2"/>
             <DropDownButton AutomationProperties.Name="AddNewProduct" Style="{StaticResource AccentButtonStyle}" Grid.Column="3" Margin="0, 0, 36, 0">

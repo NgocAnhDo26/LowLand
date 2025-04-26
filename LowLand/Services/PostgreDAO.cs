@@ -1261,7 +1261,7 @@ namespace LowLand.Services
             throw new NotImplementedException();
         }
 
-        public Table GetById(string id)
+        public Table? GetById(string id)
         {
             string query = "SELECT table_id, name, status, capacity, created_at, order_id FROM tables WHERE table_id = @id";
             return ExecuteSingleQuery(query, reader => new Table
@@ -1270,7 +1270,6 @@ namespace LowLand.Services
                 Name = reader.GetString(1),
                 Status = reader.GetString(2),
                 Capacity = reader.GetInt32(3),
-                // CreatedAt = reader.GetDateTime(4),
                 OrderId = reader.IsDBNull(5) ? null : reader.GetInt32(5)
             }, cmd => cmd.Parameters.AddWithValue("id", int.Parse(id)));
         }

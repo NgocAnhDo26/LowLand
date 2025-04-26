@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using LowLand.Model.Product;
 using LowLand.Utils;
 using LowLand.View.ViewModel;
@@ -129,6 +130,14 @@ namespace LowLand.View
             {
                 ViewModel.Paging.CurrentPage = comboBox.SelectedIndex + 1;
             }
+        }
+
+        private async void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            var keyword = sender?.Text?.Trim() ?? string.Empty;
+            Debug.WriteLine($"Search button clicked, keyword: '{keyword}'");
+            ViewModel.Paging.SearchKeyword = keyword;
+            await ViewModel.Paging.RefreshAsync();
         }
     }
 }

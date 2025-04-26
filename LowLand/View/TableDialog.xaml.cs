@@ -7,9 +7,9 @@ namespace LowLand.View
 {
     public sealed partial class TableDialog : ContentDialog
     {
-        public Table Result { get; private set; }
+        public Table? Result { get; private set; }
 
-        public TableDialog(Table table = null)
+        public TableDialog(Table? table = null)
         {
             this.InitializeComponent();
 
@@ -72,11 +72,19 @@ namespace LowLand.View
 
             HideWarning(); // Ẩn warning nếu mọi thứ ok
 
+            var selectedItem = StatusComboBox.SelectedItem as ComboBoxItem;
+            if (selectedItem == null || selectedItem.Content == null)
+            {
+                ShowWarning("Trạng thái không hợp lệ");
+                args.Cancel = true;
+                return;
+            }
+
             Result = new Table
             {
                 Name = TableNameTextBox.Text.Trim(),
                 Capacity = int.Parse(CapacityTextBox.Text),
-                Status = ((ComboBoxItem)StatusComboBox.SelectedItem).Content.ToString()
+                Status = selectedItem.Content.ToString() ?? string.Empty
             };
 
             Debug.WriteLine($"--Adding table: {Result.Name}, Capacity: {Result.Capacity}, Status: {Result.Status}");
@@ -92,6 +100,5 @@ namespace LowLand.View
         {
             WarningBar.Visibility = Visibility.Collapsed;
         }
-
     }
 }

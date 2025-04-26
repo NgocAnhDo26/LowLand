@@ -62,6 +62,7 @@ namespace LowLand.View
                 ResponseCode.InvalidDate => "Ngày bắt đầu không được lớn hơn ngày kết thúc!",
                 ResponseCode.InvalidStatus => "Không thể kích hoạt do thời gian hiện tại nằm ngoài khoảng thời gian khuyến mãi!",
                 ResponseCode.Error => "Đã xảy ra lỗi khi lưu khuyến mãi!",
+
             };
 
             var dialog = new ContentDialog

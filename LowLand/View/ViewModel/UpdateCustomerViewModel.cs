@@ -95,6 +95,14 @@ namespace LowLand.View.ViewModel
                 return false;
             }
 
+            var existingCustomer = _dao.Customers.GetAll()
+                .FirstOrDefault(c => c.Phone == phone && c.Id != EditingCustomer.Id);
+            if (existingCustomer != null)
+            {
+                ErrorMessage = "Số điện thoại đã tồn tại!";
+                return false;
+            }
+
             try
             {
                 // Cập nhật thông tin

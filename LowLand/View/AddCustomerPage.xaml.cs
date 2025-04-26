@@ -37,7 +37,8 @@ namespace LowLand.View
             await dialog.ShowAsync();
         }
 
-        private void addButton_Click(object sender, RoutedEventArgs e)
+        private async void addButton_Click(object sender, RoutedEventArgs e)
+
         {
             string name = NameTextBox.Text.Trim();
             string phone = PhoneTextBox.Text.Trim();
@@ -77,7 +78,8 @@ namespace LowLand.View
 
             };
 
-            customerVM.Add(newCustomer);
+            await customerVM.AddAsync(newCustomer);
+
 
             ShowMessage("Thêm khách hàng thành công!");
             Frame.GoBack();

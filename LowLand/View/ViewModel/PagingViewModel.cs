@@ -68,7 +68,9 @@ namespace LowLand.View.ViewModel
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
 
         public PagingViewModel(Func<int, int, string, Task<PagedResult<T>>> loadDataAsync, int pageSize = 10)
         {
