@@ -175,7 +175,11 @@ namespace LowLand.View.ViewModel
                                 .Where(o => o.Date == currentDate)
                                 .Sum(o => (double)o.TotalAfterDiscount);
                             revenueData.Add(new ObservablePoint(i, dailyRevenue));
-                            profitData.Add(new ObservablePoint(i, dailyRevenue * random.NextDouble() * 0.4 + dailyRevenue * 0.1));
+
+                            double dailyProfit = (double)ordersInPeriod
+                                .Where(o => o.Date == currentDate)
+                                .Sum(o => o.TotalAfterDiscount - o.TotalCostPrice);
+                            profitData.Add(new ObservablePoint(i, dailyProfit));
                         }
                         break;
 
@@ -192,7 +196,11 @@ namespace LowLand.View.ViewModel
                                 .Where(o => o.Date.Date >= weekStartDate && o.Date.Date <= weekEndDate)
                                 .Sum(o => (double)o.TotalAfterDiscount);
                             revenueData.Add(new ObservablePoint(i, weeklyRevenue));
-                            profitData.Add(new ObservablePoint(i, weeklyRevenue * random.NextDouble() * 0.4 + weeklyRevenue * 0.1));
+
+                            double weeklyProfit = (double)ordersInPeriod
+                                .Where(o => o.Date.Date >= weekStartDate && o.Date.Date <= weekEndDate)
+                                .Sum(o => o.TotalAfterDiscount - o.TotalCostPrice);
+                            profitData.Add(new ObservablePoint(i, weeklyProfit));
                         }
                         break;
 
@@ -206,7 +214,11 @@ namespace LowLand.View.ViewModel
                                 .Where(o => o.Date.Year == monthDate.Year && o.Date.Month == monthDate.Month)
                                 .Sum(o => (double)o.TotalAfterDiscount);
                             revenueData.Add(new ObservablePoint(i, monthlyRevenue));
-                            profitData.Add(new ObservablePoint(i, monthlyRevenue * random.NextDouble() * 0.4 + monthlyRevenue * 0.1));
+
+                            double monthlyProfit = (double)ordersInPeriod
+                                .Where(o => o.Date.Year == monthDate.Year && o.Date.Month == monthDate.Month)
+                                .Sum(o => o.TotalAfterDiscount - o.TotalCostPrice);
+                            profitData.Add(new ObservablePoint(i, monthlyProfit));
                         }
                         break;
 
@@ -220,7 +232,11 @@ namespace LowLand.View.ViewModel
                                 .Where(o => o.Date.Date >= quarterStartDate && o.Date.Date <= quarterEndDate)
                                 .Sum(o => (double)o.TotalAfterDiscount);
                             revenueData.Add(new ObservablePoint(i, quarterlyRevenue));
-                            profitData.Add(new ObservablePoint(i, quarterlyRevenue * random.NextDouble() * 0.4 + quarterlyRevenue * 0.1));
+
+                            double quarterlyProfit = (double)ordersInPeriod
+                                .Where(o => o.Date.Date >= quarterStartDate && o.Date.Date <= quarterEndDate)
+                                .Sum(o => o.TotalAfterDiscount - o.TotalCostPrice);
+                            profitData.Add(new ObservablePoint(i, quarterlyProfit));
                         }
                         break;
 
@@ -234,7 +250,11 @@ namespace LowLand.View.ViewModel
                                 .Where(o => o.Date.Year == year)
                                 .Sum(o => (double)o.TotalAfterDiscount);
                             revenueData.Add(new ObservablePoint(i, yearlyRevenue));
-                            profitData.Add(new ObservablePoint(i, yearlyRevenue * random.NextDouble() * 0.4 + yearlyRevenue * 0.1));
+
+                            var yearlyProfit = (double)ordersInPeriod
+                                .Where(o => o.Date.Year == year)
+                                .Sum(o => o.TotalAfterDiscount - o.TotalCostPrice);
+                            profitData.Add(new ObservablePoint(i, yearlyProfit));
                         }
                         break;
                 }
@@ -255,7 +275,7 @@ namespace LowLand.View.ViewModel
                     });
                     TotalRevenueProfitSeries.Add(new LineSeries<ObservablePoint>
                     {
-                        Name = "Lợi nhuận (giả)",
+                        Name = "Lợi nhuận",
                         Values = profitData,
                         Fill = null,
                         DataLabelsPosition = DataLabelsPosition.Bottom,
