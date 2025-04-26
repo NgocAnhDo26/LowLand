@@ -120,7 +120,7 @@
                         <TextBox Header="ID" Grid.Row="0" Grid.Column="0" IsEnabled="False" Text="" VerticalAlignment="Center"/>
                         <TextBox Header="Tên sản phẩm" Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.Product.Name, Mode=TwoWay}" VerticalAlignment="Center"/>
                         <TextBox Header="Tổng giá vốn (tự động tính)" IsEnabled="False" Grid.Row="1" Grid.Column="0" Text="{x:Bind ViewModel.Product.CostPrice, Converter={StaticResource CurrencyFormatter}, Mode=OneWay}" VerticalAlignment="Center"/>
-                        <NumberBox Header="Giá bán" Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.Product.SalePrice, Mode=TwoWay}" VerticalAlignment="Center" Minimum="0"/>
+                        <NumberBox x:Name="ComboSalePriceBox" Header="Giá bán" Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.Product.SalePrice, Mode=TwoWay}" VerticalAlignment="Center" Minimum="0"/>
                         <TextBlock Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center">
 <Run Text="Giá bán gốc (nếu bán lẻ): "/>
 <Run Text="{x:Bind ViewModel.Product.OriginalSalePrice, Converter={StaticResource CurrencyFormatter}, Mode=OneWay}" FontWeight="SemiBold"/>

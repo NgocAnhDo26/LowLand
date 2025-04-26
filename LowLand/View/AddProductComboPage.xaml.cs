@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using LowLand.Model.Product;
 using LowLand.Utils;
+using LowLand.View.Converter;
 using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Storage.Pickers;
@@ -19,6 +20,8 @@ namespace LowLand.View
             ViewModel = new AddProductComboViewModel();
             DataContext = ViewModel;
             this.InitializeComponent();
+
+            ComboSalePriceBox.NumberFormatter = new NumberFormatter();
         }
 
         /// <summary>
@@ -134,6 +137,19 @@ namespace LowLand.View
 
         private async void ApplyButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
+            if (ComboSalePriceBox.Text == null || ComboSalePriceBox.Text == "")
+            {
+                var dialog = new ContentDialog
+                {
+                    Title = "Thông báo",
+                    Content = "Giá bán không được để trống!",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await dialog.ShowAsync();
+                return;
+            }
+
             var response = ViewModel.AddCombo();
 
             // Show appropriate messages based on response code

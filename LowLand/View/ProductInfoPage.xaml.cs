@@ -1,6 +1,7 @@
 using System;
 using LowLand.Model.Product;
 using LowLand.Utils;
+using LowLand.View.Converter;
 using LowLand.View.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -22,6 +23,8 @@ namespace LowLand.View
         {
             this.InitializeComponent();
             DataContext = ViewModel;
+            SalePriceBox.NumberFormatter = new NumberFormatter();
+            CostPriceBox.NumberFormatter = new NumberFormatter();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -64,6 +67,19 @@ namespace LowLand.View
 
         private async void ApplyButton_Click(object sender, RoutedEventArgs e)
         {
+            if (SalePriceBox.Text == null || SalePriceBox.Text == "" || CostPriceBox.Text == null || CostPriceBox.Text == "")
+            {
+                var dialog = new ContentDialog
+                {
+                    Title = "Thông báo",
+                    Content = "Giá bán và giá vốn không được để trống!",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await dialog.ShowAsync();
+                return;
+            }
+
             var responseCode = ViewModel.UpdateProduct();
 
             // Show appropriate messages based on response code

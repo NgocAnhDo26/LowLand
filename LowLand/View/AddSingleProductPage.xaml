@@ -80,11 +80,13 @@
                 Text="{x:Bind ViewModel.Product.Name, Mode=TwoWay}" 
                 VerticalAlignment="Center"/>
                         <NumberBox 
+                            x:Name="SalePriceBox"
                 Header="Giá bán mặc định" 
                 Grid.Row="1" Grid.Column="0"
                 Text="{x:Bind ViewModel.Product.SalePrice, Mode=TwoWay}" 
                 VerticalAlignment="Center"/>
                         <NumberBox 
+                            x:Name="CostPriceBox"
                 Header="Giá vốn mặc định" 
                 Grid.Row="1" Grid.Column="1"
                 Text="{x:Bind ViewModel.Product.CostPrice, Mode=TwoWay}" 
